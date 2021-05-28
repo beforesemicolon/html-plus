@@ -4,7 +4,7 @@ const {transform} = require('../transform');
 describe('Script', () => {
   describe('should process', () => {
     it('js script', async () => {
-      const file = {ext: '.js'};
+      const fileObject = {ext: '.js'};
       const js = `
       class Home {
         #test = 10;
@@ -15,10 +15,15 @@ describe('Script', () => {
       }
       `;
       const jsResult = `
+      var __privateAdd = (obj, member, value) => {
+        if (member.has(obj))
+          throw TypeError("Cannot add the same private member more than once");
+        member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+      };
       var _test;
       class Home {
         constructor() {
-          _test.set(this, 10);
+          __privateAdd(this, _test, 10);
         }
         get n() {
           return 10;
@@ -29,11 +34,11 @@ describe('Script', () => {
       const script = new Script({
         innerHTML: js,
         attributes: {},
-        file
+        fileObject
       });
   
       const res1 = await script.render();
-      const res2 = await transform(`<script>${js}</script>`, {fileObject: file});
+      const res2 = await transform(`<script>${js}</script>`, {fileObject});
   
       expect(res1.replace(/\s+/g, ''))
         .toEqual(`<script>${jsResult}</script>`.replace(/\s+/g, ''))
@@ -42,7 +47,7 @@ describe('Script', () => {
     });
     
     it('ts script', async () => {
-      const file = {ext: '.ts'};
+      const fileObject = {ext: '.ts'};
       const ts = `
       class Home {
         private test = 10;
@@ -67,11 +72,11 @@ describe('Script', () => {
         attributes: {
           compiler: 'ts'
         },
-        file
+        fileObject
       });
   
       const res1 = await script.render();
-      const res2 = await transform(`<script #compiler="ts">${ts}</script>`, {fileObject: file});
+      const res2 = await transform(`<script #compiler="ts">${ts}</script>`, {fileObject});
   
       expect(res1.replace(/\s+/g, ''))
         .toEqual(`<script>${tsResult}</script>`.replace(/\s+/g, ''))

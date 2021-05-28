@@ -27,14 +27,14 @@ describe('Include', () => {
   it('should include partial with partialPath attribute', async () => {
     const str = '<include partial-path="/_sample.html" data="{title: \'include partial\'}"></include>'
     const inc = new Include({
-      file: {fileDirectoryPath: '/'},
+      fileObject: {fileDirectoryPath: '/'},
       attributes: {
         partialPath: '/_sample.html',
         data: {title: 'include partial'}
       },
       partialFiles: [{...partialFile, render: async ({title}) => `<div>${title}</div>`}]
     });
-  
+
     await expect(inc.render()).resolves.toEqual('<div>include partial</div>');
     await expect(transform(str, {
       partialFileObjects: [partialFile],

@@ -1,5 +1,5 @@
-const {executeCode} = require("../../../utils/execute-code");
-const {extractExecutableSnippetFromString} = require("../../../utils/extract-executable-snippet-from-string");
+const {executeCode} = require("./execute-code");
+const {extractExecutableSnippetFromString} = require("./extract-executable-snippet-from-string");
 const {undoSpecialCharactersInHTML} = require("./undo-special-characters-in-HTML");
 
 function bindData(str, data) {

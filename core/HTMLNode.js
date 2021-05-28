@@ -1,8 +1,8 @@
+const {parse} = require('node-html-parser');
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
 const {processNodeAttributes} = require("./utils/process-attributes");
 const {defineGetter} = require("./utils/define-getter");
 const {TextNode} = require('./TextNode');
-const {parse} = require('node-html-parser');
 const {renderChildren} = require("./utils/render-children");
 const {composeTagString} = require("./utils/compose-tag-string");
 
@@ -19,7 +19,7 @@ class HTMLNode {
     const children = (data = {}) => {
       return node.childNodes.map(child => {
         if (child.hasOwnProperty('rawText')) {
-          return new TextNode(child, {...opt.data, ...node.context, ...data})
+          return new TextNode(child, {...opt.data, ...this.context, ...child.context, ...data})
         } else {
           const childNode = new HTMLNode(child, opt);
     

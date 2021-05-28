@@ -1,17 +1,23 @@
 const express = require('express');
 const http = require('http');
 const path = require('path');
-const {engine} = require('./core/engine');
+const {engine} = require('../core/engine');
+const pages = require('./pages/data/pages.json');
 
 const app = express();
 
-engine(app);
+engine(app, {
+  staticData: {
+    pages
+  },
+  staticDataDirectoryPath: './pages/data'
+});
 
 app.set('views', path.resolve(__dirname, './pages'));
 app.set('view engine', 'html');
 
 app.get('/', function (req, res) {
-  res.render('index', {test: 123});
+  res.render('index');
 })
 
 const server = http.createServer(app);

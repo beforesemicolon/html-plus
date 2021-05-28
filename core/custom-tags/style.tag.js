@@ -1,8 +1,8 @@
 const {Tag} = require('../Tag');
-const {cssTransformer} = require('../../../transformers/css.transformer');
-const {sassTransformer} = require('../../../transformers/sass.transformer');
-const {lessTransformer} = require('../../../transformers/less.transformer');
-const {stylusTransformer} = require('../../../transformers/stylus.transformer');
+const {cssTransformer} = require('../../transformers/css.transformer');
+const {sassTransformer} = require('../../transformers/sass.transformer');
+const {lessTransformer} = require('../../transformers/less.transformer');
+const {stylusTransformer} = require('../../transformers/stylus.transformer');
 
 const supportedCSSTypes = ['css', 'scss', 'sass', 'styl', 'less'];
 

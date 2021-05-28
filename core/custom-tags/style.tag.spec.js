@@ -1,6 +1,6 @@
 const {Style} = require('./style.tag');
 const {transform} = require('../transform');
-const data = require('../../../transformers/test-data');
+const data = require('../../transformers/test-data');
 
 describe('Style', () => {
   describe('should process', () => {
@@ -37,19 +37,17 @@ describe('Style', () => {
     });
     
     it('sass style', async () => {
-      const file = {ext: '.sass'}
+      const fileObject = {ext: '.sass'}
       const style = new Style({
         innerHTML: data.sass,
         attributes: {
           compiler: 'sass'
         },
-        file
+        fileObject
       });
   
       const res1 = await style.render();
-      const res2 = await transform(`<style #compiler="sass">${data.sass}</style>`, {
-        fileObject: file
-      });
+      const res2 = await transform(`<style #compiler="sass">${data.sass}</style>`, {fileObject});
   
       expect(res1.replace(/\s+/g, ''))
         .toEqual(`<style>${data.sassResult}</style>`.replace(/\s+/g, ''))
@@ -95,7 +93,7 @@ describe('Style', () => {
   describe('should throw error', () => {
     it('if use wrong compiler', async () => {
       await expect(transform(`<style #compiler="scss">${data.css}</style>`)).rejects.toThrowError()
-      await expect(transform(`<style #compiler="sass">${data.scss}</style>`)).rejects.toThrowError()
+      await expect(transform(`<style #compiler="scss">${data.sass}</style>`)).rejects.toThrowError()
       await expect(transform(`<style #compiler="less">${data.scss}</style>`)).rejects.toThrowError()
       await expect(transform(`<style #compiler="styl">${data.scss}</style>`)).rejects.toThrowError()
     });

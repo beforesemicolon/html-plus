@@ -1,5 +1,5 @@
-const selfClosingTags = require('./selfClosingTags.json');
-const specialAttributes = require('./specialAttributes.json');
+const selfClosingTags = require('../selfClosingTags.json');
+const specialAttributes = require('../specialAttributes.json');
 
 function composeTagString(node, content = '') {
   let attributesList = [];

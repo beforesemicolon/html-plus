@@ -1,5 +1,5 @@
 const {Tag} = require('../Tag');
-const {jsTransformer} = require('../../../transformers/js.transformer');
+const {jsTransformer} = require('../../transformers/js.transformer');
 
 const supportedJSTypes = ['js', 'ts'];
 

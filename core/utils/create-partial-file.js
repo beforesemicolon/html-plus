@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const {replaceSpecialCharactersInHTML} = require("./replace-special-characters-in-HTML");
 const {HTMLNode} = require("../HTMLNode");
-const {FileObject} = require("../../../controllers/FileObject");
+const {FileObject} = require("../FileObject");
 const {parse} = require('node-html-parser');
 
 const createPartialFile = (partialAbsPath, srcDirectoryPath, opt) => {

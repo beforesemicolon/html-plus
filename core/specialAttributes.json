@@ -5,5 +5,6 @@
   "inject": {"process": false, "tags": "*"},
   "data": {"process": true, "tags": ["include"]},
   "partial": {"process": false, "tags": ["include"]},
+  "value": {"process": true, "tags": ["variable"]},
   "compiler": {"process": false, "tags": ["style", "script"]}
 }

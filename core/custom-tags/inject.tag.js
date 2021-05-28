@@ -3,20 +3,22 @@ const {Tag} = require('../Tag');
 class Inject extends Tag {
   constructor(tagInfo) {
     super(tagInfo);
-  
+    
     this.content = this.children;
-  
+    
     if (tagInfo.rootChildren) {
       const rootChildren = tagInfo.rootChildren();
       
       if (rootChildren.length) {
         const injectId = tagInfo.attributes['id'];
-  
+        
         if (injectId) {
-          const extendingNode = rootChildren.find(n => n.attributes && n.attributes['inject'] === injectId);
-    
-          if (extendingNode) {
-            this.content = [extendingNode];
+          const content = rootChildren.filter(n => {
+            return n.attributes && n.attributes['inject'] === injectId;
+          });
+          
+          if (content.length) {
+            this.content = content;
           }
         } else {
           this.content = rootChildren.filter(rc => {

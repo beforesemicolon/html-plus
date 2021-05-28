@@ -1,6 +1,7 @@
-const {executeCode} = require("../../../utils/execute-code");
+const {executeCode} = require("./execute-code");
 const {bindData} = require("./bind-data");
-const specialAttributes = require('./specialAttributes.json');
+const specialAttributes = require('../specialAttributes.json');
+const {isNumber} = require('util');
 
 const camelcaseString = str => str
   .match(/\w+/g)
@@ -16,19 +17,20 @@ function processNodeAttributes(node, data) {
     try {
       if (specialAttributes[attrName]) {
         const attr = specialAttributes[attrName]
-        if (attr.process && (attr.tags === "*" || attr.tags.includes[node.rawTagName])) {
+        if (attr.process && (attr.tags === "*" || attr.tags.includes(node.rawTagName))) {
           val = executeCode(`(() => (${val}))()`, data);
         }
       } else {
         val = bindData(val, data)
       }
+      
     } catch (e) {}
 
     if (val === 'true') {
       val = true
     } else if (val === 'false') {
       val = false
-    } else if (!isNaN(Number(val))) {
+    } else if (val && isNumber(Number(val)) && !isNaN(Number(val))) {
       val = Number(val);
     }
 

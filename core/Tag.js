@@ -6,17 +6,20 @@ const {composeTagString} = require("./utils/compose-tag-string");
 
 class Tag {
   constructor(tagInfo) {
-    const {attributes, children, context} = tagInfo;
+    const {attributes, children} = tagInfo;
     const tagName = createTagName(this.constructor.name);
     
     defineGetter(this, 'attributes', () => attributes);
     defineGetter(this, 'children', () => children);
     defineGetter(this, 'tagName', () => tagName);
-    defineGetter(this, 'context', () => context);
     
     this.createPartialFile = (partialAbsPath, srcDirectoryPath) => {
       return createPartialFile(partialAbsPath, srcDirectoryPath, tagInfo);
     }
+  }
+  
+  get context() {
+    return {};
   }
   
   render() {
