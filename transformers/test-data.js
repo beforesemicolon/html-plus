@@ -573,7 +573,118 @@ form input[type=button] {
   border-radius: 5px;
 }
 `;
+const js = `
+  class Home {
+    #test = 10;
+  
+    constructor() {}
+    
+    get n() { return 10; }
+  }
+  `;
+const jsResult = `
+  var __privateAdd = (obj, member, value) => {
+    if (member.has(obj))
+      throw TypeError("Cannot add the same private member more than once");
+    member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+  };
+  var _test;
+  class Home {
+    constructor() {
+      __privateAdd(this, _test, 10);
+    }
+    get n() {
+      return 10;
+    }
+  }
+  _test = new WeakMap();
+  `;
+const jsFileResult = `
+var __privateAdd = (obj, member, value) => {
+  if (member.has(obj))
+    throw TypeError("Cannot add the same private member more than once");
+  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+};
 
+// transformers/__src-js/app.js
+var _test;
+var Home = class {
+  constructor() {
+    __privateAdd(this, _test, 10);
+  }
+  get n() {
+    return 10;
+  }
+};
+_test = new WeakMap();
+`;
+const ts = `
+class Home {
+  private test = 10;
+
+  constructor() {}
+  
+  get n(): number { return 10; }
+}
+
+const home = new Home();
+`;
+const tsResult = `
+  class Home {
+    constructor() {
+      this.test = 10;
+    }
+    get n() {
+      return 10;
+    }
+  }
+  `;
+const tsFileResult = `
+// transformers/__src-js/app.ts
+var Home = class {
+  constructor() {
+    this.test = 10;
+  }
+  get n() {
+    return 10;
+  }
+};
+var home = new Home();
+`;
+const react = `
+const react = require("react");
+
+module.exports = class Test extends react.Component {
+  state = {
+    name: 'App'
+  }
+  
+  render() {
+    return (<h1>{this.state.name}</h1>)
+  }
+}
+`;
+const reactResult = `
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, {enumerable: true, configurable: true, writable: true, value}) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+
+// transformers/__src-js/app.jsx
+var react = require(react);
+module.exports = class Test extends react.Component {
+  constructor() {
+    super(...arguments);
+    __publicField(this, "state", {
+      name: "App"
+    });
+  }
+  render() {
+    return /* @__PURE__ */ React.createElement("h1", null, this.state.name);
+  }
+};`;
 
 module.exports = {
   css,
@@ -586,4 +697,12 @@ module.exports = {
   lessResult,
   stylus,
   stylusResult,
+  js,
+  jsFileResult,
+  jsResult,
+  ts,
+  tsFileResult,
+  tsResult,
+  react,
+  reactResult
 }
