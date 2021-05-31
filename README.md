@@ -12,6 +12,7 @@ npm install @beforesemicolon/html-plus
 You can get started quickly with express with this few lines of code:
 
 ```javascript
+// server.js
 const express = require('express');
 const http = require('http');
 const path = require('path');
@@ -33,6 +34,69 @@ server.listen(3000, () => {
   console.log('listening on port 3000');
 })
 ```
+
+With the above setup you can organize your html files in a structure that you would like
+your page routes to be. 
+
+The way you organize your page structure will be used to create your website route.
+```
+# File Structrure           # Routes
+
+- server.js
+- pages
+  - index.html              /
+  - contact.html            /contact
+  - about.html              /about
+  - 404.html                /404
+  - projects
+    - index.html            /projects
+    - todo-project.html     /projects/todo-project
+```
+
+## Template Tags & Attributes
+HTML+ comes with couple of built-in tags that are meant to aid you with your pages. These are:
+
+* **[include]()**: lets you include reusable partial html parts
+* **[inject]()**: lets you inject html into partial files. Works like html slot
+* **[variable]()**: lets you create scope data inside your template
+* **[fragment]()**: lets you exclude the wrapping tag from rendering as a place to add logic
+
+There are also some built-in attributes that let you control your tags even further. These are:
+
+* **[if]()**: lets you conditionally render a tag
+* **[repeat]()**: allows you to specify how the tag repeats bases on data you provide
+* **[fragment]()**: has the same purpose as the tag version of it
+* **[inject]()**: lets you flags the html you need to inject. works like the slot attribute
+* **[compiler]()**: lets you specify the compiler for style and script tags like typescript and SASS.
+
+These list have the potential to grow but you can also [create your own tags and attributes]()
+that fits your project. You can come up with your own rules and behavior for the template and this
+is what makes HTML+ more appealing. It allows you to extend the template easily
+
+## Template Data Binding
+
+HTML+ also lets you bind data from files directly into your templates. 
+All data is scoped and immutable. This is done using curly braces. Take the following file structure as example:
+
+```
+- pages
+    index.html
+  data
+    posts.json
+```
+
+You can reference the `post.json` file inside your template like so.
+
+```html
+<div #repeat="posts as post">
+    <h2>{post.title}</h2>
+    <p>{post.description}</p>
+</div>
+```
+
+For special attributes you don't need the curly braces to bind data, but everywhere else you need to wrap
+your data reference inside curly braces. [Check full DOC to learn more]().
+
 
 ## Contributing to this Project
 Anyone can help this project grow by using and reporting issues to be addressed.

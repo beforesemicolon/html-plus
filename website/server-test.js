@@ -12,12 +12,8 @@ engine(app, path.resolve(__dirname, './pages'), {
   }
 });
 
-app.get('/', function (req, res) {
-  res.render('index');
-})
-
 const server = http.createServer(app);
 
-server.listen(1000, () => {
-  console.log('listening on port 1000');
+server.listen(3000, () => {
+  console.log('listening on port 3000');
 })
