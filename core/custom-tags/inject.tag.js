@@ -4,6 +4,7 @@ class Inject extends Tag {
   constructor(tagInfo) {
     super(tagInfo);
     
+    
     this.content = this.children;
     
     if (tagInfo.rootChildren) {

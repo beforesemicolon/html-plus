@@ -1,18 +1,26 @@
 {
   "name": "@beforesemicolon/html-plus",
   "version": "0.0.1",
-  "description": "Powerful, simple and customizable HTML express template engine with CSS preprocessors and typescript support",
+  "description": "HTML Template Engine/Language",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "tests": "jest",
     "local": "nodemon --watch test/pages/data test/server-test.js"
   },
   "keywords": [
-    "template",
-    "engine",
+    "template engine",
+    "template language",
+    "compiler",
+    "builder",
+    "static website",
     "html",
-    "express"
+    "express",
+    "nodejs"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beforesemicolon/html-plus"
+  },
   "author": "Elson Correia",
   "license": "MIT",
   "browserslist": "> 0.25%, not dead",

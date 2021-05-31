@@ -1,4 +1,4 @@
-const renderChildren = async (children) => {
+const renderChildren = async (children = []) => {
   let childList = children;
   
   if (typeof children === 'function') {
@@ -21,7 +21,7 @@ const renderChildren = async (children) => {
       return node
     }))
     .then(res => {
-      return res.join('\n');
+      return res.join('');
     });
 }
 

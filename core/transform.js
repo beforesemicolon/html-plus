@@ -1,6 +1,7 @@
+const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
 const {parse} = require('node-html-parser');
 const {minify} = require('html-minifier');
-const {createTagName} = require("./utils/create-tag-name");
+const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
 const {HTMLNode} = require("./HTMLNode");
 const {customTags} = require('./custom-tags');
@@ -22,9 +23,9 @@ async function transform(content, options = defaultOptions) {
   
   const parsedHTML = parse(replaceSpecialCharactersInHTML(content));
   parsedHTML.context = {};
- 
+  
   const customTagsMap = [...customTags, ...options.customTags].reduce((acc, tag) => {
-    const tagName = createTagName(tag.name);
+    const tagName = turnCamelOrPascalToKebabCasing(tag.name);
     acc[tagName] = tag;
     return acc;
   }, {})

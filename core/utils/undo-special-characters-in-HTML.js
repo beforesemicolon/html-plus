@@ -1,9 +1,17 @@
+const symbolMap = {
+  gte: '>=',
+  lte: '<=',
+  gt: '>',
+  lt: '<',
+}
+
 function undoSpecialCharactersInHTML(html) {
   return html
-    .replace(/\sgte\s/g, ' >= ')
-    .replace(/\slt\se/g, ' <= ')
-    .replace(/\sgt\s/g, ' > ')
-    .replace(/\slt\s/g, ' < ');
+    .replace(
+      /(?:^|\s)(gte|lte|gt|lt)(?:\s|$)/g,
+      (fullMatch, grabbed) => {
+        return fullMatch.replace(grabbed, symbolMap[grabbed])
+      })
 }
 
 module.exports.undoSpecialCharactersInHTML = undoSpecialCharactersInHTML;

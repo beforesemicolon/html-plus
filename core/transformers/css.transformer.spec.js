@@ -2,7 +2,7 @@ const {cssTransformer} = require('./css.transformer');
 const path = require('path');
 const cp = require('child_process');
 const {promisify} = require('util');
-const {FileObject} = require('./../core/FileObject');
+const {File} = require('../File');
 const data = require('./test-data');
 
 const exec = promisify(cp.exec);
@@ -11,7 +11,7 @@ describe('cssTransformer', () => {
   describe('should transform from file', () => {
     const cssFile = path.resolve(__dirname, '__style.css');
     const htmlFile = path.resolve(__dirname, '__index.html');
-    const fileObject = new FileObject(cssFile, __dirname);
+    const fileObject = new File(cssFile, __dirname);
     
     beforeAll(async () => {
       await exec(`echo "${data.css.trim()}" >> ${cssFile}`);

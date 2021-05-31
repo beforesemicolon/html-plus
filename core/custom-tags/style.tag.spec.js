@@ -1,6 +1,6 @@
 const {Style} = require('./style.tag');
 const {transform} = require('../transform');
-const data = require('../../transformers/test-data');
+const data = require('../transformers/test-data');
 
 describe('Style', () => {
   describe('should process', () => {

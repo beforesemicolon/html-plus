@@ -1,6 +1,6 @@
 const esbuild = require('esbuild');
 const path = require('path');
-const {FileObject} = require("../core/FileObject");
+const {File} = require("../File");
 
 const defaultOptions = {
   env: 'development',
@@ -63,7 +63,7 @@ async function jsTransformer(content, opt = defaultOptions) {
       })
   }
   
-  if (opt.fileObject instanceof FileObject) {
+  if (opt.fileObject instanceof File) {
     options.platform = opt.platform || 'node';
     
     if (opt.platform === 'browser') {

@@ -1,14 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const {transform} = require('./transform');
-const {FileObject} = require('./FileObject');
+const {File} = require('./File');
 
 const defaultOptions = {
   staticData: {},
-  customTags: [],
+  customTags: []
 }
 
-module.exports.engine = (app, opt = defaultOptions) => {
+module.exports.engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
   opt = {
     ...defaultOptions,
     ...opt
@@ -31,7 +31,7 @@ module.exports.engine = (app, opt = defaultOptions) => {
     
     fs.readFile(filePath, async (err, content) => {
       if (err) return callback(err);
-      const fileObject = new FileObject(filePath, settings.views);
+      const fileObject = new File(filePath, settings.views);
       fileObject.content = content.toString();
       try {
         const result = await transform(fileObject.content, {
@@ -46,4 +46,7 @@ module.exports.engine = (app, opt = defaultOptions) => {
       }
     })
   });
+  
+  app.set('views', path.resolve(process.cwd(), pagesDirectoryPath));
+  app.set('view engine', 'html');
 }

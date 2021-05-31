@@ -29,6 +29,11 @@ class Variable extends Tag {
     this.value = value;
   }
   
+  static customAttributes = {
+    name: {bind: false},
+    value: {bind: true}
+  }
+  
   get context() {
     return {
       [this.name]: this.value

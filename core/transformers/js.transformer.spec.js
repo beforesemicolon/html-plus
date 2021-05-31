@@ -1,5 +1,5 @@
 const {jsTransformer} = require('./js.transformer');
-const {FileObject} = require('./../core/FileObject');
+const {File} = require('../File');
 const path = require('path');
 const cp = require('child_process');
 const {promisify} = require('util');
@@ -95,7 +95,7 @@ describe('jsTransformer', () => {
     it('js code', () => {
       expect.assertions(1);
 
-      const fileObject = new FileObject(path.join(src, 'app.js'));
+      const fileObject = new File(path.join(src, 'app.js'));
 
       return jsTransformer(null, {fileObject})
         .then(res => {
@@ -107,7 +107,7 @@ describe('jsTransformer', () => {
     it('ts code', () => {
       expect.assertions(1);
 
-      const fileObject = new FileObject(path.join(src, 'app.ts'));
+      const fileObject = new File(path.join(src, 'app.ts'));
 
       return jsTransformer(null, {fileObject})
         .then(res => {
@@ -119,7 +119,7 @@ describe('jsTransformer', () => {
     it('react(jsx) code', () => {
       expect.assertions(1);
 
-      const fileObject = new FileObject(path.join(src, 'app.jsx'));
+      const fileObject = new File(path.join(src, 'app.jsx'));
 
       return jsTransformer(null, {fileObject})
         .then(res => {

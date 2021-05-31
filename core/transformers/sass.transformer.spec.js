@@ -1,5 +1,5 @@
 const {sassTransformer} = require('./sass.transformer');
-const {FileObject} = require('./../core/FileObject');
+const {File} = require('../File');
 const path = require('path');
 const cp = require('child_process');
 const {promisify} = require('util');
@@ -79,13 +79,13 @@ describe('sassTransformer', () => {
     });
   
     it('at same directory ', () => {
-      return sassTransformer('@import "./style2";', {fileObject: new FileObject(file1)}).then(res => {
+      return sassTransformer('@import "./style2";', {fileObject: new File(file1)}).then(res => {
         expect(res.replace(/\s/g, '')).toEqual(baseStyle);
       })
     });
   
     it('at above directory ', () => {
-      return sassTransformer('@import "../style3";', {fileObject: new FileObject(file1)}).then(res => {
+      return sassTransformer('@import "../style3";', {fileObject: new File(file1)}).then(res => {
         expect(res.replace(/\s/g, '')).toEqual(baseStyle);
       })
     });

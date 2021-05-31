@@ -24,10 +24,10 @@ describe('readFileContent', () => {
     expect(content.trim()).toBe(fileContent);
   });
   
-  it('should return empty string if file does not exist', () => {
+  it('should throw error if file does not exist', () => {
     expect.assertions(1);
-    const content = readFileContent('');
     
-    expect(content).toBe(null);
+    expect(() => readFileContent('file.png'))
+      .toThrowError('ENOENT: no such file or directory, open');
   });
 });

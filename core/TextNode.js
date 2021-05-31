@@ -1,10 +1,12 @@
 const {bindData} = require("./utils/bind-data");
 
 class TextNode {
-  constructor(node, data = {}) {
-    this.value = node.rawText;
+  constructor(nodeOrText, data = {}) {
+    this.value = typeof nodeOrText === 'string'
+      ? nodeOrText
+      : nodeOrText.rawText;
     
-    if (node.rawText.trim()) {
+    if (this.value.trim()) {
       this.value = bindData(this.value, data);
       
       if (this.value === 'true') {
@@ -15,7 +17,10 @@ class TextNode {
         this.value = Number(this.value);
       }
   
-      node.rawText = this.value;
+      if (nodeOrText.rawText) {
+        nodeOrText.rawText = this.value;
+      }
+      
     }
   }
 }

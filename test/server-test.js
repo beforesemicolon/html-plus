@@ -6,15 +6,11 @@ const pages = require('./pages/data/pages.json');
 
 const app = express();
 
-engine(app, {
+engine(app, path.resolve(__dirname, './pages'), {
   staticData: {
     pages
-  },
-  staticDataDirectoryPath: './pages/data'
+  }
 });
-
-app.set('views', path.resolve(__dirname, './pages'));
-app.set('view engine', 'html');
 
 app.get('/', function (req, res) {
   res.render('index');

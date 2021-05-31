@@ -630,14 +630,15 @@ class Home {
 const home = new Home();
 `;
 const tsResult = `
-  class Home {
-    constructor() {
-      this.test = 10;
-    }
-    get n() {
-      return 10;
-    }
+class Home {
+  constructor() {
+    this.test = 10;
   }
+  get n() {
+    return 10;
+  }
+}
+const home = new Home();
   `;
 const tsFileResult = `
 // transformers/__src-js/app.ts
