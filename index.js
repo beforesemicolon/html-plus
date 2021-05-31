@@ -1,4 +1,5 @@
 const {Tag} = require('./core/Tag');
+const {Attribute} = require('./core/Attribute');
 const {engine} = require("./core/engine");
 const {transform} = require('./core/transform');
 const {File} = require('./core/File');
@@ -8,6 +9,7 @@ const {renderChildren} = require('./core/utils/render-children');
 const {PartialFile} = require('./core/PartialFile');
 
 module.exports.Tag = Tag;
+module.exports.Attribute = Attribute;
 module.exports.File = File;
 module.exports.PartialFile = PartialFile;
 module.exports.engine = engine;

@@ -1,15 +1,16 @@
-const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
+const {defaultAttributesMap} = require("./default-attributes");
+const {defaultTagsMap} = require("./default-tags");
 const {parse} = require('node-html-parser');
 const {minify} = require('html-minifier');
 const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
 const {HTMLNode} = require("./HTMLNode");
-const {customTags} = require('./default-tags');
 
 const defaultOptions = {
   env: 'development',
   data: {},
   customTags: [],
+  customAttributes: [],
   fileObject: null,
   onTraverse() {},
   partialFileObjects: [],
@@ -24,16 +25,23 @@ async function transform(content, options = defaultOptions) {
   const parsedHTML = parse(replaceSpecialCharactersInHTML(content));
   parsedHTML.context = {};
   
-  const customTagsMap = [...customTags, ...options.customTags].reduce((acc, tag) => {
+  const customTagsMap = options.customTags.reduce((acc, tag) => {
     const tagName = turnCamelOrPascalToKebabCasing(tag.name);
     acc[tagName] = tag;
+    return acc;
+  }, {})
+  
+  const customAttributesMap = options.customAttributes.reduce((acc, attribute) => {
+    const attr = turnCamelOrPascalToKebabCasing(attribute.name);
+    acc[attr] = attribute.toString().startsWith('class') ? new attribute() : attribute();
     return acc;
   }, {})
   
   const rootNode = new HTMLNode(parsedHTML, {
     ...options,
     rootChildren: null,
-    customTags: customTagsMap,
+    customTags: {...customTagsMap, ...defaultTagsMap},
+    customAttributes: {...customAttributesMap, ...defaultAttributesMap},
     rootNode: null
   });
   

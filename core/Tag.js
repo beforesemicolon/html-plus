@@ -7,7 +7,8 @@ const {composeTagString} = require("./utils/compose-tag-string");
 const defaultOptions = {
   env: 'development',
   data: {},
-  customTags: [],
+  customTags: {},
+  customAttributes: {},
   fileObject: null,
   rootChildren: null,
   onTraverse() {},
