@@ -2,6 +2,8 @@
 
 HTML Template Language
 
+![html+](https://img.shields.io/badge/beforesemicolon-html%2B-blue)
+
 
 ## Install
 Install the engine inside your project directory.
