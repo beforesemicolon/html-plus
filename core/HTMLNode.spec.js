@@ -1,3 +1,4 @@
+const {defaultAttributesMap} = require("./default-attributes");
 const {renderChildren} = require("../index");
 const {composeTagString} = require("../index");
 const {Tag} = require("../index");
@@ -176,4 +177,10 @@ describe('HTMLNode', () => {
       return expect(node.render()).resolves.toEqual('<h4>My title</h4>');
     });
   });
+  
+  describe('should handle custom attributes', () => {
+    it.todo('from class')
+    
+    it.todo('from function')
+  })
 });
