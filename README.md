@@ -3,6 +3,8 @@
 HTML Template Language
 
 ![html+](https://img.shields.io/badge/beforesemicolon-html%2B-blue)
+![Build](https://github.com/beforesemicolon/html-plus//actions/workflows/main.yml/badge.svg)
+![license](https://img.shields.io/github/license/beforesemicolon/html-plus)
 
 
 ## Install
