@@ -4,7 +4,7 @@ const {minify} = require('html-minifier');
 const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
 const {HTMLNode} = require("./HTMLNode");
-const {customTags} = require('./custom-tags');
+const {customTags} = require('./default-tags');
 
 const defaultOptions = {
   env: 'development',
