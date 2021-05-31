@@ -1,23 +1,44 @@
-const {createPartialFile} = require("./utils/create-partial-file");
+const {PartialFile} = require("./PartialFile");
 const {renderChildren} = require("./utils/render-children");
-const {createTagName} = require("./utils/create-tag-name");
+const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
 const {defineGetter} = require("./utils/define-getter");
 const {composeTagString} = require("./utils/compose-tag-string");
 
+const defaultOptions = {
+  env: 'development',
+  data: {},
+  customTags: [],
+  fileObject: null,
+  rootChildren: null,
+  onTraverse() {},
+  partialFileObjects: [],
+  attributes: {},
+  children: [],
+  context: {},
+  root: null,
+  innerHTML: '',
+  partialFiles: []
+}
+
 class Tag {
-  constructor(tagInfo) {
-    const {attributes, children, context} = tagInfo;
-    const tagName = createTagName(this.constructor.name);
+  constructor(tagInfo = defaultOptions) {
+    const {attributes = {}, children = []} = {...defaultOptions, ...tagInfo};
+    const tagName = turnCamelOrPascalToKebabCasing(this.constructor.name);
     
     defineGetter(this, 'attributes', () => attributes);
     defineGetter(this, 'children', () => children);
     defineGetter(this, 'tagName', () => tagName);
-    defineGetter(this, 'context', () => context);
     
     this.createPartialFile = (partialAbsPath, srcDirectoryPath) => {
-      return createPartialFile(partialAbsPath, srcDirectoryPath, tagInfo);
+      return new PartialFile(partialAbsPath, srcDirectoryPath, tagInfo);
     }
   }
+  
+  get context() {
+    return {};
+  }
+  
+  static customAttributes = {}
   
   render() {
     return '';
@@ -27,8 +48,8 @@ class Tag {
     return await renderChildren(children);
   }
   
-  composeTagString(content = '') {
-    return composeTagString(this, content);
+  composeTagString(content = '', exceptionAttributes = {}) {
+    return composeTagString(this, content, exceptionAttributes);
   }
 }
 

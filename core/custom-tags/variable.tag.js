@@ -7,7 +7,7 @@ class Variable extends Tag {
     const {attributes, innerHTML} = tagInfo;
     
     const name = attributes.name;
-    const value = attributes.value || innerHTML;
+    const value = attributes.value ?? innerHTML ?? '';
     
     if (!name) {
       throw new Error(`Variable must have a name`);
@@ -27,6 +27,11 @@ class Variable extends Tag {
 
     this.name = name;
     this.value = value;
+  }
+  
+  static customAttributes = {
+    name: {bind: false},
+    value: {bind: true}
   }
   
   get context() {

@@ -1,9 +1,0 @@
-{
-  "if": {"process": true, "tags": "*"},
-  "repeat": {"process": false, "tags": "*"},
-  "fragment": {"process": false, "tags": "*"},
-  "inject": {"process": false, "tags": "*"},
-  "data": {"process": true, "tags": ["include"]},
-  "partial": {"process": false, "tags": ["include"]},
-  "compiler": {"process": false, "tags": ["style", "script"]}
-}

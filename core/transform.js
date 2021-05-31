@@ -1,7 +1,9 @@
-const {createTagName} = require("./utils/create-tag-name");
+const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
+const {parse} = require('node-html-parser');
+const {minify} = require('html-minifier');
+const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
 const {HTMLNode} = require("./HTMLNode");
-const {parse} = require('node-html-parser');
 const {customTags} = require('./custom-tags');
 
 const defaultOptions = {
@@ -21,9 +23,9 @@ async function transform(content, options = defaultOptions) {
   
   const parsedHTML = parse(replaceSpecialCharactersInHTML(content));
   parsedHTML.context = {};
- 
+  
   const customTagsMap = [...customTags, ...options.customTags].reduce((acc, tag) => {
-    const tagName = createTagName(tag.name);
+    const tagName = turnCamelOrPascalToKebabCasing(tag.name);
     acc[tagName] = tag;
     return acc;
   }, {})
@@ -35,7 +37,22 @@ async function transform(content, options = defaultOptions) {
     rootNode: null
   });
   
-  return (await rootNode.render()).trim();
+  const html = (await rootNode.render()).trim();
+  
+  if (options.env === 'production') {
+    return minify(html, {
+      collapseBooleanAttributes: true,
+      collapseInlineTagWhitespace: true,
+      collapseWhitespace: true,
+      customAttrAssign: true,
+      decodeEntities: true,
+      minifyCSS: true,
+      removeComments: true,
+      removeRedundantAttributes: true
+    })
+  }
+  
+  return html;
 }
 
 module.exports.transform = transform;

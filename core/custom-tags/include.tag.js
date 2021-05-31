@@ -1,4 +1,5 @@
 const path = require('path');
+const {PartialFile} = require("../PartialFile");
 const {Tag} = require('../Tag');
 
 class Include extends Tag {
@@ -6,7 +7,7 @@ class Include extends Tag {
     super(tagInfo);
     
     const {fileObject, partialFiles} = tagInfo;
-
+  
     this.partial = null;
     let partialName = this.attributes['partial'];
     let partialPath = this.attributes['partialPath'];
@@ -32,10 +33,17 @@ class Include extends Tag {
       if (!this.partial && partialPath) {
         const partialAbsolutePath = path.resolve(fileObject.fileDirectoryPath, partialPath);
   
-        this.partial = this.createPartialFile(partialAbsolutePath, fileObject.srcDirectoryPath);
+        this.partial = new PartialFile(partialAbsolutePath, fileObject.srcDirectoryPath, tagInfo);
       }
     }
   }
+  
+  static customAttributes = {
+    data: {bind: true},
+    partial: {bind: false},
+    'partial-path': {bind: false},
+  }
+  
   async render() {
     return this.partial
       ? await this.partial.render(this.data)
