@@ -5,10 +5,11 @@ const {turnKebabToCamelCasing} = require('./turn-kebab-to-camel-casing');
 const {isNumber} = require('util');
 
 function processNodeAttributes(attributes = {}, customAttributes = {}, data = {}) {
+  
   for (const attrName in attributes) {
     if (attributes.hasOwnProperty(attrName)) {
       let val = (attributes[attrName]).trim();
-      
+
       if (val) {
         try {
           if (customAttributes[attrName]) {
@@ -24,19 +25,18 @@ function processNodeAttributes(attributes = {}, customAttributes = {}, data = {}
           } else {
             val = bindData(val, data)
           }
-    
+  
+          if (typeof val === 'string') {
+            if (val === 'true') {
+              val = true
+            } else if (val === 'false') {
+              val = false
+            } else if (val && isNumber(Number(val)) && !isNaN(Number(val))) {
+              val = Number(val);
+            }
+          }
         } catch (e) {
           throw new Error(`Failed to process attribute "${attrName}": ${e.message}`)
-        }
-  
-        if (typeof val === 'string') {
-          if (val === 'true') {
-            val = true
-          } else if (val === 'false') {
-            val = false
-          } else if (val && isNumber(Number(val)) && !isNaN(Number(val))) {
-            val = Number(val);
-          }
         }
       }
       

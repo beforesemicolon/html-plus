@@ -1,9 +1,11 @@
 class Attribute {
   value = '';
   bind = false;
-  process = null;
-  render(tag, value) {
-    return tag;
+  process(value) {
+    return value;
+  };
+  render(value, node) {
+    return node;
   }
 }
 

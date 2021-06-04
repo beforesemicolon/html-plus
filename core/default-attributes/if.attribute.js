@@ -3,8 +3,8 @@ const {Attribute} = require("../Attribute");
 class If extends Attribute {
   bind = true;
   
-  render(tag, value) {
-    return value ? tag : null;
+  render(condition, node) {
+    return condition ? node : null;
   }
 }
 
