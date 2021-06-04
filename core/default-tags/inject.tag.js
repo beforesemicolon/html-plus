@@ -1,29 +1,35 @@
-const {Tag} = require('../Tag');
+const {renderChildren} = require("../utils/render-children");
 
-class Inject extends Tag {
-  constructor(tagInfo) {
-    super(tagInfo);
+class Inject{
+  constructor(node, options) {
     
+    const {rootNode} = options;
     
-    this.content = this.children;
+    this.content = node.childNodes();
     
-    if (tagInfo.rootChildren) {
-      const rootChildren = tagInfo.rootChildren();
+    if (rootNode) {
+      const childNodes = rootNode.childNodes();
       
-      if (rootChildren.length) {
-        const injectId = tagInfo.attributes['id'];
-        
+      if (childNodes.length) {
+        const injectId = node.attributes['id'];
+  
         if (injectId) {
-          const content = rootChildren.filter(n => {
-            return n.attributes && n.attributes['inject'] === injectId;
+          const content = childNodes.filter(childNode => {
+            const include = childNode.attributes && childNode.attributes['injectId'] === injectId;
+            
+            if (include) {
+              childNode.removeAttribute('injectId')
+            }
+            
+            return include;
           });
-          
+    
           if (content.length) {
             this.content = content;
           }
         } else {
-          this.content = rootChildren.filter(rc => {
-            return !rc.attributes || rc.attributes['inject'] === undefined;
+          this.content = childNodes.filter(childNode => {
+            return !childNode.attributes || childNode.attributes['injectId'] === undefined;
           });
         }
       }
@@ -31,7 +37,7 @@ class Inject extends Tag {
   }
   
   async render() {
-    return await this.renderChildren(this.content);
+    return renderChildren(this.content);
   }
 }
 

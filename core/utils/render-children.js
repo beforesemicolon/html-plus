@@ -1,28 +1,20 @@
-const renderChildren = async (children = []) => {
-  let childList = children;
-  
-  if (typeof children === 'function') {
-    childList = children();
-  }
+const {HTMLNode} = require("../HTMLNode");
 
-  return await Promise.all(childList.map(async node => {
-      if (typeof node === 'object') {
-        if (node.render && typeof node.render === 'function') {
+const renderChildren = (childNodes = []) => {
+  if (childNodes.length) {
+    return Promise.all(childNodes.map(async node => {
+        if (node instanceof HTMLNode) {
           return node.render();
         }
-        
-        if (node.hasOwnProperty('value')) {
-          return node.value;
-        }
-        
-        return node.toString();
-      }
       
-      return node
-    }))
-    .then(res => {
-      return res.join('');
-    });
+        return node
+      }))
+      .then(res => {
+        return res.join('');
+      });
+  }
+  
+  return '';
 }
 
 module.exports.renderChildren = renderChildren;

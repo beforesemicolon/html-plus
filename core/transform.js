@@ -1,10 +1,10 @@
+const {HTMLNode} = require("./HTMLNode");
 const {defaultAttributesMap} = require("./default-attributes");
 const {defaultTagsMap} = require("./default-tags");
 const {parse} = require('node-html-parser');
 const {minify} = require('html-minifier');
 const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
-const {HTMLNode} = require("./HTMLNode");
 
 const defaultOptions = {
   env: 'development',
@@ -12,6 +12,7 @@ const defaultOptions = {
   customTags: [],
   customAttributes: [],
   fileObject: null,
+  rootNode: null,
   onTraverse() {},
   partialFileObjects: [],
 };
@@ -37,15 +38,13 @@ async function transform(content, options = defaultOptions) {
     return acc;
   }, {})
   
-  const rootNode = new HTMLNode(parsedHTML, {
+  const node = new HTMLNode(parsedHTML, {
     ...options,
-    rootChildren: null,
     customTags: {...customTagsMap, ...defaultTagsMap},
-    customAttributes: {...customAttributesMap, ...defaultAttributesMap},
-    rootNode: null
-  });
+    customAttributes: {...customAttributesMap, ...defaultAttributesMap}
+  })
   
-  const html = (await rootNode.render()).trim();
+  const html = (await node.render()).trim();
   
   if (options.env === 'production') {
     return minify(html, {

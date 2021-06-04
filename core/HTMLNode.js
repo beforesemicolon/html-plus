@@ -1,161 +1,162 @@
-const {parse} = require('node-html-parser');
-const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
+const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
+const {bindData} = require("./utils/bind-data");
+const {TextNode} = require("node-html-parser");
+const {composeTagString} = require("./utils/compose-tag-string");
 const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
 const {processNodeAttributes} = require("./utils/process-node-attributes");
-const {TextNode} = require('./TextNode');
-const {renderChildren} = require("./utils/render-children");
-const {composeTagString} = require("./utils/compose-tag-string");
 
 const defaultOptions = {
   env: 'development',
   data: {},
-  customTags: {},
-  customAttributes: {},
+  rootNode: null,
+  customTags: [],
+  customAttributes: [],
   fileObject: null,
-  rootChildren: null,
   onTraverse() {
   },
   partialFileObjects: [],
 };
 
 class HTMLNode {
-  #options = defaultOptions;
   #node = null;
+  #tag = null;
+  #options = {};
   
-  constructor(node, opt = defaultOptions) {
-    opt = {...defaultOptions, ...opt};
-    const tag = opt.customTags[node.rawTagName];
-    this.#options = opt;
+  constructor(node, options) {
+    options = {...defaultOptions, ...options}
     this.#node = node;
-    this.tagName = node.rawTagName || null;
-    this.context = node.parentNode
-      ? {...node.parentNode.context, ...(node.context || {})}
-      : {}
+    this.#options = options;
+    this.#tag = options.customTags[node.rawTagName];
+    
+    const customAttributes = this.#tag ? this.#tag.customAttributes : {}
+    
     this.attributes = processNodeAttributes(
-      node,
-      {...tag?.customAttributes, ...opt.customAttributes},
-      {...opt.data, ...this.context}
+      node.attributes,
+      customAttributes,
+      {...options.data, ...node.context}
     );
     
-    if (tag) {
-      const tagInfo = {
-        ...opt,
-        attributes: this.attributes,
-        children: this.children,
-        context: this.context,
-        root: this,
-        get innerHTML() {
-          return undoSpecialCharactersInHTML(node.innerHTML);
-        },
-        get partialFiles() {
-          return opt.partialFileObjects.map(file => {
-            file.render = async (data = {}) => {
-              const parsedHTML = parse(replaceSpecialCharactersInHTML(file.content));
-              parsedHTML.context = {...node.context, ...data};
-              const partialNode = new HTMLNode(parsedHTML, {...opt, rootChildren: this.children});
-              return (await partialNode.render()).trim()
-            }
-            
-            return file;
-          })
-        }
-      };
-      let instance = {};
-      
-      if (tag.toString().startsWith('class')) {
-        instance = new tag(tagInfo)
-      } else {
-        instance = tag(tagInfo);
-        
-        if (typeof instance === 'function') {
-          instance = {
-            render: instance,
-            context: {}
-          }
-        }
-      }
-      
-      if (typeof opt.onTraverse === 'function') {
-        opt.onTraverse(tag);
-      }
-      
-      const prevRender = instance.render;
-      instance.render = () => {
-        if (renderByAttributes(instance, this.#options.customAttributes)) {
-          return prevRender.call(instance);
-        }
-
-        return '';
-      }
-      
-      // if it is a custom tag return the tag instance to be used instead
-      return instance;
-    }
-    
-    
-    if (typeof opt.onTraverse === 'function') {
-      opt.onTraverse(this);
+    if (typeof options.onTraverse === 'function') {
+      options.onTraverse(this);
     }
   }
   
-  children = (data = {}) => {
-    return this.#node.childNodes.map(child => {
-      if (child.hasOwnProperty('rawText')) {
-        return new TextNode(child, {...this.#options.data, ...this.context, ...child.context, ...data})
-      } else {
-        const childNode = new HTMLNode(child, this.#options);
-        
-        // if the child node creates a new context
-        // it is necessary to make it available to it following siblings only
-        if (childNode.context && Object.keys(childNode.context).length) {
-          // find the current child index in its parent child nodes list
-          const childIndex = this.#node.childNodes.indexOf(child);
-          child.context = childNode.context;
-          
-          // loop all following child and update their context
-          for (let i = childIndex + 1; i < this.#node.childNodes.length; i++) {
-            if (this.#node.childNodes[i]) {
-              this.#node.childNodes[i].context = {...(this.#node.childNodes[i].context || {}), ...child.context};
-            }
-          }
-        }
-        
-        return childNode;
-      }
+  get tagName() {
+    return this.#node.rawTagName
+  }
+  
+  get context() {
+    return this.#node.context ?? {};
+  }
+  
+  get innerHTML() {
+    return undoSpecialCharactersInHTML(this.#node.innerHTML);
+  }
+  
+  setAttribute(key, value) {
+    if (typeof key === 'string' && typeof value === 'string') {
+      this.#node.setAttribute(turnCamelOrPascalToKebabCasing(key), value);
+      this.attributes[key] = processNodeAttributes(
+        {key: value},
+        this.#tag ? this.#tag.customAttributes : {},
+        {...this.#options.data, ...this.#node.context}
+      );
+    }
+  }
+  
+  removeAttribute(key) {
+    if (typeof key === 'string') {
+      this.#node.removeAttribute(turnCamelOrPascalToKebabCasing(key));
+      delete this.attributes[key];
+    }
+  }
+  
+  setContext(key, value = null) {
+    if (typeof key === 'string') {
+      this.#node.context[key] = value
+    }
+  }
+  
+  removeContext(key) {
+    if (typeof key === 'string') {
+      delete this.#node.context[key];
+    }
+  }
+  
+  childNodes(data) {
+    return this.#node.childNodes.map(childNode => {
+      childNode.context = {...this.#node.context, ...childNode.context, ...data}
+      return childNode instanceof TextNode
+        ? bindData(childNode.rawText, {...this.#options.data, ...childNode.context})
+        : new HTMLNode(childNode, this.#options)
     })
   }
   
-  async render() {
-    if (renderByAttributes(this, this.#options.customAttributes)) {
-      if (!this.tagName) {
-        return renderChildren(this.children);
-      }
-      
-      return composeTagString(this, await renderChildren(this.children));
-    }
-    
-    return '';
+  renderChildren(data = {}) {
+    return Promise.all(
+      this.#node.childNodes.map(childNode => {
+        childNode.context = {...this.#node.context, ...childNode.context, ...data}
+        return childNode instanceof TextNode
+          ? new TextNode(bindData(childNode.rawText, {...this.#options.data, ...childNode.context}))
+          : (new HTMLNode(childNode, this.#options)).render()
+      })
+    ).then(res => res.join(''));
+  }
+  
+  async render(customAttributes = {}) {
+    return (this.#tag
+        ? await renderCustomTag(this.#tag, this.#node, this, this.#options)
+        : this.tagName
+          ? composeTagString(
+            this,
+            await this.renderChildren(),
+            Object.keys({...this.#options.customAttributes, ...customAttributes})
+          )
+          : await this.renderChildren()
+    ).trim();
   }
 }
 
-function renderByAttributes(node, customAttributes) {
-  const attrs = new Set(['if', 'repeat', 'fragment', ...Object.keys(node.attributes)]);
+async function renderCustomTag(tag, rawNode, node, nodeOptions) {
+  let instance = () => '';
+  const {customTags, customAttributes, onTraverse, ...opt} = nodeOptions
   
-  for (let attr of attrs) {
-    if (
-      customAttributes[attr] &&
-      node.attributes.hasOwnProperty(attr) &&
-      typeof customAttributes[attr].render === 'function'
-    ) {
-      const result = customAttributes[attr].render(node, node.attributes[attr]);
-      
-      if (result === null) {
-        return result;
-      }
+  const options = {
+    ...opt,
+    get partialFileObjects() {
+      return opt.partialFileObjects.map(file => {
+        // partial files are created outside the context of the node, therefore
+        // the file root node needs to be update with the current node
+        file.options = {...nodeOptions, rootNode: node};
+        
+        return file;
+      })
     }
   }
   
-  return node;
+  if (tag.toString().startsWith('class')) {
+    instance = new tag(node, options)
+  } else {
+    instance = tag(node, options);
+  }
+  
+  if (Object.keys(rawNode.context ?? {}).length) {
+    const parentChildNodes = rawNode.parentNode.childNodes;
+    // find the current child index in its parent child nodes list
+    const childIndex = parentChildNodes.indexOf(rawNode);
+    
+    // loop all following child and update their context
+    for (let i = childIndex + 1; i < parentChildNodes.length; i++) {
+      parentChildNodes[i].context = {...(parentChildNodes[i].context || {}), ...rawNode.context};
+    }
+  }
+  
+  return typeof instance === 'function'
+    ? (await instance()) ?? ''
+    : typeof instance.render === 'function'
+      ? (await instance.render()) ?? ''
+      : '';
 }
+
 
 module.exports.HTMLNode = HTMLNode;

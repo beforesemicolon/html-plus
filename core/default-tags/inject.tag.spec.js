@@ -1,8 +1,7 @@
-const {Inject} = require('./inject.tag');
 const {transform} = require('./../transform');
 const cp = require('child_process');
 const path = require('path');
-const {PartialFile} = require("../../index");
+const {PartialFile} = require("../PartialFile");
 const {promisify} = require('util');
 
 const exec = promisify(cp.exec);
@@ -13,7 +12,7 @@ describe('Inject', () => {
   
   beforeAll(async () => {
     await exec(`echo '<inject></inject>' >> ${partialAbsPath}`);
-    partialFile = new PartialFile(partialAbsPath);
+    partialFile = new PartialFile(partialAbsPath, __dirname);
   })
   
   afterAll(async () => {
@@ -22,20 +21,17 @@ describe('Inject', () => {
   
   it('should render blank if no root children', async () => {
     const str = '<inject></inject>';
-    const inject = new Inject({rootChildren: null, children: () => [], attributes: {}});
 
-    await expect(inject.render()).resolves.toEqual('');
     await expect(transform(str)).resolves.toEqual('');
   });
   
   it('should render all include children if no id provided', async () => {
-    const str = '<include partial="inj-partial"><p>1</p><p>2</p><p>3</p></include>';
+    const str = '<include partial="inj-partial">stuff: <p>1</p><p>2</p></include>';
   
     await expect(transform(str, {
       partialFileObjects: [partialFile]
-    })).resolves.toEqual('<p>1</p>' +
-      '<p>2</p>' +
-      '<p>3</p>');
+    })).resolves.toEqual('stuff:\n' +
+      '<p>1</p><p>2</p>');
   });
   
   it('should render own children if include has no children', async () => {
@@ -49,7 +45,7 @@ describe('Inject', () => {
 
   it('should render single include child with same id', async () => {
     partialFile.content = '<inject id="target"></inject>'
-    const str = '<include partial="inj-partial"><p>1</p><p #inject="target">2</p><p>3</p><</include>';
+    const str = '<include partial="inj-partial"><p>1</p><p inject-id="target">2</p><p>3</p><</include>';
 
     await expect(transform(str, {
       partialFileObjects: [partialFile]
