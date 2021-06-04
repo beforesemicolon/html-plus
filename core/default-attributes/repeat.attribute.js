@@ -1,73 +1,57 @@
 const {Attribute} = require("../Attribute");
 
-// if ((expression.trim().match(/^\d+$/g) ?? []).length > 0) {
-//   const count = parseInt(expression, 10);
-//
-//   node.__repeat = (await Promise.all(
-//     Array.from({length: count})
-//       .map((_, index) => {
-//         const nodeClone = parse(node.outerHTML).childNodes[0];
-//         nodeClone.removeAttribute('repeat');
-//
-//         const data = {...scopeData, ['$index']: index}
-//
-//         if (node.rawTagName === specialTags.fragment || /#fragment/g.test(node.rawAttrs)) {
-//           return getNodeChildrenString(nodeClone, options, data);
-//         }
-//
-//         return compileHTMLObject(nodeClone, options, data);
-//       })
-//   )).join('\n');
-//
-//   return node.__repeat;
-// }
-
-// if (expression.match(/(.+)(?=as\s+[a-zA-Z_][a-zA-Z0-9_$]?)?/g)) {
-//   const [data, name] = expression.trim().split('as');
-//   const key = name ? `${name}`.trim() : '$item';
-//
-//   if (data) {
-//     const list = await executeCode(`(() => (${data}))()`, {...options.contextData, ...scopeData});
-//
-//     if (list && typeof list === 'object') {
-//       const entries = list instanceof Map || list instanceof Set
-//         ? Array.from(list.entries())
-//         : Symbol.iterator in list
-//           ? list
-//           : Object.entries(list);
-//
-//       node.__repeat = (await Promise.all(
-//         entries
-//           .map((item, index) => {
-//             const [$key, val] = Array.isArray(item) ? item : [index, item];
-//             const nodeClone = parse(node.outerHTML).childNodes[0];
-//             nodeClone.removeAttribute('repeat');
-//
-//             const data = {...scopeData, [`${key}`]: val, ['$index']: index, $key};
-//
-//             if (node.rawTagName === specialTags.fragment || /#fragment/g.test(node.rawAttrs)) {
-//               return getNodeChildrenString(nodeClone, options, data);
-//             }
-//
-//             return compileHTMLObject(nodeClone, options, data);
-//           })
-//       )).join('\n');
-//
-//       return node.__repeat;
-//     }
-//   }
-// }
-
-
 class Repeat extends Attribute {
   process(expression, data = {}) {
-    if ((expression.trim().match(/^\d+$/g) ?? []).length > 0) {
-      const count = Number(expression);
+    if (/^\d+$/g.test(expression.trim())) {
+      return Number(expression);
     }
+    
+    if (expression.match(/(.+)(?=as\s+[a-zA-Z_][a-zA-Z0-9_$]?)?/g)) {
+      const [dataKey, name] = expression.trim().split('as');
+      this.itemName = (name || 'item').trim();
+      let list = data[dataKey.trim()];
+      
+      if (!list && /Set|Map|Object|Array|^\[|^\{/g.test(dataKey.trim())) {
+        try {
+          list = eval(`(${dataKey.trim()})`);
+        } catch (e) {
+          throw new Error(`Failed to process #repeat attribute for value "${expression}": ` + e.message);
+        }
+      }
+      
+      return list
+        ? list instanceof Map || list instanceof Set
+          ? Array.from(list.entries())
+          : typeof list === 'object' ? Object.entries(list) : []
+        : [];
+    }
+    
+    return null;
   }
   
-  render(tag, value) {
-    return value ? tag : null;
+  async render(value, node) {
+    let result = '';
+    
+    if (typeof value === "number") {
+      for (let i = 0; i < value; i++) {
+        node.setContext('$index', i);
+        node.setContext('$key', i);
+        node.setContext('$item', i + 1);
+        
+        result += await node.render()
+      }
+    } else if (value && Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        const [key, data] = value[i];
+        node.setContext('$index', i);
+        node.setContext('$key', key);
+        node.setContext(`$${this.itemName}`, data);
+        
+        result += await node.render();
+      }
+    }
+    
+    return result || node;
   }
 }
 

@@ -5,8 +5,8 @@ const symbolMap = {
   lt: '<',
 }
 
-function undoSpecialCharactersInHTML(html) {
-  return html
+function undoSpecialCharactersInHTML(html = '') {
+  return `${html}`
     .replace(
       /(?:^|\s)(gte|lte|gt|lt)(?:\s|$)/g,
       (fullMatch, grabbed) => {
