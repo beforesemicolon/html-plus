@@ -1,10 +1,6 @@
-const {Tag} = require('../Tag');
-
-class Variable extends Tag {
-  constructor(tagInfo) {
-    super(tagInfo);
-    
-    const {attributes, innerHTML} = tagInfo;
+class Variable {
+  constructor(node) {
+    const {attributes, innerHTML} = node;
     
     const name = attributes.name;
     const value = attributes.value ?? innerHTML ?? '';
@@ -24,20 +20,13 @@ class Variable extends Tag {
     if (/<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*(\/>|>(.*?)<\/\1>)/gm.test(`${value}`.trim())) {
       throw new Error(`Variable children cannot be HTML tags`);
     }
-
-    this.name = name;
-    this.value = value;
+  
+    node.setContext(name, value);
   }
   
   static customAttributes = {
     name: {bind: false},
     value: {bind: true}
-  }
-  
-  get context() {
-    return {
-      [this.name]: this.value
-    };
   }
 }
 

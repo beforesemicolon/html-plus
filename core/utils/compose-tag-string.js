@@ -1,26 +1,21 @@
 const selfClosingTags = require('./selfClosingTags.json');
+const {turnCamelOrPascalToKebabCasing} = require("./turn-camel-or-pascal-to-kebab-casing");
 
-const globalAttributes = {
-  inject: 'inject',
-  if: 'if',
-  repeat: 'repeat',
-  fragment: 'fragment',
-}
-
-function composeTagString(node = {}, content = '', specialAttributes = {}) {
+function composeTagString(node = {}, content = '', excludedAttributes = []) {
   let attributesList = [];
-  const {attributes = {}, tagName = 'un-named'} = node;
+  const attributes = node.attributes;
+  const tagName = (node.tagName || 'un-named').toLowerCase();
   
   if (!/^[a-zA-Z][a-zA-Z0-9-]*$/.test(tagName)) {
       throw new Error(`Tag name "${tagName}" is invalid! Tags must start with a letter and can be optionally followed by letters, numbers and dashes.`)
   }
   
   for (let key in attributes) {
-    if (attributes.hasOwnProperty(key) && !specialAttributes.hasOwnProperty(key) && !globalAttributes.hasOwnProperty(key)) {
+    if (attributes.hasOwnProperty(key) && !excludedAttributes.includes(key)) {
       if (attributes[key]) {
-        attributesList.push(`${key}="${attributes[key]}"`);
+        attributesList.push(`${turnCamelOrPascalToKebabCasing(key)}="${attributes[key]}"`);
       } else {
-        attributesList.push(key);
+        attributesList.push(turnCamelOrPascalToKebabCasing(key));
       }
     }
   }

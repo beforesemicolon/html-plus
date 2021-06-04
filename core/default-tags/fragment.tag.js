@@ -1,9 +1,5 @@
-const {Tag} = require('../Tag');
-
-class Fragment extends Tag {
-  async render() {
-    return await this.renderChildren();
-  }
+function Fragment(node) {
+  return async () => await node.renderChildren();
 }
 
 module.exports.Fragment = Fragment;

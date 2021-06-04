@@ -1,4 +1,4 @@
-const {Tag} = require('../Tag');
+const {composeTagString} = require("./../utils/compose-tag-string");
 const {cssTransformer} = require('../transformers/css.transformer');
 const {sassTransformer} = require('../transformers/sass.transformer');
 const {lessTransformer} = require('../transformers/less.transformer');
@@ -6,17 +6,17 @@ const {stylusTransformer} = require('../transformers/stylus.transformer');
 
 const supportedCSSTypes = ['css', 'scss', 'sass', 'styl', 'less'];
 
-class Style extends Tag {
-  constructor(tagInfo) {
-    super(tagInfo);
+class Style {
+  constructor(node, options) {
+    const {fileObject, env} = options;
+    const {innerHTML, attributes} = node;
     
-    const {innerHTML, fileObject, env} = tagInfo;
-    
+    this.node = node;
     this.content = innerHTML;
-    const shouldProcess = !this.attributes.hasOwnProperty('href') && this.content.trim().length;
-  
+    const shouldProcess = !attributes.hasOwnProperty('href') && this.content.trim().length;
+
     if (shouldProcess) {
-      const type = this.attributes['compiler'] ||  'css';
+      const type = attributes['compiler'] ||  'css';
     
       if (supportedCSSTypes.includes(type)) {
         // transformers are async so content will have a promise
@@ -45,7 +45,7 @@ class Style extends Tag {
   
   async render() {
     const content = await (async () => this.content)();
-    return this.composeTagString(content, Style.customAttributes);
+    return composeTagString(this.node, content, Object.keys(Style.customAttributes))
   }
 }
 

@@ -26,7 +26,7 @@
   "browserslist": "> 0.25%, not dead",
   "dependencies": {
     "@fullhuman/postcss-purgecss": "^4.0.3",
-    "chalk": "^4.1.0",
+    "chalk": "^4.1.1",
     "cssnano": "^4.1.10",
     "esbuild": "^0.11.1",
     "html-minifier": "^4.0.0",

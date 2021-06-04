@@ -4,12 +4,10 @@ const {bindData} = require("./bind-data");
 const {turnKebabToCamelCasing} = require('./turn-kebab-to-camel-casing');
 const {isNumber} = require('util');
 
-function processNodeAttributes(node = {}, customAttributes = {}, data = {}) {
-  const attributes = node?.attributes ?? {};
-  
+function processNodeAttributes(attributes = {}, customAttributes = {}, data = {}) {
   for (const attrName in attributes) {
     if (attributes.hasOwnProperty(attrName)) {
-      let val = (attributes[attrName].trim());
+      let val = (attributes[attrName]).trim();
       
       if (val) {
         try {
@@ -40,18 +38,12 @@ function processNodeAttributes(node = {}, customAttributes = {}, data = {}) {
             val = Number(val);
           }
         }
-  
-        if (typeof node.setAttribute === 'function') {
-          node.setAttribute(attrName, val);
-        }
       }
       
       delete attributes[attrName];
       attributes[turnKebabToCamelCasing(attrName)] = val;
-  
-      if (customAttributes[attrName] && typeof node.removeAttribute === 'function') {
-        node.removeAttribute(attrName);
-      }
+    } else {
+      delete attributes[attrName];
     }
   }
   

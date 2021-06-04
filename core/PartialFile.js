@@ -6,8 +6,6 @@ const {HTMLNode} = require("./HTMLNode");
 const {File} = require("./File");
 
 class PartialFile extends File {
-  #options = {};
-  
   constructor(fileAbsolutePath = required('fileAbsolutePath'), srcDirectoryPath = '', options = {}) {
     const fileName = path.basename(fileAbsolutePath);
   
@@ -21,16 +19,15 @@ class PartialFile extends File {
     
     super(fileAbsolutePath, srcDirectoryPath);
     
-    this.#options = {context: {}, children: [], ...options};
+    this.options = options;
     
     this.load();
   }
   
   async render(contextData = {}) {
-    const {context, children} = this.#options;
     const parsedHTML = parse(replaceSpecialCharactersInHTML(this.content));
-    parsedHTML.context = {...context, ...contextData};
-    const partialNode = new HTMLNode(parsedHTML, {...this.#options, rootChildren: children});
+    parsedHTML.context = contextData;
+    const partialNode = new HTMLNode(parsedHTML, this.options);
     return (await partialNode.render()).trim()
   }
 }
