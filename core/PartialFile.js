@@ -1,8 +1,8 @@
 const path = require('path');
 const {parse} = require('node-html-parser');
 const {required} = require("./utils/required");
-const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
-const {HTMLNode} = require("./HTMLNode");
+const {replaceSpecialCharactersInHTML} = require("./parser/utils/replace-special-characters-in-HTML");
+const {HTMLNode} = require("./parser/HTMLNode");
 const {File} = require("./File");
 
 class PartialFile extends File {

@@ -1,5 +1,5 @@
-const {bindData} = require("./bind-data");
-const {executeCode} = require("./execute-code");
+const {bindData} = require("../../utils/bind-data");
+const {executeCode} = require("../../utils/execute-code");
 
 function processCustomAttributeValue(attr, val, data) {
   if (typeof attr.process === 'function') {

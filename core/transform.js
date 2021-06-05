@@ -1,4 +1,4 @@
-const {HTMLNode} = require("./HTMLNode");
+const {HTMLNode} = require("./parser/HTMLNode");
 const {defaultAttributesMap} = require("./default-attributes");
 const {defaultTagsMap} = require("./default-tags");
 const {minify} = require('html-minifier');

@@ -11,9 +11,8 @@ const defaultOptions = {
 }
 
 async function sassTransformer(content, opt = defaultOptions) {
-  if (!content || typeof content !== 'string') return '';
-  
   opt = {...defaultOptions, ...opt};
+  content = content ?? '';
   
   if (opt.env === 'production') {
     opt.outputStyle = 'compressed';
@@ -21,7 +20,7 @@ async function sassTransformer(content, opt = defaultOptions) {
   
   return render({
     data: content,
-    file: opt?.fileObject?.fileAbsolutePath,
+    file: opt.fileObject?.fileAbsolutePath,
     indentedSyntax: opt?.fileObject?.ext === '.sass',
     // ...(opt.env === 'development' && {sourceMap: true}),
     ...opt

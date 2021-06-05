@@ -1,5 +1,5 @@
 const selfClosingTags = require('./selfClosingTags.json');
-const {turnCamelOrPascalToKebabCasing} = require("./turn-camel-or-pascal-to-kebab-casing");
+const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
 
 function composeTagString(node = {}, content = '', excludedAttributes = []) {
   let attributesList = [];

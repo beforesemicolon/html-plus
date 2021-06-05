@@ -1,5 +1,4 @@
-const {TextNode} = require("node-html-parser");
-const {HTMLNode} = require("../HTMLNode");
+const {HTMLNode} = require("./HTMLNode");
 const {renderChildren} = require('./render-children');
 
 describe('renderChildren', () => {

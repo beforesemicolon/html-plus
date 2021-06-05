@@ -1,6 +1,6 @@
 const {processCustomAttributeValue} = require("./process-custom-attribute-value");
 const {undoSpecialCharactersInHTML} = require("./undo-special-characters-in-HTML");
-const {bindData} = require("./bind-data");
+const {bindData} = require("../../utils/bind-data");
 const {isNumber} = require('util');
 
 function processNodeAttributes(attributes = {}, customAttributes = {}, data = {}) {

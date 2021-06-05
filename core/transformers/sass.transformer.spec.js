@@ -44,14 +44,6 @@ describe('sassTransformer', () => {
     });
   });
   
-  it('should return empty string if no content provided', () => {
-    expect.assertions(1);
-  
-    return sassTransformer().then(res => {
-      expect(res).toEqual('');
-    })
-  });
-  
   it('should setup for production', () => {
     expect.assertions(1);
   

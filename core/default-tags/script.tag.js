@@ -1,4 +1,4 @@
-const {composeTagString} = require("../utils/compose-tag-string");
+const {composeTagString} = require("../parser/compose-tag-string");
 const {jsTransformer} = require('../transformers/js.transformer');
 
 const supportedJSTypes = ['js', 'ts'];

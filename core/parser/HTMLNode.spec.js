@@ -1,5 +1,5 @@
 const {HTMLElement} = require("node-html-parser");
-const {composeTagString} = require("./utils/compose-tag-string");
+const {composeTagString} = require("./compose-tag-string");
 const {HTMLNode} = require("./HTMLNode");
 
 describe('HTMLNode', () => {
