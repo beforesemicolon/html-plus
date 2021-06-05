@@ -9,7 +9,7 @@ describe('transform', () => {
     <meta name="viewport" content="width=device-width initial-scale=1.0, minimum-scale=1.0">
     <meta name="description" content="Blog &amp; Youtube Channel | Web, UI, Software Development">
     <title>{title}</title>
-    <link rel="stylesheet" href="/test/pages/home.scss" type="text/css">
+    <link rel="stylesheet" href="/website/pages/home.scss" type="text/css">
     <script defer="" src="/bfs.js" type="application/javascript"></script></head>
   <body>
   
@@ -22,14 +22,13 @@ describe('transform', () => {
     return expect(result.replace(/\s+/g, '')).toEqual(`
     <html lang="en">
     <head>
-      <meta charset="UTF-8"/>
-      <meta name="viewport" content="width=device-width initial-scale=1.0, minimum-scale=1.0"/>
-      <meta name="description" content="Blog & Youtube Channel | Web, UI, Software Development"/>
-      <title>Home - Before Semicolon</title>
-      <link rel="stylesheet" href="/test/pages/home.scss" type="text/css"/>
-      <script defer src="/bfs.js" type="application/javascript"></script></head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width initial-scale=1.0, minimum-scale=1.0"/>
+    <meta name="description" content="Blog & Youtube Channel | Web, UI, Software Development"/>
+    <title>Home - Before Semicolon</title>
+    <link rel="stylesheet" href="/website/pages/home.scss" type="text/css"/>
+    <script defer src="/bfs.js" type="application/javascript"></script></head>
     <body>
-    
     </body>
     </html>
     `.replace(/\s+/g, ''));

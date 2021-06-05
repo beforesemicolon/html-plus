@@ -19,9 +19,8 @@ const defaultOptions = {
 };
 
 async function cssTransformer(content, opt = defaultOptions) {
-  if (!content || typeof content !== 'string') return '';
-  
   opt = {...defaultOptions, ...opt};
+  content = content ?? '';
   
   const prefixes = [
     postcssPresetEnv({

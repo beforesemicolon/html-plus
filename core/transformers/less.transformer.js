@@ -11,14 +11,13 @@ const defaultOptions = {
 }
 
 async function lessTransformer(content, opt = defaultOptions) {
-  if (!content || typeof content !== 'string') return '';
-  
   opt = {...defaultOptions, ...opt};
+  content = content ?? '';
   
   const options = {
     ...defaultOptions,
     env: opt.env,
-    filename: opt?.fileObject?.fileAbsolutePath,
+    filename: opt.fileObject?.fileAbsolutePath,
     // ...(opt.env === 'development' && {sourceMap: {}})
   }
   
