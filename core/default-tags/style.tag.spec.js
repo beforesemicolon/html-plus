@@ -2,7 +2,7 @@ const {Style} = require('./style.tag');
 const {transform} = require('../transform');
 const data = require('../transformers/test-data');
 
-describe('Style', () => {
+describe('Style Tag', () => {
   describe('should process', () => {
     it('css style', async () => {
       const res2 = await transform(`<style>${data.css}</style>`);

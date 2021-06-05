@@ -8,7 +8,6 @@ function bindData(str, data = {}) {
   if (str.trim() && str.includes('{')) {
     str = undoSpecialCharactersInHTML(str);
     const execs = extractExecutableSnippetFromString(str);
-    
     if (execs.length) {
       for (let m of execs) {
         const res = executeCode(`(() => (${m.executable}))()`, data);

@@ -8,7 +8,7 @@ class Include {
     this.node = node;
     this.partial = null;
     let partialName = node.attributes['partial'];
-    let partialPath = node.attributes['partialPath'];
+    let partialPath = node.attributes['partial-path'];
     this.data = {...node.context, ...node.attributes['data']};
     
     if (this.data && typeof this.data !== 'object') {
@@ -43,9 +43,9 @@ class Include {
   }
   
   static customAttributes = {
-    data: {bind: true},
-    partial: {bind: false},
-    'partial-path': {bind: false}
+    data: {execute: true},
+    partial: null,
+    'partial-path': null
   }
   
   async render() {

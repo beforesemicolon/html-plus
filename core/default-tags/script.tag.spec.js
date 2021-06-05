@@ -2,7 +2,7 @@ const {Script} = require('./script.tag');
 const {transform} = require('../transform');
 const data = require('../transformers/test-data');
 
-describe('Script', () => {
+describe('Script Tag', () => {
   describe('should process', () => {
     it('js script', async () => {
       const fileObject = {ext: '.js'};

@@ -9,10 +9,6 @@ describe('processNodeAttributes', () => {
     expect(processNodeAttributes({name: 'test', value: 'good'})).toEqual({name: 'test', value: 'good'})
   });
   
-  it('should turn dash separated attributes into camelcase', () => {
-    expect(processNodeAttributes({'name-attr': 'test', 'value-attr': 'good'})).toEqual({nameAttr: 'test', valueAttr: 'good'})
-  });
-  
   it('should turn boolean and numbers attribute values into booleans and numbers', () => {
     expect(processNodeAttributes({valid: 'true', value: '12'})).toEqual({valid: true, value: 12})
   });
@@ -22,17 +18,24 @@ describe('processNodeAttributes', () => {
   });
   
   describe('should resolve special attributes', () => {
-    it('by binding', () => {
+    it('by executing', () => {
       expect(processNodeAttributes({valid: 'valid', value: 'value'}, {
-        valid: {bind: true},
-        value: {bind: true}
+        valid: {execute: true},
+        value: {execute: true}
       }, {valid: true, value: 12})).toEqual({valid: true, value: 12})
     });
     
-    it('by processing', () => {
+    it('by executing and processing', () => {
       expect(processNodeAttributes({valid: 'valid', value: 'value'}, {
-        valid: {process: val => !val},
-        value: {bind: true, process: val => val * 10}
+        valid: {execute: true, process: val => `!${val}`},
+        value: {execute: true, process: val => `${val} * 10`}
+      }, {valid: true, value: 12})).toEqual({valid: false, value: 120})
+    });
+  
+    it('by binding and processing', () => {
+      expect(processNodeAttributes({valid: 'valid', value: 'value'}, {
+        valid: {bind: true, process: val => `{!${val}}`},
+        value: {bind: true, process: val => `{${val} * 10}`}
       }, {valid: true, value: 12})).toEqual({valid: false, value: 120})
     });
   });

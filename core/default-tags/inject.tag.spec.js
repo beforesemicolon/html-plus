@@ -6,7 +6,7 @@ const {promisify} = require('util');
 
 const exec = promisify(cp.exec);
 
-describe('Inject', () => {
+describe('Inject Tag', () => {
   const partialAbsPath = `${path.resolve(__dirname)}/_inj-partial.html`;
   let partialFile;
   

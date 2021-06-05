@@ -25,8 +25,8 @@ class Variable {
   }
   
   static customAttributes = {
-    name: {bind: false},
-    value: {bind: true}
+    name: null,
+    value: null
   }
 }
 
