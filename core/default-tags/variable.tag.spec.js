@@ -1,6 +1,6 @@
 const {transform} = require('../transform');
 
-describe('Variable', () => {
+describe('Variable Tag', () => {
   describe('should create context data', () => {
     it('using name and value attributes ', async () => {
       const str = '<variable name="test" value="20"></variable><b>{test}</b>';

@@ -1,8 +1,9 @@
 const chalk = require("chalk");
+const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
+const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
 const {executeCode} = require("./utils/execute-code");
-const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
 const {bindData} = require("./utils/bind-data");
-const {TextNode} = require("node-html-parser");
+const {TextNode, parse} = require("node-html-parser");
 const {composeTagString} = require("./utils/compose-tag-string");
 const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
 const {processNodeAttributes} = require("./utils/process-node-attributes");
@@ -24,12 +25,14 @@ class HTMLNode {
   #tag = null;
   #options = {};
   
-  constructor(node, options) {
+  constructor(nodeORHTMLString, options) {
     options = {...defaultOptions, ...options}
-    this.#node = node;
+    this.#node = typeof nodeORHTMLString === 'string'
+      ? parse(replaceSpecialCharactersInHTML(nodeORHTMLString))
+      : nodeORHTMLString;
     this.#options = options;
-    this.#tag = options.customTags[node.rawTagName];
-    this.attributes = node.attributes;
+    this.#tag = options.customTags[this.#node.rawTagName];
+    this.attributes = this.#node.attributes;
     
     if (typeof options.onTraverse === 'function') {
       options.onTraverse(this);
@@ -43,7 +46,7 @@ class HTMLNode {
   get context() {
     return this.#node.parentNode
       ? {...this.#node.parentNode.context, ...this.#node.context}
-      : this.#node.context;
+      : (this.#node.context ?? {});
   }
   
   get innerHTML() {
@@ -52,7 +55,7 @@ class HTMLNode {
   
   setAttribute(key, value) {
     if (typeof key === 'string' && typeof value === 'string') {
-      this.#node.setAttribute(turnCamelOrPascalToKebabCasing(key), value);
+      this.#node.setAttribute(key, value);
       this.attributes[key] = processNodeAttributes(
         {key: value},
         this.#tag ? this.#tag.customAttributes : {},
@@ -63,7 +66,7 @@ class HTMLNode {
   
   removeAttribute(key) {
     if (typeof key === 'string') {
-      this.#node.removeAttribute(turnCamelOrPascalToKebabCasing(key));
+      this.#node.removeAttribute(key);
       delete this.attributes[key];
     }
   }
@@ -103,7 +106,7 @@ class HTMLNode {
   
   async render() {
     try {
-      if (this.#node.rawAttrs.length && /^|\s#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
+      if (this.#node.rawAttrs.length && /\s?#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
         const result = await renderByAttribute(this, this.#options);
     
         if (result === null) {
@@ -116,6 +119,7 @@ class HTMLNode {
       }
   
       const customAttributes = this.#tag ? this.#tag.customAttributes : {}
+      
       this.attributes = processNodeAttributes(
         this.#node.attributes,
         customAttributes,
@@ -129,7 +133,6 @@ class HTMLNode {
             : await this.renderChildren(this.context)
       ).trim();
     } catch(e) {
-      console.error('render failed', e);
       handleError(e, this.#node, this.#options);
     }
   }
@@ -137,23 +140,19 @@ class HTMLNode {
 
 async function renderByAttribute(node, options) {
   for (let attr of new Set(['if', 'repeat', 'fragment', ...Object.keys(options.customAttributes)])) {
-    if (node.attributes[attr] && options.customAttributes[attr]) {
-      let value = undoSpecialCharactersInHTML(node.attributes[attr]);
+    if (node.attributes.hasOwnProperty(attr) && options.customAttributes[attr]) {
       const handler = options.customAttributes[attr];
       const data = {...options.data, ...node.context};
-      
-      if (handler.bind) {
-        value = executeCode(`(() => (${value}))()`, data);
+      let value = node.attributes[attr].trim();
+
+      if (value) {
+        value = processCustomAttributeValue(handler, undoSpecialCharactersInHTML(node.attributes[attr]), data);
+  
+        node.removeAttribute(attr)
       }
-      
-      if (typeof handler.process === 'function') {
-        value = handler.process(value, data);
-      }
-      
-      node.removeAttribute(attr)
-      console.log('-- value', value);
+  
       const result = await handler.render(value, node);
-      
+  
       if (result === null || typeof result === 'string') {
         return result;
       }
@@ -186,14 +185,14 @@ async function renderCustomTag(tag, rawNode, node, nodeOptions) {
     instance = tag(node, options);
   }
   
-  if (Object.keys(rawNode.context ?? {}).length) {
+  if (Object.keys(node.context ?? {}).length) {
     const parentChildNodes = rawNode.parentNode.childNodes;
     // find the current child index in its parent child nodes list
     const childIndex = parentChildNodes.indexOf(rawNode);
     
     // loop all following child and update their context
     for (let i = childIndex + 1; i < parentChildNodes.length; i++) {
-      parentChildNodes[i].context = {...(parentChildNodes[i].context || {}), ...rawNode.context};
+      parentChildNodes[i].context = {...(parentChildNodes[i].context || {}), ...node.context};
     }
   }
   

@@ -29,9 +29,9 @@ describe('renderChildren', () => {
   
   it('should handle html nodes as children', () => {
     return expect(renderChildren([
-      new HTMLNode({rawTagName: 'p', childNodes: [new TextNode('my simple paragraph')]}),
-      new HTMLNode({rawTagName: 'h2', childNodes: [new TextNode('title')]}),
-      new HTMLNode({rawTagName: 'div', childNodes: []}),
+      new HTMLNode('<p>my simple paragraph</p>'),
+      new HTMLNode('<h2>title</h2>'),
+      new HTMLNode('<div></div>'),
     ])).resolves.toEqual('<p>my simple paragraph</p>' +
       '<h2>title</h2>' +
       '<div></div>')

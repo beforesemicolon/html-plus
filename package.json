@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tests": "jest",
+    "tests:watch": "jest --watch",
     "local": "nodemon --watch test/pages/data test/server-test.js"
   },
   "keywords": [

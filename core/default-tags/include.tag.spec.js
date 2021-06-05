@@ -6,7 +6,7 @@ const {promisify} = require('util');
 
 const exec = promisify(cp.exec);
 
-describe('Include', () => {
+describe('Include Tag', () => {
   const partialAbsPath = `${path.resolve(__dirname)}/_inc-partial.html`;
   let partialFile;
   

@@ -1,10 +1,8 @@
 const {HTMLNode} = require("./HTMLNode");
 const {defaultAttributesMap} = require("./default-attributes");
 const {defaultTagsMap} = require("./default-tags");
-const {parse} = require('node-html-parser');
 const {minify} = require('html-minifier');
 const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
-const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
 
 const defaultOptions = {
   env: 'development',
@@ -23,9 +21,6 @@ async function transform(content, options = defaultOptions) {
   
   options = {...defaultOptions, ...options};
   
-  const parsedHTML = parse(replaceSpecialCharactersInHTML(content));
-  parsedHTML.context = {};
-  
   const customTagsMap = options.customTags.reduce((acc, tag) => {
     const tagName = turnCamelOrPascalToKebabCasing(tag.name);
     acc[tagName] = tag;
@@ -38,7 +33,7 @@ async function transform(content, options = defaultOptions) {
     return acc;
   }, {})
   
-  const node = new HTMLNode(parsedHTML, {
+  const node = new HTMLNode(content, {
     ...options,
     customTags: {...customTagsMap, ...defaultTagsMap},
     customAttributes: {...customAttributesMap, ...defaultAttributesMap}

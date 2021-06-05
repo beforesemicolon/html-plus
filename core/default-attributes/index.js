@@ -1,9 +1,11 @@
 const {If} = require('./if.attribute');
 const {Repeat} = require('./repeat.attribute');
+const {Fragment} = require('./fragment.attribute');
 
 const defaultAttributes = [
   If,
   Repeat,
+  Fragment
 ]
 
 const defaultAttributesMap = defaultAttributes.reduce((acc, attribute) => {

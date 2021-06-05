@@ -40,7 +40,7 @@ class Style {
   }
   
   static customAttributes = {
-    compiler: {bind: false}
+    compiler: null
   }
   
   async render() {
