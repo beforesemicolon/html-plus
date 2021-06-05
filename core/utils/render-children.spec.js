@@ -1,10 +1,10 @@
+const {TextNode} = require("node-html-parser");
 const {HTMLNode} = require("../HTMLNode");
-const {TextNode} = require("../TextNode");
 const {renderChildren} = require('./render-children');
 
 describe('renderChildren', () => {
   it('should return empty string if not children', () => {
-    return expect(renderChildren()).resolves.toEqual('')
+    return expect(renderChildren()).toEqual('')
   });
   
   it('should return text separated by new lines', () => {
@@ -19,9 +19,9 @@ describe('renderChildren', () => {
   
   it('should handle text nodes as children', () => {
     return expect(renderChildren([
-      new TextNode('my sample'),
-      new TextNode('text'),
-      new TextNode('children'),
+      'my sample',
+      'text',
+      'children',
     ])).resolves.toEqual('my sample' +
       'text' +
       'children')
@@ -29,9 +29,9 @@ describe('renderChildren', () => {
   
   it('should handle html nodes as children', () => {
     return expect(renderChildren([
-      new HTMLNode({rawTagName: 'p', childNodes: [{rawText: 'my simple paragraph'}]}),
-      new HTMLNode({rawTagName: 'h2', childNodes: [{rawText: 'title'}]}),
-      new HTMLNode({rawTagName: 'div', childNodes: []}),
+      new HTMLNode('<p>my simple paragraph</p>'),
+      new HTMLNode('<h2>title</h2>'),
+      new HTMLNode('<div></div>'),
     ])).resolves.toEqual('<p>my simple paragraph</p>' +
       '<h2>title</h2>' +
       '<div></div>')

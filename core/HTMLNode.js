@@ -1,123 +1,233 @@
-const {parse} = require('node-html-parser');
+const chalk = require("chalk");
+const {defaultAttributesName} = require("./default-attributes");
+const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
+const {bindData} = require("./utils/bind-data");
+const {TextNode, parse} = require("node-html-parser");
+const {composeTagString} = require("./utils/compose-tag-string");
 const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
 const {processNodeAttributes} = require("./utils/process-node-attributes");
-const {defineGetter} = require("./utils/define-getter");
-const {TextNode} = require('./TextNode');
-const {renderChildren} = require("./utils/render-children");
-const {composeTagString} = require("./utils/compose-tag-string");
 
 const defaultOptions = {
   env: 'development',
   data: {},
+  rootNode: null,
   customTags: [],
+  customAttributes: [],
   fileObject: null,
-  rootChildren: null,
-  onTraverse() {},
+  onTraverse() {
+  },
   partialFileObjects: [],
 };
 
 class HTMLNode {
-  constructor(node, opt = defaultOptions) {
-    opt = {...defaultOptions, ...opt};
-    defineGetter(this, 'context', () => {
-      return node.parentNode
-        ? {...node.parentNode.context, ...(node.context || {})}
-        : {}
-    });
+  #node = null;
+  #tag = null;
+  #options = {};
   
-    const tag = opt.customTags[node.rawTagName];
-    const name = node.rawTagName || null;
-    const attributes = processNodeAttributes(node, tag?.customAttributes, {...opt.data, ...this.context});
-    const children = (data = {}) => {
-      return node.childNodes.map(child => {
-        if (child.hasOwnProperty('rawText')) {
-          return new TextNode(child, {...opt.data, ...this.context, ...child.context, ...data})
-        } else {
-          const childNode = new HTMLNode(child, opt);
+  constructor(nodeORHTMLString, options) {
+    options = {...defaultOptions, ...options}
+    this.#node = typeof nodeORHTMLString === 'string'
+      ? parse(replaceSpecialCharactersInHTML(nodeORHTMLString))
+      : nodeORHTMLString;
+    this.#options = options;
+    this.#tag = options.customTags[this.#node.rawTagName];
+    this.attributes = this.#node.attributes;
     
-          // if the child node creates a new context
-          // it is necessary to make it available to it following siblings only
-          if (childNode.context && Object.keys(childNode.context).length) {
-            // find the current child index in its parent child nodes list
-            const childIndex = node.childNodes.indexOf(child);
-            child.context = childNode.context;
-
-            // loop all following child and update their context
-            for (let i = childIndex+1; i < node.childNodes.length; i++) {
-              if(node.childNodes[i]) {
-                node.childNodes[i].context = {...(node.childNodes[i].context || {}), ...child.context};
-              }
-            }
-          }
-    
-          return childNode;
-        }
-      })
+    if (typeof options.onTraverse === 'function') {
+      options.onTraverse(this);
     }
-    
-    if (tag) {
-      const tagInfo = {
-        ...opt,
-        attributes,
-        children,
-        context: this.context,
-        root: this,
-        get innerHTML() {
-          return undoSpecialCharactersInHTML(node.innerHTML);
-        },
-        get partialFiles() {
-          return opt.partialFileObjects.map(file => {
-            file.render = async (data = {}) => {
-              const parsedHTML = parse(replaceSpecialCharactersInHTML(file.content));
-              parsedHTML.context = {...node.context, ...data};
-              const partialNode = new HTMLNode(parsedHTML, {...opt, rootChildren: children});
-              return (await partialNode.render()).trim()
-            }
-            
-            return file;
-          })
-        }
-      };
-      let instance = {};
-      
-      if (tag.toString().startsWith('class')) {
-        instance = new tag(tagInfo)
-      } else {
-        instance = tag(tagInfo);
+  }
+  
+  get tagName() {
+    return this.#node.rawTagName
+  }
+  
+  get context() {
+    return this.#node.parentNode
+      ? {...this.#node.parentNode.context, ...this.#node.context}
+      : (this.#node.context ?? {});
+  }
+  
+  get innerHTML() {
+    return undoSpecialCharactersInHTML(this.#node.innerHTML);
+  }
+  
+  setAttribute(key, value) {
+    if (typeof key === 'string' && typeof value === 'string') {
+      this.#node.setAttribute(key, value);
+      this.attributes[key] = processNodeAttributes(
+        {key: value},
+        this.#tag ? this.#tag.customAttributes : {},
+        {...this.#options.data, ...this.#node.context}
+      );
+    }
+  }
+  
+  removeAttribute(key) {
+    if (typeof key === 'string') {
+      this.#node.removeAttribute(key);
+      delete this.attributes[key];
+    }
+  }
+  
+  setContext(key, value = null) {
+    if (typeof key === 'string') {
+      this.#node.context[key] = value
+    }
+  }
+  
+  removeContext(key) {
+    if (typeof key === 'string') {
+      delete this.#node.context[key];
+    }
+  }
+  
+  childNodes(data) {
+    return this.#node.childNodes.map(childNode => {
+      childNode.context = {...this.context, ...childNode.context, ...data}
+      return childNode instanceof TextNode
+        ? bindData(childNode.rawText, {...this.#options.data, ...childNode.context})
+        : new HTMLNode(childNode, this.#options)
+    })
+  }
+  
+  renderChildren(data = {}) {
+    return Promise.all(
+      this.#node.childNodes.map(childNode => {
+        childNode.context = {...this.context, ...childNode.context, ...data}
         
-        if (typeof instance === 'function') {
-          instance = {
-            render: instance,
-            context: {}
-          }
-        }
-      }
-      
-      if (typeof opt.onTraverse === 'function') {
-        opt.onTraverse(tag);
-      }
-      
-      // if it is a custom tag return the tag instance to be used instead
-      return instance;
-    }
-  
-    defineGetter(this, 'attributes', () => attributes);
-    defineGetter(this, 'tagName', () => name);
-    defineGetter(this, 'children', () => children);
-  
-    if (typeof opt.onTraverse === 'function') {
-      opt.onTraverse(this);
-    }
+        return childNode instanceof TextNode
+          ? new TextNode(bindData(childNode.rawText, {...this.#options.data, ...childNode.context}))
+          : (new HTMLNode(childNode, this.#options)).render()
+      })
+    ).then(res => res.join(''));
   }
   
   async render() {
-    if (!this.tagName) {
-      return renderChildren(this.children);
-    }
+    try {
+      if (this.#node.rawAttrs.length && /\s?#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
+        const result = await renderByAttribute(this, this.#options);
+    
+        if (result === null) {
+          return '';
+        }
+    
+        if (typeof result === 'string') {
+          return result;
+        }
+      }
   
-    return composeTagString(this, await renderChildren(this.children));
+      const customAttributes = this.#tag ? this.#tag.customAttributes : {}
+      
+      this.attributes = processNodeAttributes(
+        this.#node.attributes,
+        customAttributes,
+        {...this.#options.data, ...this.#node.context}
+      );
+  
+      return (this.#tag
+          ? await renderCustomTag(this.#tag, this.#node, this, this.#options)
+          : this.tagName
+            ? composeTagString(this, await this.renderChildren(this.context), Object.keys(this.#options.customAttributes))
+            : await this.renderChildren(this.context)
+      ).trim();
+    } catch(e) {
+      handleError(e, this.#node, this.#options);
+    }
   }
+}
+
+async function renderByAttribute(node, options) {
+  for (let attr of new Set([...defaultAttributesName, ...Object.keys(options.customAttributes)])) {
+    if (node.attributes.hasOwnProperty(attr) && options.customAttributes[attr]) {
+      const handler = options.customAttributes[attr];
+      const data = {...options.data, ...node.context};
+      let value = node.attributes[attr].trim();
+
+      if (value) {
+        value = processCustomAttributeValue(handler, undoSpecialCharactersInHTML(node.attributes[attr]), data);
+  
+        node.removeAttribute(attr)
+      }
+  
+      const result = await handler.render(value, node);
+  
+      if (result === null || typeof result === 'string') {
+        return result;
+      }
+    }
+  }
+  
+  return node;
+}
+
+async function renderCustomTag(tag, rawNode, node, nodeOptions) {
+  let instance = () => '';
+  const {customTags, customAttributes, onTraverse, ...opt} = nodeOptions
+  
+  const options = {
+    ...opt,
+    get partialFileObjects() {
+      return opt.partialFileObjects.map(file => {
+        // partial files are created outside the context of the node, therefore
+        // the file root node needs to be update with the current node
+        file.options = {...nodeOptions, rootNode: node};
+        
+        return file;
+      })
+    }
+  }
+  
+  if (tag.toString().startsWith('class')) {
+    instance = new tag(node, options)
+  } else {
+    instance = tag(node, options);
+  }
+  
+  if (Object.keys(node.context ?? {}).length) {
+    const parentChildNodes = rawNode.parentNode.childNodes;
+    // find the current child index in its parent child nodes list
+    const childIndex = parentChildNodes.indexOf(rawNode);
+    
+    // loop all following child and update their context
+    for (let i = childIndex + 1; i < parentChildNodes.length; i++) {
+      parentChildNodes[i].context = {...(parentChildNodes[i].context || {}), ...node.context};
+    }
+  }
+  
+  return typeof instance === 'function'
+    ? (await instance()) ?? ''
+    : typeof instance.render === 'function'
+      ? (await instance.render()) ?? ''
+      : '';
+}
+
+function handleError(e, node, options) {
+  let error = e.message;
+  
+  if (node instanceof TextNode) {
+    throw new Error(`${error}||${node.rawText}`)
+  }
+  
+  if (e.message && e.message.startsWith('HTML: ')) {
+    throw new Error(error)
+  }
+  
+  const [errMsg, text] = error.split('||');
+  const nodeString = text
+    ? ((node.parentNode || node).outerHTML).replace(text, chalk.redBright(`\n${text.trim()} <= Error: ${errMsg}\n`))
+    : node.outerHTML;
+  
+  const fileInfo = options.fileObject
+    ? `\n:File \n${chalk.yellow(options.fileObject?.filePath)}`
+    : '';
+  
+  throw new Error(
+    'HTML: ' +
+    chalk.redBright(errMsg) + fileInfo +
+    `\n\n:Markup \n${chalk.green(nodeString)}`
+  );
 }
 
 module.exports.HTMLNode = HTMLNode;

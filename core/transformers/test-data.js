@@ -606,7 +606,7 @@ var __privateAdd = (obj, member, value) => {
   member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
 };
 
-// transformers/__src-js/app.js
+// core/transformers/__src-js/app.js
 var _test;
 var Home = class {
   constructor() {
@@ -641,7 +641,7 @@ class Home {
 const home = new Home();
   `;
 const tsFileResult = `
-// transformers/__src-js/app.ts
+// core/transformers/__src-js/app.ts
 var Home = class {
   constructor() {
     this.test = 10;
@@ -673,7 +673,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 
-// transformers/__src-js/app.jsx
+// core/transformers/__src-js/app.jsx
 var react = require(react);
 module.exports = class Test extends react.Component {
   constructor() {

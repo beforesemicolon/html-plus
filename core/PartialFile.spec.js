@@ -1,4 +1,3 @@
-const {FileObject} = require("../index");
 const cp = require('child_process');
 const path = require('path');
 const {PartialFile} = require('./PartialFile');
@@ -6,7 +5,7 @@ const {promisify} = require('util');
 
 const exec = promisify(cp.exec);
 
-describe('createPartialFile', () => {
+describe('PartialFile', () => {
   it('should throw error if partial name does not start with underscore', () => {
     expect(() => new PartialFile('partial.html'))
       .toThrowError('Cannot create partial file. Partial files must start with underscore(_).')
@@ -22,7 +21,7 @@ describe('createPartialFile', () => {
       .toThrowError('no such file or directory');
   });
   
-  describe('', () => {
+  describe('on real file', () => {
     const filePath = path.join(__dirname, '_partial.html');
   
     beforeAll(async () => {
