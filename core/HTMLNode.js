@@ -1,7 +1,7 @@
 const chalk = require("chalk");
+const {defaultAttributesName} = require("./default-attributes");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
-const {executeCode} = require("./utils/execute-code");
 const {bindData} = require("./utils/bind-data");
 const {TextNode, parse} = require("node-html-parser");
 const {composeTagString} = require("./utils/compose-tag-string");
@@ -139,7 +139,7 @@ class HTMLNode {
 }
 
 async function renderByAttribute(node, options) {
-  for (let attr of new Set(['if', 'repeat', 'fragment', ...Object.keys(options.customAttributes)])) {
+  for (let attr of new Set([...defaultAttributesName, ...Object.keys(options.customAttributes)])) {
     if (node.attributes.hasOwnProperty(attr) && options.customAttributes[attr]) {
       const handler = options.customAttributes[attr];
       const data = {...options.data, ...node.context};

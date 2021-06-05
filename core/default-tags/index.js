@@ -13,7 +13,9 @@ const defaultTags = [
   Script,
   Include,
   Inject
-]
+];
+
+const defaultTagsName = defaultTags.map(attr => attr.name);
 
 const defaultTagsMap = defaultTags.reduce((acc, tag) => {
   const tagName = turnCamelOrPascalToKebabCasing(tag.name);
@@ -24,3 +26,4 @@ const defaultTagsMap = defaultTags.reduce((acc, tag) => {
 
 module.exports.defaultTags = defaultTags;
 module.exports.defaultTagsMap = defaultTagsMap;
+module.exports.defaultTagsName = defaultTagsName;
