@@ -1,4 +1,4 @@
-const {HTMLNode} = require("../HTMLNode");
+const {HTMLNode} = require("./HTMLNode");
 
 const renderChildren = (childNodes = []) => {
   if (childNodes.length) {

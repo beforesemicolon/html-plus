@@ -6,7 +6,7 @@
   "scripts": {
     "tests": "jest",
     "tests:watch": "jest --watch",
-    "local": "nodemon --watch website/pages --exec node website/server-test.js"
+    "local": "nodemon --watch website --exec node website/server-test.js"
   },
   "keywords": [
     "template engine",

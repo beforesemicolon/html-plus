@@ -1,4 +1,4 @@
-const {renderChildren} = require("../utils/render-children");
+const {renderChildren} = require("../parser/render-children");
 
 class Inject{
   constructor(node, options) {

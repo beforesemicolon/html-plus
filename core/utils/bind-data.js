@@ -1,6 +1,6 @@
 const {executeCode} = require("./execute-code");
 const {extractExecutableSnippetFromString} = require("./extract-executable-snippet-from-string");
-const {undoSpecialCharactersInHTML} = require("./undo-special-characters-in-HTML");
+const {undoSpecialCharactersInHTML} = require("../parser/utils/undo-special-characters-in-HTML");
 
 function bindData(str, data = {}) {
   str = str.replace(/\s+$/g, '\n');

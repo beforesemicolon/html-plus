@@ -1,4 +1,4 @@
-const {composeTagString} = require("./../utils/compose-tag-string");
+const {composeTagString} = require("../parser/compose-tag-string");
 const {cssTransformer} = require('../transformers/css.transformer');
 const {sassTransformer} = require('../transformers/sass.transformer');
 const {lessTransformer} = require('../transformers/less.transformer');

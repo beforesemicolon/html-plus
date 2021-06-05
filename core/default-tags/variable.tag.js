@@ -26,7 +26,7 @@ class Variable {
   
   static customAttributes = {
     name: null,
-    value: null
+    value: {execute: true}
   }
 }
 

@@ -1,10 +1,10 @@
-const chalk = require("chalk");
-const {defaultAttributesName} = require("./default-attributes");
-const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
+const {handleError} = require("./handle-error");
+const {renderByAttribute} = require("./render-by-attribute");
+const {renderCustomTag} = require("./render-custom-tag");
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
-const {bindData} = require("./utils/bind-data");
+const {bindData} = require("../utils/bind-data");
 const {TextNode, parse} = require("node-html-parser");
-const {composeTagString} = require("./utils/compose-tag-string");
+const {composeTagString} = require("./compose-tag-string");
 const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
 const {processNodeAttributes} = require("./utils/process-node-attributes");
 
@@ -35,7 +35,7 @@ class HTMLNode {
     this.attributes = this.#node.attributes;
     
     if (typeof options.onTraverse === 'function') {
-      options.onTraverse(this);
+      options.onTraverse(this, options.fileObject);
     }
   }
   
@@ -136,98 +136,6 @@ class HTMLNode {
       handleError(e, this.#node, this.#options);
     }
   }
-}
-
-async function renderByAttribute(node, options) {
-  for (let attr of new Set([...defaultAttributesName, ...Object.keys(options.customAttributes)])) {
-    if (node.attributes.hasOwnProperty(attr) && options.customAttributes[attr]) {
-      const handler = options.customAttributes[attr];
-      const data = {...options.data, ...node.context};
-      let value = node.attributes[attr].trim();
-
-      if (value) {
-        value = processCustomAttributeValue(handler, undoSpecialCharactersInHTML(node.attributes[attr]), data);
-  
-        node.removeAttribute(attr)
-      }
-  
-      const result = await handler.render(value, node);
-  
-      if (result === null || typeof result === 'string') {
-        return result;
-      }
-    }
-  }
-  
-  return node;
-}
-
-async function renderCustomTag(tag, rawNode, node, nodeOptions) {
-  let instance = () => '';
-  const {customTags, customAttributes, onTraverse, ...opt} = nodeOptions
-  
-  const options = {
-    ...opt,
-    get partialFileObjects() {
-      return opt.partialFileObjects.map(file => {
-        // partial files are created outside the context of the node, therefore
-        // the file root node needs to be update with the current node
-        file.options = {...nodeOptions, rootNode: node};
-        
-        return file;
-      })
-    }
-  }
-  
-  if (tag.toString().startsWith('class')) {
-    instance = new tag(node, options)
-  } else {
-    instance = tag(node, options);
-  }
-  
-  if (Object.keys(node.context ?? {}).length) {
-    const parentChildNodes = rawNode.parentNode.childNodes;
-    // find the current child index in its parent child nodes list
-    const childIndex = parentChildNodes.indexOf(rawNode);
-    
-    // loop all following child and update their context
-    for (let i = childIndex + 1; i < parentChildNodes.length; i++) {
-      parentChildNodes[i].context = {...(parentChildNodes[i].context || {}), ...node.context};
-    }
-  }
-  
-  return typeof instance === 'function'
-    ? (await instance()) ?? ''
-    : typeof instance.render === 'function'
-      ? (await instance.render()) ?? ''
-      : '';
-}
-
-function handleError(e, node, options) {
-  let error = e.message;
-  
-  if (node instanceof TextNode) {
-    throw new Error(`${error}||${node.rawText}`)
-  }
-  
-  if (e.message && e.message.startsWith('HTML: ')) {
-    throw new Error(error)
-  }
-  
-  const [errMsg, text] = error.split('||');
-  const nodeString = text
-    ? ((node.parentNode || node).outerHTML).replace(text, chalk.redBright(`\n${text.trim()} <= Error: ${errMsg}\n`))
-    : node.outerHTML;
-  
-  const fileInfo = options.fileObject
-    ? `\n:File \n${chalk.yellow(options.fileObject?.filePath)}`
-    : '';
-  
-  throw new Error(
-    'HTML: ' +
-    chalk.redBright(errMsg) + fileInfo +
-    `\n\n:Markup \n${chalk.green(nodeString)}`
-  );
 }
 
 module.exports.HTMLNode = HTMLNode;

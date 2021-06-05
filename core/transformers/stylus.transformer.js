@@ -9,12 +9,11 @@ const defaultOptions = {
 }
 
 async function stylusTransformer(content = null, opt = defaultOptions) {
-  if (!content || typeof content !== 'string') return '';
-  
   opt = {...defaultOptions, ...opt};
+  content = content ?? '';
   
   return await render(content, {
-    filename: opt?.fileObject?.fileAbsolutePath,
+    filename: opt.fileObject?.fileAbsolutePath,
     // ...(opt.env === 'development' && {sourceMap: 'inline'}),
   })
     .then(css => {
