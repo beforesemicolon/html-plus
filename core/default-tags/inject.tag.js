@@ -12,17 +12,10 @@ class Inject{
       
       if (childNodes.length) {
         const injectId = node.attributes['id'];
-        
   
         if (injectId) {
           const content = childNodes.filter(childNode => {
-            const include = childNode.attributes && childNode.attributes['inject-id'] === injectId;
-            
-            if (include) {
-              childNode.removeAttribute('inject-id')
-            }
-            
-            return include;
+            return childNode.attributes && childNode.attributes['inject-id'] === injectId;
           });
     
           if (content.length) {
