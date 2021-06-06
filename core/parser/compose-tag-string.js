@@ -8,8 +8,8 @@ function composeTagString(node, content = '', excludedAttributes = []) {
   
   const customAttrs = new Set([...attr.defaultAttributesName, ...Object.keys(node._options?.customAttributes ?? {})]);
   let attributesList = [];
-  const attributes = node.attributes ?? {};
-  const tagName = (node.tagName || 'un-named').toLowerCase();
+  const attributes = node.attributes;
+  const tagName = (node.tagName || node.name || 'un-named').toLowerCase();
   
   if (!/^[a-zA-Z][\w:.-]*$/.test(tagName)) {
       throw new Error(`Tag name "${tagName}" is invalid! Tags must start with a letter and can be optionally followed by letters, numbers and dashes.`)
