@@ -2,6 +2,7 @@ const {Attribute} = require("../Attribute");
 
 class Repeat extends Attribute {
   execute = true;
+  itemName = 'item';
   
   process(expression) {
     if (/^\d+$/g.test(expression.trim())) {
@@ -10,7 +11,7 @@ class Repeat extends Attribute {
     
     if (expression.match(/(.+)(?=as\s+[a-zA-Z_][a-zA-Z0-9_$]?)?/g)) {
       const [dataKey, name] = expression.trim().split('as');
-      this.itemName = (name || 'item').trim();
+      this.itemName = (name || '').trim() || 'item';
       
       return dataKey.trim();
     }
@@ -20,7 +21,7 @@ class Repeat extends Attribute {
   
   async render(value, node) {
     let result = '';
-  
+    
     if (typeof value === "number") {
       for (let i = 0; i < value; i++) {
         node.setContext('$index', i);
