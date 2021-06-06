@@ -5,6 +5,8 @@ const {Style} = require("./style.tag");
 const {Script} = require("./script.tag");
 const {Include} = require("./include.tag");
 const {Inject} = require("./inject.tag");
+const {Log} = require("./log.tag");
+const {Ignore} = require("./ignore.tag");
 
 const defaultTags = [
   Variable,
@@ -12,10 +14,12 @@ const defaultTags = [
   Style,
   Script,
   Include,
-  Inject
+  Inject,
+  Log,
+  Ignore
 ];
 
-const defaultTagsName = defaultTags.map(attr => attr.name);
+const defaultTagsName = defaultTags.map(attr => turnCamelOrPascalToKebabCasing(attr.name));
 
 const defaultTagsMap = defaultTags.reduce((acc, tag) => {
   const tagName = turnCamelOrPascalToKebabCasing(tag.name);
