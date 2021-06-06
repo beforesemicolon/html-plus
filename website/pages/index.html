@@ -1,8 +1,48 @@
-<variable name="page" value="pages.home"></variable>
-
-<include partial="layout" data="page">
+<include partial="layout" data="pages.home">
 	<link rel="stylesheet" href="./home.scss" inject-id="style">
 
-	<h1>It works!</h1>
+	<section role="banner" class="wrapper">
+		<h2>{site.description}</h2>
+		<p>{banner.description}</p>
+		<div class="doc-links">
+			<a href="{banner['learn-link'].path}" class="link-button cta">{banner['learn-link'].label}</a>
+			<a href="{banner['documentation-link'].path}" class="link-button">{banner['documentation-link'].label}</a>
+		</div>
+		<p>{banner['footer-note']}</p>
+	</section>
+
+	<section class="features wrapper">
+		<h3>{features.title}</h3>
+		<p>{features.description}</p>
+		<div class="feature-list">
+			<div #repeat="features.list as feature" class="feature-card">
+				<h4>{$feature.title}</h4>
+				<p>{$feature.description}</p>
+				<a href="{$feature.path}">{features['link-label']}</a>
+			</div>
+		</div>
+	</section>
+
+	<section class="quick-start wrapper">
+		<h3>{this['quick-start'].title}</h3>
+		<p>{this['quick-start'].description}</p>
+		<pre #ignore class="js-code">
+			<code class="declaration">const</code> express = require(<code class="import">'express'</code>);
+			<code class="declaration">const</code> http = require(<code class="import">'http'</code>);
+			<code class="declaration">const</code> path = require(<code class="import">'path'</code>);
+			<code class="declaration">const</code> {engine} = require(<code class="import">'@before-semicolon/html-plus'</code>);
+
+			<code class="declaration">const</code> app = express();
+
+			<code class="special">engine</code>(app, path.<code class="property">resolve</code>(__dirname, <code class="import">'./pages'</code>));
+
+			<code class="declaration">const</code> server = http.<code class="property">createServer</code>(app);
+
+			server.<code class="property">listen</code>(3000, () => {
+				console.log('listening on port http://localhost:3000/');
+			})
+		</pre>
+		<a href="{this['quick-start'].link.path}" class="link-button cta">{this['quick-start'].link.label}</a>
+	</section>
 
 </include>

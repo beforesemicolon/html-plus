@@ -1,0 +1,150 @@
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+}
+
+body {
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(0deg, #eee, #fff, #fff);
+  line-height: 100%;
+  color: #222;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+$headings: "h1, h2, h3, h4, h5, h6, p";
+
+#{$headings} {
+  margin-top: 0;
+  line-height: 120%;
+}
+
+a {
+  color: #3f51b5;
+}
+a:visited {
+  color: #087342;
+}
+
+ul, ol {
+  margin: 0;
+}
+
+.link-button,
+.link-button:any-link {
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-transform: capitalize;
+  text-decoration: none;
+  letter-spacing: 1px;
+  background: #ebebeb;
+  color: #222;
+  font-weight: 400;
+  display: inline-block;
+
+  &.cta {
+    background: #673ab7;
+    color: #fff;
+  }
+}
+
+.wrapper {
+  padding-left: calc((100vw - min(960px, calc(100vw - 50px))) / 2);
+  padding-right: calc((100vw - min(960px, calc(100vw - 50px))) / 2);
+}
+
+@mixin wrapper($max-width) {
+  padding-left: calc((100vw - min(#{$max-width}, calc(100vw - 50px))) / 2);
+  padding-right: calc((100vw - min(#{$max-width}, calc(100vw - 50px))) / 2);
+}
+
+.top-bar {
+  background: #111;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+
+  a:any-link {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 200;
+
+    strong {
+      font-weight: 600;
+    }
+  }
+}
+
+.js-code {
+  padding: 35px 0;
+  background: #011823;
+  color: #fff;
+  text-align: left;
+  margin: 0;
+  font-family: monospace;
+  line-height: 120%;
+  border-radius: 5px;
+
+  .highlight {
+    margin: 0;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .declaration {
+    color: #c556ea;
+  }
+
+  .import {
+    color: #11b147;
+  }
+
+  .property {
+    color: #ee697e;
+  }
+
+  .special {
+    color: #ffc107;
+  }
+}
+
+footer {
+  background: #f2f2f2;
+  color: #222;
+  padding-top: 60px;
+  padding-bottom: 40px;
+  text-align: center;
+
+  ul {
+    padding: 0;
+    margin: 0 auto;
+    list-style: none;
+    text-align: center;
+    display: block;
+
+    li {
+      padding: 0 20px;
+      display: inline-block;
+    }
+  }
+
+  a:any-link {
+    color: #222;
+    text-decoration: none;
+    text-transform: capitalize;
+  }
+
+  p {
+    margin: 40px 0 0;
+    color: #777;
+  }
+}
+
+@import "partials/header";

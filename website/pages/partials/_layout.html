@@ -2,13 +2,25 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport"
-	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 	<title>{title}</title>
 	<inject id="style"></inject>
 </head>
 <body>
+	<div class="wrapper top-bar">
+		<a href="https://beforesemicolon.com/">by <strong>Before Semicolon</strong></a>
+		<a href="https://beforesemicolon.com/blog">Blog</a>
+	</div>
+	<include partial="header"></include>
 	<inject></inject>
+	<footer class="wrapper">
+		<ul aria-label="secondary navigation">
+			<li #repeat="site.footer.links"><a href="{$item.path}">{$item.label}</a></li>
+		</ul>
+		<p><small>copyright @copy Before Semicolon {(new Date()).getFullYear()}. All rights reserved</small></p>
+	</footer>
 </body>
 </html>
