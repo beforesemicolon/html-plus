@@ -15,7 +15,14 @@ class Inject{
   
         if (injectId) {
           const content = childNodes.filter(childNode => {
-            return childNode.attributes && childNode.attributes['inject-id'] === injectId;
+            const include = childNode.attributes && childNode.attributes['inject-id'] === injectId
+            
+            if (include) {
+              childNode.removeAttribute('inject-id');
+              childNode.setContext('$$included', true);
+            }
+            
+            return include;
           });
     
           if (content.length) {
@@ -23,7 +30,10 @@ class Inject{
           }
         } else {
           this.content = childNodes.filter(childNode => {
-            return !childNode.attributes || childNode.attributes['inject-id'] === undefined;
+            return !childNode.attributes || (
+              childNode.attributes['inject-id'] === undefined &&
+              (childNode.context && !childNode?.context['$$included'])
+            );
           });
         }
       }
