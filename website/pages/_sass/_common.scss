@@ -1,3 +1,6 @@
+@import "./normalizer";
+@import "./colors";
+
 html,
 body {
   width: 100vw;
@@ -8,9 +11,9 @@ body {
 body {
   font-size: 16px;
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(0deg, #eee, #fff, #fff);
+  background: linear-gradient(0deg, $secondary, $light, $light);
   line-height: 100%;
-  color: #222;
+  color: $dark;
 }
 
 *,
@@ -26,11 +29,8 @@ $headings: "h1, h2, h3, h4, h5, h6, p";
   line-height: 120%;
 }
 
-a {
-  color: #3f51b5;
-}
-a:visited {
-  color: #087342;
+a:any-link {
+  color: $cta;
 }
 
 ul, ol {
@@ -44,14 +44,14 @@ ul, ol {
   text-transform: capitalize;
   text-decoration: none;
   letter-spacing: 1px;
-  background: #ebebeb;
-  color: #222;
+  background: $secondary;
+  color: $dark;
   font-weight: 400;
   display: inline-block;
 
   &.cta {
-    background: #673ab7;
-    color: #fff;
+    background: $cta;
+    color: $light;
   }
 }
 
@@ -63,24 +63,6 @@ ul, ol {
 @mixin wrapper($max-width) {
   padding-left: calc((100vw - min(#{$max-width}, calc(100vw - 50px))) / 2);
   padding-right: calc((100vw - min(#{$max-width}, calc(100vw - 50px))) / 2);
-}
-
-.top-bar {
-  background: #111;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-
-  a:any-link {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 200;
-
-    strong {
-      font-weight: 600;
-    }
-  }
 }
 
 .js-code {
@@ -115,36 +97,3 @@ ul, ol {
   }
 }
 
-footer {
-  background: #f2f2f2;
-  color: #222;
-  padding-top: 60px;
-  padding-bottom: 40px;
-  text-align: center;
-
-  ul {
-    padding: 0;
-    margin: 0 auto;
-    list-style: none;
-    text-align: center;
-    display: block;
-
-    li {
-      padding: 0 20px;
-      display: inline-block;
-    }
-  }
-
-  a:any-link {
-    color: #222;
-    text-decoration: none;
-    text-transform: capitalize;
-  }
-
-  p {
-    margin: 40px 0 0;
-    color: #777;
-  }
-}
-
-@import "partials/header";

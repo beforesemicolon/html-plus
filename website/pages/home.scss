@@ -1,5 +1,5 @@
-@import "includes/normalizer";
-@import "includes/common";
+@import "_sass/common";
+@import "_partials/layout";
 
 section[role="banner"] {
   display: flex;
@@ -38,7 +38,7 @@ section[role="banner"] {
 }
 
 .features {
-  background: #fbfaff;
+  background: $brand-light;
   padding-top: 80px;
   padding-bottom: 50px;
 
@@ -59,10 +59,10 @@ section[role="banner"] {
     justify-content: space-between;
 
     .feature-card {
-      background: #fff;
+      background: $light;
       padding: 25px;
       border-radius: 6px;
-      box-shadow: 0 0 12px #f4f4f4;
+      box-shadow: 0 0 12px rgba($secondary, 0.5);
       width: calc(50% - 25px/2);
       margin-bottom: 25px;
       display: flex;
@@ -92,7 +92,7 @@ section[role="banner"] {
 }
 
 .quick-start {
-  background: #fff;
+  background: $light;
   padding-top: 80px;
   padding-bottom: 50px;
   text-align: center;
