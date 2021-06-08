@@ -1,6 +1,25 @@
 <include partial="layout" data="pages.documentation">
 	<link rel="stylesheet" href="documentation.scss" inject-id="style">
 
-	<h2>Documentations</h2>
+	<main class="documentation wrapper">
+		<aside>
+			<label class="search-field" aria-label="search field">
+				<input type="search" name="search" placeholder="{searchLabel}">
+			</label>
+			<section>
+				<h2>{this['docs-menu'].title}</h2>
+				<ul>
+					<li #repeat="this['docs-menu'].list">
+						<a href="{$item.path}">{$item.label}</a>
+					</li>
+				</ul>
+			</section>
+		</aside>
+		<article>
+			<variable name="currentPage" value="[...this['docs-menu'].list].find((item, i) => i === 3)"></variable>
+			<log></log>
+			{$params.doc}
+		</article>
+	</main>
 
 </include>

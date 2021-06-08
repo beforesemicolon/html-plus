@@ -24,10 +24,25 @@ engine(app, path.resolve(__dirname, './pages'), {
   customTags: [],
   onPageRequest: (req) => {
     return {
-      $query: req.query
+      $params: req.params,
+      $query: req.query,
+      $url_path: req.originalUrl
     }
   }
 });
+
+app.get('/documentation/:doc', (req, res, next) => {
+  const ext = path.extname(req.path);
+  
+  if (!ext || ext === '.html') {
+    return res.render('documentation', {
+      $params: req.params,
+      $query: req.query
+    });
+  }
+  
+  next();
+})
 
 const server = http.createServer(app);
 

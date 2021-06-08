@@ -1,2 +1,15 @@
 @import "../_sass/common";
 @import "../_partials/layout";
+
+.documentation {
+  padding-top: 50px;
+  display: flex;
+
+  aside {
+    width: 300px;
+  }
+
+  article {
+    flex: 1;
+  }
+}

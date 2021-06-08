@@ -19,6 +19,14 @@ describe('Variable Tag', () => {
     
       await expect(transform(str)).resolves.toEqual('');
     });
+  
+    it('x', async () => {
+      const str = '<variable name="docs" value="[...this[\'docs-menu\'].list].find((item, i) => i === 3)"></variable>';
+    
+      await expect(transform(str, {
+        list: [{name: 'a'}, {name: 'b'}, {name: 'c'}]
+      })).resolves.toEqual('');
+    });
   });
   
   describe('should throw an error', () => {

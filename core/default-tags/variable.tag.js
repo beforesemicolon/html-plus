@@ -5,6 +5,8 @@ class Variable {
     const name = attributes.name;
     const value = attributes.value ?? innerHTML ?? '';
     
+    console.log('-- value', value);
+    
     if (!name) {
       throw new Error(`Variable must have a name`);
     }

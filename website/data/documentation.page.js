@@ -3,52 +3,60 @@ const docLink = '/documentation'
 module.exports = {
   currentPath: "/documentation",
   title: "HTML+ Documentation",
-  searchTerm: 'Search...',
+  searchLabel: 'Search...',
   'docs-menu': {
     title: 'Documentation',
+    path: docLink,
     list: [
       {
         label: "Getting Started",
-        page: "getting-started",
-        path: `${docLink}/${this.page}`,
-        list: []
+        path: `${docLink}/getting-started`,
+        content: ``,
       },
       {
         label: "Routing",
-        list: []
+        path: `${docLink}/routing`,
+        content: ``,
       },
       {
-        label: "Data",
-        list: []
+        label: "Data and Data Binding",
+        path: `${docLink}/data-and-data-binding`,
+        content: ``,
       },
       {
         label: "Data Context",
-        list: []
+        path: `${docLink}/data-context`,
+        content: ``,
       },
       {
         label: "Templating",
-        list: []
+        path: `${docLink}/templating`,
+        content: ``,
       },
       {
         label: "Styling",
-        list: []
+        path: `${docLink}/styling`,
+        content: ``,
       },
       {
         label: "Scripting",
-        list: []
+        path: `${docLink}/scripting`,
+        content: ``,
       },
       {
         label: "Create Custom Tag",
-        list: []
+        path: `${docLink}/create-custom-tag`,
+        content: ``,
       },
       {
         label: "Create Custom Attribute",
-        list: []
+        path: `${docLink}/create-custom-attribute`,
+        content: ``,
       },
       {
         label: "FAQ",
-        page: "getting-started",
-        path: `${docLink}/${this.page}`,
+        path: `${docLink}/faq`,
+        content: ``,
       },
     ]
   },
