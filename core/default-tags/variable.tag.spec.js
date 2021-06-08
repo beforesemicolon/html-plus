@@ -13,6 +13,12 @@ describe('Variable Tag', () => {
   
       await expect(transform(str)).resolves.toEqual('<b>20</b>');
     });
+  
+    it('using name attribute and children text', async () => {
+      const str = '<variable name="docs">{{page1: "Page 1", page2: "Page 2"}}</variable>';
+    
+      await expect(transform(str)).resolves.toEqual('');
+    });
   });
   
   describe('should throw an error', () => {

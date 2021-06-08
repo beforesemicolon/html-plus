@@ -2,7 +2,9 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const {engine} = require('../core/engine');
-const pages = require('./data/pages.json');
+const homePage = require('./data/home.page');
+const documentationPage = require('./data/documentation.page');
+const learnPage = require('./data/learn.page');
 const site = require('./data/site.json');
 const packageJSON = require('./../package.json');
 
@@ -10,12 +12,21 @@ const app = express();
 
 engine(app, path.resolve(__dirname, './pages'), {
   staticData: {
-    pages,
+    pages: {
+      documentation: documentationPage,
+      home: homePage,
+      learn: learnPage,
+    },
     site,
     version: packageJSON.version,
     license: packageJSON.license
   },
-  customTags: []
+  customTags: [],
+  onPageRequest: (req) => {
+    return {
+      $query: req.query
+    }
+  }
 });
 
 const server = http.createServer(app);
