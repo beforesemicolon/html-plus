@@ -49,7 +49,7 @@ describe('Inject Tag', () => {
 
     await expect(transform(str, {
       partialFileObjects: [partialFile]
-    })).resolves.toEqual('<p inject-id="target">2</p>');
+    })).resolves.toEqual('<p>2</p>');
   });
 
   it('should render own children if no include children has same id', async () => {

@@ -56,18 +56,6 @@ describe('Variable Tag', () => {
       await expect(() => transform(str)).rejects.toThrowError('Invalid variable name "09dd"');
     });
     
-    it('if value attribute is not provided', async () => {
-      const str = '<variable name="test"></variable>';
-      
-      await expect(() => transform(str)).rejects.toThrowError('Variable name "test" is missing value');
-    });
-    
-    it('if value attribute is empty', async () => {
-      const str = '<variable name="test" value=""></variable>';
-      
-      await expect(() => transform(str)).rejects.toThrowError('Variable name "test" is missing value');
-    });
-    
     it('if children is a html tag', async () => {
       const str = '<variable name="test"><b>20</b></variable>';
       
