@@ -20,12 +20,14 @@ describe('Variable Tag', () => {
       await expect(transform(str)).resolves.toEqual('');
     });
   
-    it('x', async () => {
-      const str = '<variable name="docs" value="[...this[\'docs-menu\'].list].find((item, i) => i === 3)"></variable>';
+    it('handle complex value logic', async () => {
+      const str = '<variable name="item" value="list.find((item, i) => i === 2)"></variable>{item.name}';
     
       await expect(transform(str, {
-        list: [{name: 'a'}, {name: 'b'}, {name: 'c'}]
-      })).resolves.toEqual('');
+        data: {
+          list: [{name: 'a'}, {name: 'b'}, {name: 'c'}]
+        }
+      })).resolves.toEqual('c');
     });
   });
   

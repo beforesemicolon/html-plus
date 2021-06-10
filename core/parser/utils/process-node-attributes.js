@@ -28,6 +28,7 @@ function processNodeAttributes(attributes = {}, customAttributes = {}, data = {}
               val = Number(val);
             }
           }
+  
         } catch (e) {
           throw new Error(`Failed to process attribute "${attrName}": ${e.message}`)
         }

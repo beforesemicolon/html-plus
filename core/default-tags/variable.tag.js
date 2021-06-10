@@ -3,9 +3,9 @@ class Variable {
     const {attributes, innerHTML} = node;
     
     const name = attributes.name;
-    const value = attributes.value ?? innerHTML ?? '';
-    
-    console.log('-- value', value);
+    const value = attributes.hasOwnProperty('value')
+      ? attributes.value
+      : innerHTML;
     
     if (!name) {
       throw new Error(`Variable must have a name`);
@@ -13,10 +13,6 @@ class Variable {
 
     if (!/^[a-zA-Z_][a-zA-Z0-9_$]*$/.test(name.trim())) {
       throw new Error(`Invalid variable name "${name}"`);
-    }
-
-    if (!`${value}`.trim()) {
-      throw new Error(`Variable name "${name}" is missing value`);
     }
     
     if (/<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*(\/>|>(.*?)<\/\1>)/gm.test(`${value}`.trim())) {

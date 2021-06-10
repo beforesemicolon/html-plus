@@ -1,17 +1,13 @@
-const symbolMap = {
-  gte: '>=',
-  lte: '<=',
-  gt: '>',
-  lt: '<',
-}
+const attributePattern = /\"([^"]*)\"/g;
 
-function undoSpecialCharactersInHTML(html = '') {
-  return `${html}`
-    .replace(
-      /(?:^|\s)(gte|lte|gt|lt)(?:\s|$)/g,
-      (fullMatch, grabbed) => {
-        return fullMatch.replace(grabbed, symbolMap[grabbed])
-      })
+function undoSpecialCharactersInHTML(html) {
+  return html
+    .replace(attributePattern,
+      (match) => {
+        return match
+          .replace('&lt;', '<')
+          .replace('&gt;', '>');
+      });
 }
 
 module.exports.undoSpecialCharactersInHTML = undoSpecialCharactersInHTML;

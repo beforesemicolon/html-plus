@@ -96,7 +96,7 @@ class HTMLNode {
     return Promise.all(
       this.#node.childNodes.map(childNode => {
         childNode.context = {...this.context, ...childNode.context, ...data}
-        
+
         return childNode instanceof TextNode
           ? new TextNode(bindData(childNode.rawText, {...this.#options.data, ...childNode.context}))
           : (new HTMLNode(childNode, this.#options)).render()

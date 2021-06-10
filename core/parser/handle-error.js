@@ -1,4 +1,5 @@
 const chalk = require("chalk");
+const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
 const {TextNode} = require("node-html-parser");
 
 function handleError(e, node, options) {
@@ -24,7 +25,7 @@ function handleError(e, node, options) {
   throw new Error(
     'HTML: ' +
     chalk.redBright(errMsg) + fileInfo +
-    `\n\n:Markup \n${chalk.green(nodeString)}`
+    `\n\n:Markup \n${chalk.green(undoSpecialCharactersInHTML(nodeString))}`
   );
 }
 
