@@ -77,7 +77,11 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
             
             callback(null, result);
           } catch (e) {
-            callback(new Error(e.message));
+            console.log(e.message);
+            const cleanMsg = e.message
+              .replace(/\[\d+m/g, '')
+              .replace(/(>|<)/g, m => m === '<' ? '&lt;' : '&gt;');
+            callback(null, `<pre>${cleanMsg}</pre>`);
           }
         })
       });
