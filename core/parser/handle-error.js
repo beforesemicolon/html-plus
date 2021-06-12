@@ -9,7 +9,7 @@ function handleError(e, node, options) {
     throw new Error(`${error}||${node.rawText}`)
   }
   
-  if (e.message && e.message.startsWith('HTML: ')) {
+  if (e.message && e.message.startsWith('Error: ')) {
     throw new Error(error)
   }
   
@@ -19,13 +19,12 @@ function handleError(e, node, options) {
     : node.outerHTML;
   
   const fileInfo = options.fileObject
-    ? `\n:File \n${chalk.yellow(options.fileObject?.filePath)}`
+    ? `\nFile: ${chalk.yellow(options.fileObject?.filePath)}`
     : '';
   
   throw new Error(
-    'HTML: ' +
-    chalk.redBright(errMsg) + fileInfo +
-    `\n\n:Markup \n${chalk.green(undoSpecialCharactersInHTML(nodeString))}`
+    'Error: ' + chalk.redBright(errMsg) + fileInfo +
+    `\nMarkup: ${chalk.green(undoSpecialCharactersInHTML(nodeString))}`
   );
 }
 
