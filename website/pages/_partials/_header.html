@@ -1,9 +1,9 @@
 <header class="wrapper">
-	<h1><a href="/">{site.name}</a></h1>
+	<h1><a href="/">{$data.site.name}</a></h1>
 	<nav>
 		<h2 hidden>main navigation</h2>
-		<a href="https://github.com/beforesemicolon/html-plus" class="version-link">v{version}</a>
-		<a #repeat="site.navigation"
+		<a href="https://github.com/beforesemicolon/html-plus" class="version-link">v{$data.site.version}</a>
+		<a #repeat="$data.site.navigation"
 		   href="{$item.path}"
 		   class="{($item.type === 'button' ? 'link-button cta ' : '') + ($item.path === currentPath ? 'current' : '')}">
 			{$item.label}

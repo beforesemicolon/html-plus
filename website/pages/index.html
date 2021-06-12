@@ -1,31 +1,33 @@
-<include partial="layout" data="pages.home">
+<variable name="page" value="$data.pages.home"></variable>
+
+<include partial="layout" data="page">
 	<link rel="stylesheet" href="./home.scss" inject-id="style">
 
 	<section role="banner" class="wrapper">
-		<h2>{site.description}</h2>
-		<p>{banner.description}</p>
+		<h2>{$data.site.description}</h2>
+		<p>{page.banner.description}</p>
 		<div class="doc-links">
-			<a href="{banner['learn-link'].path}" class="link-button cta">{banner['learn-link'].label}</a>
-			<a href="{banner['documentation-link'].path}" class="link-button">{banner['documentation-link'].label}</a>
+			<a href="{page.banner.learn_link.path}" class="link-button cta">{page.banner.learn_link.label}</a>
+			<a href="{page.banner.documentation_link.path}" class="link-button">{page.banner.documentation_link.label}</a>
 		</div>
-		<p>License: <strong>{license}</strong></p>
+		<p>License: <strong>{$data.site.license}</strong></p>
 	</section>
 
 	<section class="features wrapper">
-		<h3>{features.title}</h3>
-		<p>{features.description}</p>
+		<h3>{page.features.title}</h3>
+		<p>{page.features.description}</p>
 		<div class="feature-list">
-			<div #repeat="features.list as feature" class="feature-card">
-				<h4>{$feature.title}</h4>
-				<p>{$feature.description}</p>
-				<a href="{$feature.path}">{features['link-label']}</a>
+			<div #repeat="page.features.list as feature" class="feature-card">
+				<h4>{feature.title}</h4>
+				<p>{feature.description}</p>
+				<a href="{feature.path}">{page.features.link_label}</a>
 			</div>
 		</div>
 	</section>
 
 	<section class="quick-start wrapper">
-		<h3>{this['quick-start'].title}</h3>
-		<p>{this['quick-start'].description}</p>
+		<h3>{page.quick_start.title}</h3>
+		<p>{page.quick_start.description}</p>
 		<pre #ignore class="js-code">
 			<code class="declaration">const</code> express = require(<code class="import">'express'</code>);
 			<code class="declaration">const</code> http = require(<code class="import">'http'</code>);
@@ -42,7 +44,7 @@
 				console.log('listening on port http://localhost:3000/');
 			})
 		</pre>
-		<a href="{this['quick-start'].link.path}" class="link-button cta">{this['quick-start'].link.label}</a>
+		<a href="{page.quick_start.link.path}" class="link-button cta">{page.quick_start.link.label}</a>
 	</section>
 
 </include>

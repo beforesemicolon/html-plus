@@ -1,15 +1,53 @@
 @import "../_sass/common";
 @import "../_partials/layout";
+@import "../_partials/search-field";
 
 .documentation {
-  padding-top: 50px;
   display: flex;
+  margin: 50px 0;
 
   aside {
     width: 300px;
+    background: $brand-light;
+    padding: 25px;
+    border-radius: 5px;
+
+    section {
+      margin-top: 25px;
+
+      ul {
+        padding: 0;
+
+        li {
+          height: 35px;
+          display: flex;
+          align-items: center;
+          position: relative;
+          padding-left: 20px;
+
+          &::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            background: $dark;
+            border-radius: 50%;
+            position: absolute;
+            left: 0;
+          }
+
+          a {
+            text-decoration: none;
+            font-size: 1rem;
+            color: $dark;
+          }
+        }
+      }
+    }
   }
 
   article {
     flex: 1;
+    padding: 20px;
   }
 }

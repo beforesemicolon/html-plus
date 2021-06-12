@@ -1,0 +1,15 @@
+@import "../_sass/colors";
+
+.search-field {
+  overflow: hidden;
+  display: block;
+
+  input {
+    height: 45px;
+    width: 100%;
+    border: 1px solid $secondary-darker;
+    border-radius: 3px;
+    padding: 5px 15px;
+    background: #fff;
+  }
+}

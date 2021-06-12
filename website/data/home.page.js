@@ -3,11 +3,11 @@ module.exports = {
   title: "HTML+ - HTML template language, engine and site builder",
   banner: {
     description: "HTML is powerful on its own and there is no need to change its syntax. <strong>HTML+</strong> simply\n\t\tadds and allows you to add extra capabilities while still enjoying the HTML syntax.",
-    'learn-link': {
+    learn_link: {
       path: "/learn",
       label: "Start Learning"
     },
-    'documentation-link': {
+    documentation_link: {
       path: "/documentation",
       label: "Documentation"
     }
@@ -15,7 +15,7 @@ module.exports = {
   features: {
     title: "What makes it stand-out?",
     description: "In short, it is familiar, fast, powerful and allows you to write less and powerfully. Here is more:",
-    'link-label': "learn more",
+    link_label: "learn more",
     list: [
       {
         title: "It is just HTML",
@@ -69,7 +69,7 @@ module.exports = {
       }
     ]
   },
-  "quick-start": {
+  quick_start: {
     title: "Get Started Quickly",
     description: "The following code creates an Express server with template, page routes, CSS(pre and post processors) and Typescript files setup ready to go.",
     link: {

@@ -17,16 +17,21 @@ engine(app, path.resolve(__dirname, './pages'), {
       home: homePage,
       learn: learnPage,
     },
-    site,
-    version: packageJSON.version,
-    license: packageJSON.license
+    site: {
+      ...site,
+      version: packageJSON.version,
+      license: packageJSON.license
+    },
+    params: {},
+    query: {},
+    url_path: '/'
   },
   customTags: [],
   onPageRequest: (req) => {
     return {
-      $params: req.params,
-      $query: req.query,
-      $url_path: req.originalUrl
+      params: req.params,
+      query: req.query,
+      url_path: req.originalUrl
     }
   }
 });
@@ -35,10 +40,19 @@ app.get('/documentation/:doc', (req, res, next) => {
   const ext = path.extname(req.path);
   
   if (!ext || ext === '.html') {
-    return res.render('documentation', {
-      $params: req.params,
-      $query: req.query
+    const foundDocument = [...documentationPage.docs_menu.list, documentationPage.api_menu.list].find(doc => {
+      return doc.path === req.path.replace(/\/$/, '');
     });
+    
+    if (foundDocument) {
+      return res.render('documentation', {
+        params: req.params,
+        query: req.query,
+        url_path: req.originalUrl
+      });
+    } else {
+      return res.redirect('/404')
+    }
   }
   
   next();

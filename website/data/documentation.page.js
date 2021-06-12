@@ -4,14 +4,13 @@ module.exports = {
   currentPath: "/documentation",
   title: "HTML+ Documentation",
   searchLabel: 'Search...',
-  'docs-menu': {
+  docs_menu: {
     title: 'Documentation',
-    path: docLink,
     list: [
       {
         label: "Getting Started",
         path: `${docLink}/getting-started`,
-        content: ``,
+        content: ` `,
       },
       {
         label: "Routing",
@@ -60,7 +59,7 @@ module.exports = {
       },
     ]
   },
-  'api-menu': {
+  api_menu: {
     title: 'API Reference',
     list: [
       {
