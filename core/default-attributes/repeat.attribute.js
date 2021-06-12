@@ -41,7 +41,9 @@ class Repeat extends Attribute {
         const [key, data] = list[i];
         node.setContext('$index', i);
         node.setContext('$key', key);
-        node.setContext(`$${this.itemName}`, data);
+        node.setContext(this.itemName === 'item'
+          ? `$${this.itemName}`
+          : this.itemName, data);
         
         result += await node.render();
       }
