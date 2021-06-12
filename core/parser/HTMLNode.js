@@ -116,40 +116,34 @@ class HTMLNode {
     ).then(res => res.join(''));
   }
   
-  async #processAttribute(cb) {
-    if (this.#node.rawAttrs.length && /\s?#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
-      const result = await renderByAttribute(this, this.#options);
-    
-      if (result === null) {
-        return '';
-      }
-    
-      if (typeof result === 'string') {
-        return result;
-      }
-    }
-    
-    return await cb();
-  }
-  
   async render() {
     try {
-      return this.#processAttribute(async () => {
-        if (this.#tag) {
-          return this.#tag.render();
+      if (this.#node.rawAttrs.length && /\s?#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
+        const result = await renderByAttribute(this, this.#options);
+    
+        if (result === null) {
+          return '';
         }
+    
+        if (typeof result === 'string') {
+          return result;
+        }
+      }
   
-        this.attributes = processNodeAttributes(
-          this.#node.attributes,
-          {},
-          {$data: this.#options.data, ...this.#node.context}
-        );
+      if (this.#tag) {
+        return this.#tag.render();
+      }
   
-        return (this.tagName
-            ? composeTagString(this, await this.renderChildren(this.context), Object.keys(this.#options.customAttributes))
-            : await this.renderChildren(this.context)
-        ).trim();
-      })
+      this.attributes = processNodeAttributes(
+        this.#node.attributes,
+        {},
+        {$data: this.#options.data, ...this.#node.context}
+      );
+  
+      return (this.tagName
+          ? composeTagString(this, await this.renderChildren(this.context), Object.keys(this.#options.customAttributes))
+          : await this.renderChildren(this.context)
+      ).trim();
     } catch (e) {
       handleError(e, this.#node, this.#options);
     }
