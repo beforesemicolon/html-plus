@@ -40,7 +40,7 @@ class HTMLNode {
       this.attributes = processNodeAttributes(
         this.#node.attributes,
         this.#tag.customAttributes,
-        {...this.#options.data, ...this.#node.context}
+        {$data: this.#options.data, ...this.#node.context}
       );
       this.#tag = createCustomTag(this.#tag, this.#node, this, this.#options);
     }
@@ -70,7 +70,7 @@ class HTMLNode {
       this.attributes[key] = processNodeAttributes(
         {key: value},
         this.#tag ? this.#tag.customAttributes : {},
-        {...this.#options.data, ...this.#node.context}
+        {$data: this.#options.data, ...this.#node.context}
       );
     }
   }
@@ -99,7 +99,7 @@ class HTMLNode {
       childNode.context = {...childNode.context, ...data};
       
       return childNode instanceof TextNode
-        ? new TextNode(bindData(childNode.rawText, {...this.#options.data, ...this.context, ...childNode.context}))
+        ? new TextNode(bindData(childNode.rawText, {$data: this.#options.data, ...this.context, ...childNode.context}))
         : new HTMLNode(childNode, this.#options)
     })
   }
@@ -110,7 +110,7 @@ class HTMLNode {
         childNode.context = {...childNode.context, ...data}
         
         return childNode instanceof TextNode
-          ? new TextNode(bindData(childNode.rawText, {...this.#options.data, ...this.context, ...childNode.context}))
+          ? new TextNode(bindData(childNode.rawText, {$data: this.#options.data, ...this.context, ...childNode.context}))
           : (new HTMLNode(childNode, this.#options)).render()
       })
     ).then(res => res.join(''));
@@ -142,7 +142,7 @@ class HTMLNode {
         this.attributes = processNodeAttributes(
           this.#node.attributes,
           {},
-          {...this.#options.data, ...this.#node.context}
+          {$data: this.#options.data, ...this.#node.context}
         );
   
         return (this.tagName

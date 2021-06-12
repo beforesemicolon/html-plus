@@ -10,13 +10,13 @@ describe('If Attribute', () => {
     await expect(transform('<b #if="true"></b>')).resolves.toEqual('<b></b>');
     await expect(transform('<b #if="5"></b>')).resolves.toEqual('<b></b>');
     await expect(transform('<b #if="4 > 0"></b>')).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="checked"></b>', {
+    await expect(transform('<b #if="$data.checked"></b>', {
       data: {checked: true}
     })).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="!checked"></b>', {
+    await expect(transform('<b #if="!$data.checked"></b>', {
       data: {checked: false}
     })).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="checked === false"></b>', {
+    await expect(transform('<b #if="$data.checked === false"></b>', {
       data: {checked: false}
     })).resolves.toEqual('<b></b>');
   });
@@ -28,13 +28,13 @@ describe('If Attribute', () => {
     await expect(transform('<b #if="undefined"></b>')).resolves.toEqual('');
     await expect(transform('<b #if=""></b>')).resolves.toEqual('');
     await expect(transform('<b #if="4 < 0"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="checked"></b>', {
+    await expect(transform('<b #if="$data.checked"></b>', {
       data: {checked: false}
     })).resolves.toEqual('');
-    await expect(transform('<b #if="!checked"></b>', {
+    await expect(transform('<b #if="!$data.checked"></b>', {
       data: {checked: true}
     })).resolves.toEqual('');
-    await expect(transform('<b #if="checked === false"></b>', {
+    await expect(transform('<b #if="$data.checked === false"></b>', {
       data: {checked: true}
     })).resolves.toEqual('');
   });

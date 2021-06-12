@@ -6,7 +6,7 @@ async function renderByAttribute(node, options) {
   for (let attr of new Set([...defaultAttributesName, ...Object.keys(options.customAttributes)])) {
     if (node.attributes.hasOwnProperty(attr) && options.customAttributes[attr]) {
       const handler = new options.customAttributes[attr]();
-      const data = {...options.data, ...node.context};
+      const data = {$data: options.data, ...node.context};
       let value = node.attributes[attr].trim();
       
       if (value) {

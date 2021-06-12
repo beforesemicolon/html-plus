@@ -63,8 +63,8 @@ describe('Inject Tag', () => {
   
   it('should maintain context', async () => {
     partialFile.content = '<inject></inject>'
-    const str = '<include partial="inj-partial" data="documents">' +
-      '<variable name="currentPath">/documentation/sample</variable>' +
+    const str = '<include partial="inj-partial" data="$data.documents">' +
+      '<variable name="currentPath" value="`${$data.documents.currentPath}/sample`"></variable>' +
       '{currentPath}' +
       '</include>';
 
@@ -73,7 +73,8 @@ describe('Inject Tag', () => {
       data: {
         documents: {
           currentPath: '/documentation'
-        }
+        },
+        other: 24
       }
     })).resolves.toEqual('/documentation/sample');
   });

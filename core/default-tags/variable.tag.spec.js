@@ -21,7 +21,7 @@ describe('Variable Tag', () => {
     });
   
     it('handle complex value logic', async () => {
-      const str = '<variable name="item" value="list.find((item, i) => i === 2)"></variable>{item.name}';
+      const str = '<variable name="item" value="$data.list.find((item, i) => i === 2)"></variable>{item.name}';
     
       await expect(transform(str, {
         data: {

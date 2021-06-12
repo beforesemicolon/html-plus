@@ -34,12 +34,6 @@ class Include {
         this.partial = new PartialFile(partialAbsolutePath, fileObject.srcDirectoryPath, tagInfo);
       }
     }
-  
-    for (let key in node.attributes['data']) {
-      if (node.attributes['data'].hasOwnProperty(key)) {
-        node.setContext(key, node.attributes['data'][key])
-      }
-    }
   }
   
   static customAttributes = {
@@ -50,7 +44,7 @@ class Include {
   
   async render() {
     return this.partial
-      ? await this.partial.render(this.data, this.node.childNodes)
+      ? await this.partial.render(this.data)
       : '';
   }
 }
