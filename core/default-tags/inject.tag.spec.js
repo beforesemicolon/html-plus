@@ -60,4 +60,21 @@ describe('Inject Tag', () => {
       partialFileObjects: [partialFile]
     })).resolves.toEqual('<p>default</p>');
   });
+  
+  it('should maintain context', async () => {
+    partialFile.content = '<inject></inject>'
+    const str = '<include partial="inj-partial" data="documents">' +
+      '<variable name="currentPath">/documentation/sample</variable>' +
+      '{currentPath}' +
+      '</include>';
+
+    await expect(transform(str, {
+      partialFileObjects: [partialFile],
+      data: {
+        documents: {
+          currentPath: '/documentation'
+        }
+      }
+    })).resolves.toEqual('/documentation/sample');
+  });
 });

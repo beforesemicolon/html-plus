@@ -29,6 +29,16 @@ describe('Variable Tag', () => {
         }
       })).resolves.toEqual('c');
     });
+  
+    it('overriding data', async () => {
+      const str = '<variable name="sample" value="`transformed`"></variable>{sample}';
+    
+      await expect(transform(str, {
+        data: {
+          sample: 'transform'
+        }
+      })).resolves.toEqual('transformed');
+    });
   });
   
   describe('should throw an error', () => {

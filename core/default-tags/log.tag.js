@@ -3,7 +3,13 @@ const chalk = require("chalk");
 function Log(node, options) {
   let value = node.attributes.value;
   
-  value = node.context[value] ?? options.data[value] ?? node.context;
+  if (node.context.hasOwnProperty(value)) {
+    value = node.context[value];
+  } else if(options.data.hasOwnProperty(value)) {
+    value = options.data[value];
+  } else {
+    value = node.context;
+  }
   
   return async () => {
     const msg = (await node.renderChildren()) || 'log';

@@ -1,4 +1,4 @@
-async function renderCustomTag(tag, rawNode, node, nodeOptions) {
+function createCustomTag(tag, rawNode, node, nodeOptions) {
   let instance = () => '';
   const {customTags, customAttributes, onTraverse, ...opt} = nodeOptions
   
@@ -32,11 +32,15 @@ async function renderCustomTag(tag, rawNode, node, nodeOptions) {
     }
   }
   
-  return typeof instance === 'function'
-    ? (await instance()) ?? ''
-    : typeof instance.render === 'function'
-      ? (await instance.render()) ?? ''
-      : '';
+  if (typeof instance === 'function') {
+    return {
+      render: async () => (await instance()) ?? ''
+    }
+  }
+  
+  return typeof instance.render === 'function'
+    ? instance
+    : {render: () => ''}
 }
 
-module.exports.renderCustomTag = renderCustomTag;
+module.exports.createCustomTag = createCustomTag;

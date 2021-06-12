@@ -1,12 +1,10 @@
 const {executeCode} = require("./execute-code");
 const {extractExecutableSnippetFromString} = require("./extract-executable-snippet-from-string");
-const {undoSpecialCharactersInHTML} = require("../parser/utils/undo-special-characters-in-HTML");
 
 function bindData(str, data = {}) {
   str = str.replace(/\s+$/g, '\n');
   
   if (str.trim() && str.includes('{')) {
-    str = undoSpecialCharactersInHTML(str);
     const execs = extractExecutableSnippetFromString(str);
     if (execs.length) {
       for (let m of execs) {
