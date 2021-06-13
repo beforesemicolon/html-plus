@@ -1,57 +1,60 @@
 @import "header";
 
-footer {
-  background: $secondary;
-  color: $dark;
-  padding-top: 60px;
-  padding-bottom: 40px;
-  text-align: center;
+body {
 
-  ul {
-    padding: 0;
-    margin: 0 auto;
-    list-style: none;
-    text-align: center;
-    display: block;
+  .top-bar {
+    background: $black;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
 
-    li {
-      padding: 0 20px;
-      display: inline-block;
+    a:any-link {
+      color: $light;
+      text-decoration: none;
+      font-weight: 200;
+      margin-left: 35px;
+
+      &:first-of-type {
+        margin-left: 0;
+      }
+
+      strong {
+        font-weight: 600;
+      }
     }
   }
 
-  a:any-link {
+  & > footer {
+    background: $secondary;
     color: $dark;
-    text-decoration: none;
-    text-transform: capitalize;
-  }
+    padding-top: 60px;
+    padding-bottom: 40px;
+    text-align: center;
 
-  p {
-    margin: 40px 0 0;
-    color: $black;
-    opacity: 0.7;
-  }
-}
+    ul {
+      padding: 0;
+      margin: 0 auto;
+      list-style: none;
+      text-align: center;
+      display: block;
 
-.top-bar {
-  background: $black;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-
-  a:any-link {
-    color: $light;
-    text-decoration: none;
-    font-weight: 200;
-    margin-left: 35px;
-
-    &:first-of-type {
-      margin-left: 0;
+      li {
+        padding: 0 20px;
+        display: inline-block;
+      }
     }
 
-    strong {
-      font-weight: 600;
+    a:any-link {
+      color: $dark;
+      text-decoration: none;
+      text-transform: capitalize;
+    }
+
+    p {
+      margin: 40px 0 0;
+      color: $black;
+      opacity: 0.7;
     }
   }
 }

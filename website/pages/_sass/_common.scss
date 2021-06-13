@@ -36,6 +36,29 @@ a:any-link {
 
 ul, ol {
   margin: 0;
+
+  li {
+    padding-left: 10px;
+    line-height: 150%;
+
+    &::marker {
+      content: "-";
+      color: $brand;
+    }
+  }
+}
+
+p {
+  line-height: 150%;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+abbr {
+  color: $dark;
+  font-weight: 500;
 }
 
 .link-button,
@@ -53,6 +76,17 @@ ul, ol {
   &.cta {
     background: $cta;
     color: $light;
+  }
+
+  &.primary {
+    background: $black;
+    color: $light;
+  }
+
+  &.secondary {
+    background: $secondary;
+    color: $dark;
+    font-weight: 600;
   }
 }
 

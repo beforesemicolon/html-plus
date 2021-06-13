@@ -33,13 +33,27 @@
             background: $dark;
             border-radius: 50%;
             position: absolute;
-            left: 0;
+            left: 5px;
           }
 
           a {
             text-decoration: none;
             font-size: 1rem;
             color: $dark;
+          }
+
+          &.current {
+            background: rgba($brand, 0.1);
+            border-right: 5px solid $brand;
+
+            &::before {
+              background: $brand;
+            }
+
+            a {
+              font-weight: 600;
+              color: $brand;
+            }
           }
         }
       }
@@ -49,5 +63,16 @@
   article {
     flex: 1;
     padding: 20px;
+    font-weight: 300;
+
+    h2 {
+      font-size: 3rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin: 35px 0 10px;
+    }
   }
 }

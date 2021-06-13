@@ -3,24 +3,25 @@
 <include partial="layout" data="page">
 	<link rel="stylesheet" href="documentation.scss" inject-id="style">
 	<main class="documentation wrapper">
-		<variable name="fullPath"
-		          value="`${page.currentPath}/${$data.params.doc ?? ''}`"></variable>
 		<aside>
 			<include partial="search-field" data="{placeholder: 'Search...'}"></include>
 			<section>
 				<h2>{page.docs_menu.title}</h2>
 				<ul>
-					<li #repeat="page.docs_menu.list">
+					<li #repeat="page.docs_menu.list" class="{$data.path === $item.path ? 'current' : ''}">
 						<a href="{$item.path}">{$item.label}</a>
 					</li>
 				</ul>
 			</section>
 		</aside>
 		<variable name="currentPage"
-		          value="page.docs_menu.list.find((item) => item.path === fullPath)"></variable>
+		          value="page.docs_menu.list.find((item) => item.path === $data.path)"></variable>
 		<article #if="currentPage">
 			<h2>{currentPage.label}</h2>
 			{currentPage.content}
+		</article>
+		<article #if="$data.path === page.path">
+			{page.content}
 		</article>
 	</main>
 

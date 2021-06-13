@@ -10,6 +10,7 @@ const packageJSON = require('./../package.json');
 
 const app = express();
 
+
 engine(app, path.resolve(__dirname, './pages'), {
   staticData: {
     pages: {
@@ -28,10 +29,9 @@ engine(app, path.resolve(__dirname, './pages'), {
   },
   customTags: [],
   onPageRequest: (req) => {
+    const fullPath = req.path.replace(/(\/|\.html)$/, '');
     return {
-      params: req.params,
-      query: req.query,
-      url_path: req.originalUrl
+      path: fullPath
     }
   }
 });
@@ -40,15 +40,14 @@ app.get('/documentation/:doc', (req, res, next) => {
   const ext = path.extname(req.path);
   
   if (!ext || ext === '.html') {
+    const fullPath = req.path.replace(/(\/|\.html)$/, '');
     const foundDocument = [...documentationPage.docs_menu.list, documentationPage.api_menu.list].find(doc => {
-      return doc.path === req.path.replace(/\/$/, '');
+      return doc.path === fullPath;
     });
     
     if (foundDocument) {
       return res.render('documentation', {
-        params: req.params,
-        query: req.query,
-        url_path: req.originalUrl
+        path: fullPath
       });
     } else {
       return res.redirect('/404')

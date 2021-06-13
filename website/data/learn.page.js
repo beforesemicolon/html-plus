@@ -1,4 +1,4 @@
 module.exports = {
-  currentPath: "/learn",
+  path: "/learn",
   title: "HTML+ Learn"
 }
