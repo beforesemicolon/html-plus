@@ -45,7 +45,7 @@ class HTMLNode {
       this.attributes = processNodeAttributes(
         this.#node.attributes,
         this.#tag.customAttributes,
-        {$data: this.#options.data, ...this.#node.context}
+        {$data: this.#options.data, ...this.context}
       );
       this.#tag = createCustomTag(this.#tag, this.#node, this, this.#options);
     }
@@ -73,7 +73,7 @@ class HTMLNode {
       this.attributes[key] = processNodeAttributes(
         {key: value},
         this.#tag ? this.#tag.customAttributes : {},
-        {$data: this.#options.data, ...this.#node.context}
+        {$data: this.#options.data, ...this.context}
       );
     }
   }
@@ -145,7 +145,7 @@ class HTMLNode {
       this.attributes = processNodeAttributes(
         this.#node.attributes,
         {},
-        {$data: this.#options.data, ...this.#node.context}
+        {$data: this.#options.data, ...this.context}
       );
       
       return (this.tagName

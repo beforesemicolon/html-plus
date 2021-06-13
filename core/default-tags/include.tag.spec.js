@@ -7,16 +7,21 @@ const {promisify} = require('util');
 const exec = promisify(cp.exec);
 
 describe('Include Tag', () => {
+  const nestedPartialAbsPath = `${path.resolve(__dirname)}/_inc-nested-partial.html`;
   const partialAbsPath = `${path.resolve(__dirname)}/_inc-partial.html`;
   let partialFile;
+  let nestedPartialFile;
   
   beforeAll(async () => {
     await exec(`echo '<div>{title}</div>' >> ${partialAbsPath}`);
+    await exec(`echo '<div>Nested: {title}</div>' >> ${nestedPartialAbsPath}`);
     partialFile = new PartialFile(partialAbsPath, __dirname);
+    nestedPartialFile = new PartialFile(nestedPartialAbsPath, __dirname);
   })
   
   afterAll(async () => {
     await exec(`rm ${partialAbsPath}`);
+    await exec(`rm ${nestedPartialAbsPath}`);
   });
   
   it('should include partial with partial attribute', async () => {
@@ -34,6 +39,16 @@ describe('Include Tag', () => {
       partialFileObjects: [partialFile],
       fileObject: {fileDirectoryPath: __dirname}
     })).resolves.toEqual('<div>include partial</div>');
+  });
+  
+  it('should allow for nested includes', async () => {
+    partialFile.content = '<include partial-path="_inc-nested-partial.html"></include>'
+    const str = '<include partial-path="_inc-partial.html" data="{title: \'include partial\'}"></include>'
+    
+    await expect(transform(str, {
+      partialFileObjects: [partialFile, nestedPartialFile],
+      fileObject: {fileDirectoryPath: __dirname}
+    })).resolves.toEqual('<div>Nested: include partial</div>');
   });
 
   it('should render blank if no partial info is provided', async () => {

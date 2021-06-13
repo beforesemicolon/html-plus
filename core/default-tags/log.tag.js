@@ -7,6 +7,8 @@ function Log(node, options) {
     value = node.context[value];
   } else if(options.data.hasOwnProperty(value)) {
     value = options.data[value];
+  } else if(value === '$context') {
+    value = node.context;
   } else {
     value = null;
   }
