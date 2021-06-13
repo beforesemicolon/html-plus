@@ -20,6 +20,14 @@ describe('Variable Tag', () => {
       await expect(transform(str)).resolves.toEqual('');
     });
   
+    it('for all sibling nodes after', async () => {
+      const str = '<variable name="title">Super Title</variable>' +
+        '<div><p>{title}</p></div>'
+      ;
+    
+      await expect(transform(str)).resolves.toEqual('<div><p>Super Title</p></div>');
+    });
+  
     it('handle complex value logic', async () => {
       const str = '<variable name="item" value="$data.list.find((item, i) => i === 2)"></variable>{item.name}';
     
@@ -38,6 +46,18 @@ describe('Variable Tag', () => {
           sample: 'transform'
         }
       })).resolves.toEqual('transformed');
+    });
+  
+    it('overriding other variable', async () => {
+      const str = '<variable name="sample" value="\'transformed\'"></variable>{sample}' +
+        '<div><variable name="sample" value="\'transformed again\'"></variable>{sample}</div>'
+      ;
+    
+      await expect(transform(str, {
+        data: {
+          sample: 'transform'
+        }
+      })).resolves.toEqual('transformed<div>transformed again</div>');
     });
   });
   

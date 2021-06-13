@@ -30,9 +30,14 @@ class HTMLNode {
     this.#node = typeof nodeORHTMLString === 'string'
       ? parse(replaceSpecialCharactersInHTML(nodeORHTMLString))
       : nodeORHTMLString;
+    this.#node.context = {...this.#node.context};
     this.#options = options;
     this.#tag = options.customTags[this.#node.rawTagName];
     this.attributes = this.#node.attributes;
+  
+    this.#node.getContext = () => {
+      return {...this.#node.parentNode?.getContext(), ...(this.#node.context ?? {})};
+    }
     
     // need to process custom tag early so any context that is set
     // is kept and used to update the nodes before it gets to rendering
@@ -55,9 +60,7 @@ class HTMLNode {
   }
   
   get context() {
-    return this.#node.parentNode
-      ? {...this.#node.parentNode.context, ...this.#node.context}
-      : (this.#node.context ?? {});
+    return this.#node.getContext();
   }
   
   get innerHTML() {
@@ -94,55 +97,60 @@ class HTMLNode {
     }
   }
   
-  childNodes(data) {
+  #childNodes(data = {}, render = false) {
     return this.#node.childNodes.map(childNode => {
-      childNode.context = {...childNode.context, ...data};
+      if (childNode instanceof TextNode) {
+        const text = bindData(childNode.rawText, {
+          $data: this.#options.data,
+          ...this.context,
+          ...childNode.context,
+          ...data
+        });
+        
+        return render ? text : new TextNode(text);
+      }
       
-      return childNode instanceof TextNode
-        ? new TextNode(bindData(childNode.rawText, {$data: this.#options.data, ...this.context, ...childNode.context}))
-        : new HTMLNode(childNode, this.#options)
+      const node = new HTMLNode(childNode, this.#options);
+      
+      return render ? node.render() : node;
     })
   }
   
+  childNodes(data) {
+    return this.#childNodes(data);
+  }
+  
   renderChildren(data = {}) {
-    return Promise.all(
-      this.#node.childNodes.map(childNode => {
-        childNode.context = {...childNode.context, ...data}
-        
-        return childNode instanceof TextNode
-          ? new TextNode(bindData(childNode.rawText, {$data: this.#options.data, ...this.context, ...childNode.context}))
-          : (new HTMLNode(childNode, this.#options)).render()
-      })
-    ).then(res => res.join(''));
+    return Promise.all(this.#childNodes(data, true)).then(res => res.join(''));
   }
   
   async render() {
     try {
       if (this.#node.rawAttrs.length && /\s?#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
         const result = await renderByAttribute(this, this.#options);
-    
+        
         if (result === null) {
           return '';
         }
-    
+        
         if (typeof result === 'string') {
           return result;
         }
       }
-  
+      
       if (this.#tag) {
         return this.#tag.render();
       }
-  
+      
       this.attributes = processNodeAttributes(
         this.#node.attributes,
         {},
         {$data: this.#options.data, ...this.#node.context}
       );
-  
+      
       return (this.tagName
-          ? composeTagString(this, await this.renderChildren(this.context), Object.keys(this.#options.customAttributes))
-          : await this.renderChildren(this.context)
+          ? composeTagString(this, await this.renderChildren(), Object.keys(this.#options.customAttributes))
+          : await this.renderChildren()
       ).trim();
     } catch (e) {
       handleError(e, this.#node, this.#options);

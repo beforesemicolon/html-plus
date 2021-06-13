@@ -8,7 +8,7 @@ function Log(node, options) {
   } else if(options.data.hasOwnProperty(value)) {
     value = options.data[value];
   } else {
-    value = node.context;
+    value = null;
   }
   
   return async () => {
@@ -17,7 +17,7 @@ function Log(node, options) {
     
     try {
       result = value && typeof value === 'object'
-        ? JSON.stringify({log: value}, null, 2)
+        ? JSON.stringify({_: value}, null, 2)
         : `${value}`;
     } catch (e) {
       result = e.message;
@@ -25,7 +25,7 @@ function Log(node, options) {
     
     console.log(`\n${chalk.green(msg)}:\n${result}`);
     
-    return `<p>${msg}</p><pre>${result}</pre>`;
+    return `<p>${msg}</p><pre style="overflow: scroll">${result}</pre>`;
   };
 }
 
