@@ -19,56 +19,56 @@ describe('Inject Tag', () => {
     await exec(`rm ${partialAbsPath}`);
   });
   
-  it('should render blank if no root children', async () => {
+  it('should render blank if no root children', () => {
     const str = '<inject></inject>';
 
-    await expect(transform(str)).resolves.toEqual('');
+    expect(transform(str)).toEqual('');
   });
   
-  it('should render all include children if no id provided', async () => {
+  it('should render all include children if no id provided', () => {
     const str = '<include partial="inj-partial">stuff: <p>1</p><p>2</p></include>';
   
-    await expect(transform(str, {
+    expect(transform(str, {
       partialFileObjects: [partialFile]
-    })).resolves.toEqual('stuff:\n' +
+    })).toEqual('stuff:\n' +
       '<p>1</p><p>2</p>');
   });
   
-  it('should render own children if include has no children', async () => {
+  it('should render own children if include has no children', () => {
     partialFile.content = '<inject><p>default content</p></inject>'
     const str = '<include partial="inj-partial"></include>';
 
-    await expect(transform(str, {
+    expect(transform(str, {
       partialFileObjects: [partialFile]
-    })).resolves.toEqual('<p>default content</p>');
+    })).toEqual('<p>default content</p>');
   });
 
-  it('should render single include child with same id', async () => {
+  it('should render single include child with same id', () => {
     partialFile.content = '<inject id="target"></inject>'
     const str = '<include partial="inj-partial"><p>1</p><p inject-id="target">2</p><p>3</p><</include>';
 
-    await expect(transform(str, {
+    expect(transform(str, {
       partialFileObjects: [partialFile]
-    })).resolves.toEqual('<p>2</p>');
+    })).toEqual('<p>2</p>');
   });
 
-  it('should render own children if no include children has same id', async () => {
+  it('should render own children if no include children has same id', () => {
     partialFile.content = '<inject id="target"><p>default</p></inject>'
     const str = '<include partial="inj-partial"><p>1</p><p>2</p><p>3</p><</include>';
 
-    await expect(transform(str, {
+    expect(transform(str, {
       partialFileObjects: [partialFile]
-    })).resolves.toEqual('<p>default</p>');
+    })).toEqual('<p>default</p>');
   });
   
-  it('should maintain context', async () => {
+  it('should maintain context', () => {
     partialFile.content = '<inject></inject>'
     const str = '<include partial="inj-partial" data="$data.documents">' +
       '<variable name="currentPath" value="`${$data.documents.currentPath}/sample`"></variable>' +
       '{currentPath}' +
       '</include>';
 
-    await expect(transform(str, {
+    expect(transform(str, {
       partialFileObjects: [partialFile],
       data: {
         documents: {
@@ -76,14 +76,14 @@ describe('Inject Tag', () => {
         },
         other: 24
       }
-    })).resolves.toEqual('/documentation/sample');
+    })).toEqual('/documentation/sample');
   });
   
-  it('should inject html from html attribute and process it', async () => {
-    await expect(transform('<inject html="$data.content"></inject>', {
+  it('should inject html from html attribute and process it', () => {
+    expect(transform('<inject html="$data.content"></inject>', {
       data: {
         content: '<fragment>Sample</fragment>'
       }
-    })).resolves.toEqual('Sample');
+    })).toEqual('Sample');
   });
 });

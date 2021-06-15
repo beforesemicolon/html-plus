@@ -1,41 +1,41 @@
 const {transform} = require('./../transform');
 
 describe('If Attribute', () => {
-  it('should only process if attribute is preceded by #', async () => {
-    await expect(transform('<b if="false"></b>')).resolves.toEqual('<b></b>')
-    await expect(transform('<b #if="false"></b>')).resolves.toEqual('')
+  it('should only process if attribute is preceded by #', () => {
+    expect(transform('<b if="false"></b>')).toEqual('<b></b>')
+    expect(transform('<b #if="false"></b>')).toEqual('')
   });
   
-  it('should render node if condition is TRUTHY', async () => {
-    await expect(transform('<b #if="true"></b>')).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="5"></b>')).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="4 > 0"></b>')).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="$data.checked"></b>', {
+  it('should render node if condition is TRUTHY', () => {
+    expect(transform('<b #if="true"></b>')).toEqual('<b></b>');
+    expect(transform('<b #if="5"></b>')).toEqual('<b></b>');
+    expect(transform('<b #if="4 > 0"></b>')).toEqual('<b></b>');
+    expect(transform('<b #if="$data.checked"></b>', {
       data: {checked: true}
-    })).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="!$data.checked"></b>', {
+    })).toEqual('<b></b>');
+    expect(transform('<b #if="!$data.checked"></b>', {
       data: {checked: false}
-    })).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="$data.checked === false"></b>', {
+    })).toEqual('<b></b>');
+    expect(transform('<b #if="$data.checked === false"></b>', {
       data: {checked: false}
-    })).resolves.toEqual('<b></b>');
+    })).toEqual('<b></b>');
   });
   
-  it('should NOT render node if condition is FALSY', async () => {
-    await expect(transform('<b #if="false"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="0"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="null"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="undefined"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if=""></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="4 < 0"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="$data.checked"></b>', {
+  it('should NOT render node if condition is FALSY', () => {
+    expect(transform('<b #if="false"></b>')).toEqual('');
+    expect(transform('<b #if="0"></b>')).toEqual('');
+    expect(transform('<b #if="null"></b>')).toEqual('');
+    expect(transform('<b #if="undefined"></b>')).toEqual('');
+    expect(transform('<b #if=""></b>')).toEqual('');
+    expect(transform('<b #if="4 < 0"></b>')).toEqual('');
+    expect(transform('<b #if="$data.checked"></b>', {
       data: {checked: false}
-    })).resolves.toEqual('');
-    await expect(transform('<b #if="!$data.checked"></b>', {
+    })).toEqual('');
+    expect(transform('<b #if="!$data.checked"></b>', {
       data: {checked: true}
-    })).resolves.toEqual('');
-    await expect(transform('<b #if="$data.checked === false"></b>', {
+    })).toEqual('');
+    expect(transform('<b #if="$data.checked === false"></b>', {
       data: {checked: true}
-    })).resolves.toEqual('');
+    })).toEqual('');
   });
 });

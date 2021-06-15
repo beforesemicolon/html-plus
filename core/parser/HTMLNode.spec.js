@@ -15,7 +15,7 @@ describe('HTMLNode', () => {
     expect(node.childNodes).toBeInstanceOf(Function);
     expect(node.renderChildren).toBeInstanceOf(Function);
     expect(node.render).toBeInstanceOf(Function);
-    return expect(node.render()).resolves.toEqual('<h1 id="main-title">my title</h1>');
+    return expect(node.render()).toEqual('<h1 id="main-title">my title</h1>');
   });
   
   describe('should create a ul node', () => {
@@ -45,7 +45,7 @@ describe('HTMLNode', () => {
     });
     
     it('and render', () => {
-      return expect(node.render()).resolves.toEqual('<ul class="list-items"><li class="item">item 1</li><li class="item">item 2</li><li class="item">item 3</li></ul>');
+      return expect(node.render()).toEqual('<ul class="list-items"><li class="item">item 1</li><li class="item">item 2</li><li class="item">item 3</li></ul>');
     });
   });
   
@@ -59,8 +59,8 @@ describe('HTMLNode', () => {
         this.node = node;
       }
       
-      async render() {
-        const content = await this.node.renderChildren();
+      render() {
+        const content = this.node.renderChildren();
         
         let tagName = 'h1';
         switch (this.node.attributes.type) {
@@ -91,8 +91,8 @@ describe('HTMLNode', () => {
     }
     
     function title(node) {
-      return async () => {
-        const content = await node.renderChildren();
+      return () => {
+        const content = node.renderChildren();
 
         let tagName = 'h1';
 
@@ -126,14 +126,14 @@ describe('HTMLNode', () => {
     it('from class', () => {
       const node = new HTMLNode(htmlNode, {customTags: {'title': Title}});
   
-      return expect(node.render()).resolves.toEqual('<h5>My title</h5>');
+      return expect(node.render()).toEqual('<h5>My title</h5>');
     });
     
     it('from function', () => {
       htmlNode.setAttribute('type', 'm')
       const node = new HTMLNode(htmlNode, {customTags: {'title': title}});
 
-      return expect(node.render()).resolves.toEqual('<h4>My title</h4>');
+      return expect(node.render()).toEqual('<h4>My title</h4>');
     });
   });
   

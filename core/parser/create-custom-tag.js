@@ -33,7 +33,7 @@ function createCustomTag(tag, rawNode, node, nodeOptions) {
   
   if (typeof instance === 'function') {
     return {
-      render: async () => (await instance()) ?? ''
+      render: instance,
     }
   }
   

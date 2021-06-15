@@ -142,14 +142,12 @@ module.exports = {
       {
         label: "Styling",
         path: `${docLink}/styling`,
-        content: ``,
-        list: []
+        content: ``
       },
       {
         label: "Scripting",
         path: `${docLink}/scripting`,
-        content: ``,
-        list: []
+        content: ``
       },
       {
         label: "FAQ",

@@ -44,12 +44,12 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
           callback(new Error(`Cannot render partial(${fileName}) file as page. Partial files can only be included.`));
         }
         
-        fs.readFile(filePath, async (err, content) => {
+        fs.readFile(filePath, (err, content) => {
           if (err) return callback(err);
           const fileObject = new File(filePath, settings.views);
           fileObject.content = content.toString();
           try {
-            const result = await transform(fileObject.content, {
+            const result = transform(fileObject.content, {
               data: {...opt.staticData, ...data},
               fileObject,
               customTags: opt.customTags,

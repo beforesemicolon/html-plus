@@ -13,8 +13,8 @@ function Log(node, options) {
     value = null;
   }
   
-  return async () => {
-    const msg = (await node.renderChildren()) || 'log';
+  return () => {
+    const msg = (node.renderChildren()) || 'log';
     let result = ''
     
     try {

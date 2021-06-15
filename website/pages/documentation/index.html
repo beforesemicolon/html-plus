@@ -10,6 +10,9 @@
 				<ul>
 					<li #repeat="page.docs_menu.list" class="{$data.path === $item.path ? 'current' : ''}">
 						<a href="{$item.path}">{$item.label}</a>
+						<ul #if="$item.list?.length > 0">
+							<li #repeat="$item.list">{$item.label}</li>
+						</ul>
 					</li>
 				</ul>
 			</section>

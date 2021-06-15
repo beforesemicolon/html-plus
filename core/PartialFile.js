@@ -24,11 +24,11 @@ class PartialFile extends File {
     this.load();
   }
   
-  async render(contextData = {}) {
+  render(contextData = {}) {
     const parsedHTML = parse(replaceSpecialCharactersInHTML(this.content));
     parsedHTML.context = contextData;
     const partialNode = new HTMLNode(parsedHTML, this.options);
-    return (await partialNode.render()).trim()
+    return partialNode.render()
   }
 }
 

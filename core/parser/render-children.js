@@ -1,20 +1,13 @@
 const {HTMLNode} = require("./HTMLNode");
 
 const renderChildren = (childNodes = []) => {
-  if (childNodes.length) {
-    return Promise.all(childNodes.map(async node => {
-        if (node instanceof HTMLNode) {
-          return node.render();
-        }
-      
-        return node
-      }))
-      .then(res => {
-        return res.join('');
-      });
-  }
-  
-  return '';
+  return childNodes.map(node => {
+    if (node instanceof HTMLNode) {
+      return node.render();
+    }
+    
+    return node
+  }).join('');
 }
 
 module.exports.renderChildren = renderChildren;

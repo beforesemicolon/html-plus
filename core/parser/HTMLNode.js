@@ -111,7 +111,7 @@ class HTMLNode {
       }
       
       const node = new HTMLNode(childNode, this.#options);
-      
+  
       return render ? node.render() : node;
     })
   }
@@ -121,13 +121,15 @@ class HTMLNode {
   }
   
   renderChildren(data = {}) {
-    return Promise.all(this.#childNodes(data, true)).then(res => res.join(''));
+    const renderList = this.#childNodes(data, true);
+    console.log('-- renderList', this.tagName, this.#node.rawAttrs, renderList);
+    return renderList.join('');
   }
   
-  async render() {
+  render() {
     try {
       if (this.#node.rawAttrs.length && /\s?#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
-        const result = await renderByAttribute(this, this.#options);
+        const result = renderByAttribute(this, this.#options);
         
         if (result === null) {
           return '';
@@ -149,8 +151,8 @@ class HTMLNode {
       );
       
       return (this.tagName
-          ? composeTagString(this, await this.renderChildren(), Object.keys(this.#options.customAttributes))
-          : await this.renderChildren()
+          ? composeTagString(this, this.renderChildren(), Object.keys(this.#options.customAttributes))
+          : this.renderChildren()
       ).trim();
     } catch (e) {
       handleError(e, this.#node, this.#options);

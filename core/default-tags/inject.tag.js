@@ -50,7 +50,7 @@ class Inject{
     html: {execute: true}
   }
   
-  async render() {
+  render() {
     return renderChildren(this.content);
   }
 }

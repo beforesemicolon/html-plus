@@ -24,43 +24,43 @@ describe('Include Tag', () => {
     await exec(`rm ${nestedPartialAbsPath}`);
   });
   
-  it('should include partial with partial attribute', async () => {
+  it('should include partial with partial attribute', () => {
     const str = '<include partial="inc-partial" data="{title: \'include partial\'}"></include>'
 
-    await expect(transform(str, {
+    expect(transform(str, {
       partialFileObjects: [partialFile]
-    })).resolves.toEqual('<div>include partial</div>');
+    })).toEqual('<div>include partial</div>');
   });
 
-  it('should include partial with partialPath attribute', async () => {
+  it('should include partial with partialPath attribute', () => {
     const str = '<include partial-path="_inc-partial.html" data="{title: \'include partial\'}"></include>'
 
-    await expect(transform(str, {
+    expect(transform(str, {
       partialFileObjects: [partialFile],
       fileObject: {fileDirectoryPath: __dirname}
-    })).resolves.toEqual('<div>include partial</div>');
+    })).toEqual('<div>include partial</div>');
   });
   
-  it('should allow for nested includes', async () => {
+  it('should allow for nested includes', () => {
     partialFile.content = '<include partial-path="_inc-nested-partial.html"></include>'
     const str = '<include partial-path="_inc-partial.html" data="{title: \'include partial\'}"></include>'
     
-    await expect(transform(str, {
+    expect(transform(str, {
       partialFileObjects: [partialFile, nestedPartialFile],
       fileObject: {fileDirectoryPath: __dirname}
-    })).resolves.toEqual('<div>Nested: include partial</div>');
+    })).toEqual('<div>Nested: include partial</div>');
   });
 
-  it('should render blank if no partial info is provided', async () => {
+  it('should render blank if no partial info is provided', () => {
     const str = '<include></include>'
 
-    await expect(transform(str)).resolves.toEqual('');
+    expect(transform(str)).toEqual('');
   });
 
-  it('should fail if non object literal data attribute value is provided', async () => {
+  it('should fail if non object literal data attribute value is provided', () => {
     const str = '<include data="sample"></include>'
     
-    await expect(transform(str))
-      .rejects.toThrowError('Failed to process attribute "data": sample is not defined');
+    expect(() => transform(str))
+      .toThrowError('Failed to process attribute "data": sample is not defined');
   });
 });

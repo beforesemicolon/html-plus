@@ -37,14 +37,12 @@ class Include {
   }
   
   static customAttributes = {
-    data: {execute: true},
-    partial: null,
-    'partial-path': null
+    data: {execute: true}
   }
   
-  async render() {
+  render() {
     return this.partial
-      ? await this.partial.render(this.data)
+      ? this.partial.render(this.data)
       : '';
   }
 }

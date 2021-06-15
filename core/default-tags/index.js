@@ -1,8 +1,6 @@
 const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
 const {Variable} = require("./variable.tag");
 const {Fragment} = require("./fragment.tag");
-const {Style} = require("./style.tag");
-const {Script} = require("./script.tag");
 const {Include} = require("./include.tag");
 const {Inject} = require("./inject.tag");
 const {Log} = require("./log.tag");
@@ -11,8 +9,6 @@ const {Ignore} = require("./ignore.tag");
 const defaultTags = [
   Variable,
   Fragment,
-  Style,
-  Script,
   Include,
   Inject,
   Log,

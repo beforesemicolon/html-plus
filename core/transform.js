@@ -15,7 +15,7 @@ const defaultOptions = {
   partialFileObjects: [],
 };
 
-async function transform(content, options = defaultOptions) {
+function transform(content, options = defaultOptions) {
   if (!content || typeof content !== 'string') return '';
   content = content.replace(/\s+/, ' ');
   
@@ -39,7 +39,7 @@ async function transform(content, options = defaultOptions) {
     customAttributes: {...customAttributesMap, ...defaultAttributesMap}
   })
   
-  const html = (await node.render()).trim();
+  const html = (node.render()).trim();
   
   if (options.env === 'production') {
     return minify(html, {

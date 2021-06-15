@@ -19,7 +19,7 @@ class Repeat extends Attribute {
     return '[]';
   }
   
-  async render(value, node) {
+  render(value, node) {
     let result = '';
     
     if (typeof value === "number") {
@@ -28,7 +28,7 @@ class Repeat extends Attribute {
         node.setContext('$key', i);
         node.setContext('$item', i + 1);
         
-        result += await node.render()
+        result += node.render();
       }
     } else if (value && typeof value === 'object') {
       const list = /Set|Map/.test(value.toString())
@@ -45,7 +45,7 @@ class Repeat extends Attribute {
           ? `$${this.itemName}`
           : this.itemName, data);
         
-        result += await node.render();
+        result += node.render();
       }
     }
     
