@@ -25,13 +25,13 @@ async function transform(content, options = defaultOptions) {
     const tagName = turnCamelOrPascalToKebabCasing(tag.name);
     acc[tagName] = tag;
     return acc;
-  }, {})
+  }, {});
   
   const customAttributesMap = options.customAttributes.reduce((acc, attribute) => {
     const attr = turnCamelOrPascalToKebabCasing(attribute.name);
     acc[attr] = attribute.toString().startsWith('class') ? new attribute() : attribute();
     return acc;
-  }, {})
+  }, {});
   
   const node = new HTMLNode(content, {
     ...options,

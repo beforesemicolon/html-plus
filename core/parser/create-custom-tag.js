@@ -1,11 +1,10 @@
 function createCustomTag(tag, rawNode, node, nodeOptions) {
   let instance = () => '';
-  const {customTags, customAttributes, onTraverse, ...opt} = nodeOptions
   
   const options = {
-    ...opt,
+    ...nodeOptions,
     get partialFileObjects() {
-      return opt.partialFileObjects.map(file => {
+      return nodeOptions.partialFileObjects.map(file => {
         // partial files are created outside the context of the node, therefore
         // the file root node needs to be update with the current node
         file.options = {...nodeOptions, rootNode: node};

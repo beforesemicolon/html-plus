@@ -78,4 +78,12 @@ describe('Inject Tag', () => {
       }
     })).resolves.toEqual('/documentation/sample');
   });
+  
+  it('should inject html from html attribute and process it', async () => {
+    await expect(transform('<inject html="$data.content"></inject>', {
+      data: {
+        content: '<fragment>Sample</fragment>'
+      }
+    })).resolves.toEqual('Sample');
+  });
 });
