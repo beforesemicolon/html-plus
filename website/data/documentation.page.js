@@ -31,53 +31,125 @@ module.exports = {
             <li>Any OS that NodeJs can run</li>
             <li><a href="https://expressjs.com/">Express</a> 4 or later</li>
           </ul>
-          <h3>Installation</h3>
           <h3>Create Your Project</h3>
+          <p>You can create your node project how you normally do by using some tool or executing the following commands:</p>
+          <code-snippet>
+          mkdir my-app
+          cd my-app
+          npm init
+          </code-snippet>
+          <h3>Installation</h3>
+          <p>Inside your project you can proceed to install <strong>HTML+</strong> and express:</p>
+          <code-snippet>
+          npm install express
+          npm install @beforesemicolon/html-plus
+          </code-snippet>
           <h3>Server Setup</h3>
+          <p>The simplest setup you can have is importing <strong>HTML+</strong>, create your express app to pass it to
+          the engine along with the directory where you will put the html page files.</p>
+          <p><strong>HTML+ engine</strong> will setup your <a href="${docLink}/routing">Routes</a> and all handlers for
+          CSS(including preprocessors), Javascript and Typescript.</p>
+          <code-snippet type="js">
+            const express = require('express');
+            const http = require('http');
+            const path = require('path');
+            const {engine} = require('@beforesemicolon/html-plus');
+      
+            const app = express();
+      
+            engine(app, path.resolve(__dirname, './pages'));
+      
+            const server = http.createServer(app);
+      
+            server.listen(3000)
+          </code-snippet>
           <footer>
-            <p>Next: <a href="${docLink}/routing">Routing</a></p>
+            <p><strong>Next:</strong> <a href="${docLink}/routing">Routing</a></p>
           </footer>
         `,
       },
       {
-        label: "Routing",
-        path: `${docLink}/routing`,
+        label: "Routes",
+        path: `${docLink}/routes`,
         content: ``,
+        list: [
+          {
+            label: "Pages",
+            path: `${docLink}/pages`,
+            content: ``
+          },
+          {
+            label: "Express Routes",
+            path: `${docLink}/express-routes`,
+            content: ``
+          },
+        ],
       },
       {
-        label: "Data and Data Binding",
-        path: `${docLink}/data-and-data-binding`,
+        label: "Data",
+        path: `${docLink}/data`,
         content: ``,
-      },
-      {
-        label: "Data Context",
-        path: `${docLink}/data-context`,
-        content: ``,
+        list: [
+          {
+            label: "Static Data",
+            path: `${docLink}/static-data`,
+            content: ``
+          },
+          {
+            label: "Dynamic Data",
+            path: `${docLink}/dynamic-data`,
+            content: ``
+          },
+          {
+            label: "Context Data",
+            path: `${docLink}/context-data`,
+            content: ``
+          }
+        ]
       },
       {
         label: "Templating",
         path: `${docLink}/templating`,
         content: ``,
+        list: [
+          {
+            label: "Partials and Include",
+            path: `${docLink}/partials-and-include`,
+            content: ``
+          },
+          {
+            label: "Inject HTML",
+            path: `${docLink}/inject-html`,
+            content: ``
+          },
+          {
+            label: "Conditional Rendering",
+            path: `${docLink}/conditional-rendering`,
+            content: ``
+          },
+          {
+            label: "Repeating Markup",
+            path: `${docLink}/repeating-markup`,
+            content: ``
+          },
+          {
+            label: "Fragments & Ignore",
+            path: `${docLink}/fragments-and-ignore`,
+            content: ``
+          },
+        ]
       },
       {
         label: "Styling",
         path: `${docLink}/styling`,
         content: ``,
+        list: []
       },
       {
         label: "Scripting",
         path: `${docLink}/scripting`,
         content: ``,
-      },
-      {
-        label: "Create Custom Tag",
-        path: `${docLink}/create-custom-tag`,
-        content: ``,
-      },
-      {
-        label: "Create Custom Attribute",
-        path: `${docLink}/create-custom-attribute`,
-        content: ``,
+        list: []
       },
       {
         label: "FAQ",

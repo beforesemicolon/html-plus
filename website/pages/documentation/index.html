@@ -18,10 +18,10 @@
 		          value="page.docs_menu.list.find((item) => item.path === $data.path)"></variable>
 		<article #if="currentPage">
 			<h2>{currentPage.label}</h2>
-			{currentPage.content}
+			<inject html="currentPage.content"></inject>
 		</article>
 		<article #if="$data.path === page.path">
-			{page.content}
+			<inject html="page.content"></inject>
 		</article>
 	</main>
 

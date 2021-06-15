@@ -28,22 +28,20 @@
 	<section class="quick-start wrapper">
 		<h3>{page.quick_start.title}</h3>
 		<p>{page.quick_start.description}</p>
-		<pre #ignore class="js-code">
-			<code class="declaration">const</code> express = require(<code class="import">'express'</code>);
-			<code class="declaration">const</code> http = require(<code class="import">'http'</code>);
-			<code class="declaration">const</code> path = require(<code class="import">'path'</code>);
-			<code class="declaration">const</code> {engine} = require(<code class="import">'@before-semicolon/html-plus'</code>);
+		<code-snippet type="js">
+			const express = require('express');
+			const http = require('http');
+			const path = require('path');
+			const {engine} = require('@beforesemicolon/html-plus');
 
-			<code class="declaration">const</code> app = express();
+			const app = express();
 
-			<code class="special">engine</code>(app, path.<code class="property">resolve</code>(__dirname, <code class="import">'./pages'</code>));
+			engine(app, path.resolve(__dirname, './pages'));
 
-			<code class="declaration">const</code> server = http.<code class="property">createServer</code>(app);
+			const server = http.createServer(app);
 
-			server.<code class="property">listen</code>(3000, () => {
-				console.log('listening on port http://localhost:3000/');
-			})
-		</pre>
+			server.listen(3000)
+		</code-snippet>
 		<a href="{page.quick_start.link.path}" class="link-button cta">{page.quick_start.link.label}</a>
 	</section>
 

@@ -74,5 +74,22 @@
       font-weight: 400;
       margin: 35px 0 10px;
     }
+
+    footer {
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: $secondary;
+      border-radius: 5px;
+
+      p {
+        margin: 0;
+
+        a {
+          font-weight: 700;
+        }
+      }
+    }
   }
 }

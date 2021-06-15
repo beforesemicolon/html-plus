@@ -100,35 +100,3 @@ abbr {
   padding-right: calc((100vw - min(#{$max-width}, calc(100vw - 50px))) / 2);
 }
 
-.js-code {
-  padding: 35px 0;
-  background: #011823;
-  color: #fff;
-  text-align: left;
-  margin: 0;
-  font-family: monospace;
-  line-height: 120%;
-  border-radius: 5px;
-
-  .highlight {
-    margin: 0;
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  .declaration {
-    color: #c556ea;
-  }
-
-  .import {
-    color: #11b147;
-  }
-
-  .property {
-    color: #ee697e;
-  }
-
-  .special {
-    color: #ffc107;
-  }
-}
-

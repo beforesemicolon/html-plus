@@ -5,6 +5,7 @@ const {engine} = require('../core/engine');
 const homePage = require('./data/home.page');
 const documentationPage = require('./data/documentation.page');
 const learnPage = require('./data/learn.page');
+const {CodeSnippet} = require('./tags/code-snippet');
 const site = require('./data/site.json');
 const packageJSON = require('./../package.json');
 
@@ -27,7 +28,9 @@ engine(app, path.resolve(__dirname, './pages'), {
     query: {},
     url_path: '/'
   },
-  customTags: [],
+  customTags: [
+    CodeSnippet,
+  ],
   onPageRequest: (req) => {
     const fullPath = req.path.replace(/(\/|\.html)$/, '');
     return {
