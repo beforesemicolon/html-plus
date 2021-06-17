@@ -8,10 +8,13 @@
 			<section>
 				<h2>{page.docs_menu.title}</h2>
 				<ul>
-					<li #repeat="page.docs_menu.list" class="{$data.path === $item.path ? 'current' : ''}">
+					<li #repeat="page.docs_menu.list" class="{$data.path.startsWith($item.path) ? 'current' : ''}">
 						<a href="{$item.path}">{$item.label}</a>
-						<ul #if="$item.list?.length > 0">
-							<li #repeat="$item.list">{$item.label}</li>
+						<span #if="$item.list?.length"
+						      class="expand-indicator {$data.path.startsWith($item.path) ? 'expanded' : ''}"></span>
+						<ul #if="$item.list?.length"
+						    style="display: {$data.path.startsWith($item.path) ? 'block' : 'none'}">
+							<li #repeat="$item.list"><a href="{$item.path}">{$item.label}</a></li>
 						</ul>
 					</li>
 				</ul>

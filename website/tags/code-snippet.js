@@ -43,7 +43,7 @@ class CodeSnippet {
       .replace(/express/g, (m) => `<span style="color: #feffa2">${m}</span>`)
   }
   
-  async render() {
+  render() {
     return `<pre style="${this.style}"><code>${this.content}</code></pre>`;
   }
 }

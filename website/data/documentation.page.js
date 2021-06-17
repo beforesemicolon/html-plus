@@ -1,4 +1,10 @@
-const docLink = '/documentation'
+const docLink = '/documentation';
+const routesLink = '/documentation/routes';
+const dataLink = '/documentation/data';
+const templatingLink = '/documentation/templating';
+const stylingLink = '/documentation/styling';
+const scriptingLink = '/documentation/scripting';
+const faqLink = '/documentation/faq';
 
 module.exports = {
   path: "/documentation",
@@ -64,94 +70,94 @@ module.exports = {
             server.listen(3000)
           </code-snippet>
           <footer>
-            <p><strong>Next:</strong> <a href="${docLink}/routing">Routing</a></p>
+            <p><strong>Next:</strong> <a href="${docLink}/routes">Routes</a></p>
           </footer>
         `,
       },
       {
         label: "Routes",
-        path: `${docLink}/routes`,
+        path: `${routesLink}`,
         content: ``,
         list: [
           {
             label: "Pages",
-            path: `${docLink}/pages`,
+            path: `${routesLink}/pages`,
             content: ``
           },
           {
             label: "Express Routes",
-            path: `${docLink}/express-routes`,
+            path: `${routesLink}/express-routes`,
             content: ``
           },
         ],
       },
       {
         label: "Data",
-        path: `${docLink}/data`,
+        path: `${dataLink}`,
         content: ``,
         list: [
           {
             label: "Static Data",
-            path: `${docLink}/static-data`,
+            path: `${dataLink}/static-data`,
             content: ``
           },
           {
             label: "Dynamic Data",
-            path: `${docLink}/dynamic-data`,
+            path: `${dataLink}/dynamic-data`,
             content: ``
           },
           {
             label: "Context Data",
-            path: `${docLink}/context-data`,
+            path: `${dataLink}/context-data`,
             content: ``
           }
         ]
       },
       {
         label: "Templating",
-        path: `${docLink}/templating`,
+        path: `${templatingLink}`,
         content: ``,
         list: [
           {
             label: "Partials and Include",
-            path: `${docLink}/partials-and-include`,
+            path: `${templatingLink}/partials-and-include`,
             content: ``
           },
           {
             label: "Inject HTML",
-            path: `${docLink}/inject-html`,
+            path: `${templatingLink}/inject-html`,
             content: ``
           },
           {
             label: "Conditional Rendering",
-            path: `${docLink}/conditional-rendering`,
+            path: `${templatingLink}/conditional-rendering`,
             content: ``
           },
           {
             label: "Repeating Markup",
-            path: `${docLink}/repeating-markup`,
+            path: `${templatingLink}/repeating-markup`,
             content: ``
           },
           {
             label: "Fragments & Ignore",
-            path: `${docLink}/fragments-and-ignore`,
+            path: `${templatingLink}/fragments-and-ignore`,
             content: ``
           },
         ]
       },
       {
         label: "Styling",
-        path: `${docLink}/styling`,
+        path: `${stylingLink}`,
         content: ``
       },
       {
         label: "Scripting",
-        path: `${docLink}/scripting`,
+        path: `${scriptingLink}`,
         content: ``
       },
       {
         label: "FAQ",
-        path: `${docLink}/faq`,
+        path: `${faqLink}`,
         content: ``,
       },
     ]

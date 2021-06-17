@@ -11,7 +11,6 @@ const packageJSON = require('./../package.json');
 
 const app = express();
 
-
 engine(app, path.resolve(__dirname, './pages'), {
   staticData: {
     pages: {
@@ -39,16 +38,34 @@ engine(app, path.resolve(__dirname, './pages'), {
   }
 });
 
-app.get('/documentation/:doc', (req, res, next) => {
+const collectPaths = list => {
+  const paths = new Set();
+  
+  for (let item of list) {
+    if (item.hasOwnProperty('path')) {
+      paths.add(item.path);
+      
+      if (item.list && item.list.length) {
+        Array.from(collectPaths(item.list), (p) => paths.add(p))
+      }
+    }
+  }
+  
+  return paths;
+}
+
+const paths = collectPaths([
+  ...documentationPage.docs_menu.list,
+  ...documentationPage.api_menu.list
+]);
+
+app.get('/documentation/:group/:doc?', (req, res, next) => {
   const ext = path.extname(req.path);
   
   if (!ext || ext === '.html') {
     const fullPath = req.path.replace(/(\/|\.html)$/, '');
-    const foundDocument = [...documentationPage.docs_menu.list, documentationPage.api_menu.list].find(doc => {
-      return doc.path === fullPath;
-    });
     
-    if (foundDocument) {
+    if (paths.has(fullPath)) {
       return res.render('documentation', {
         path: fullPath
       });
