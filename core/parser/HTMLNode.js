@@ -20,6 +20,16 @@ const defaultOptions = {
   partialFileObjects: [],
 };
 
+class Text{
+  constructor(value) {
+    this.value = value;
+  }
+  
+  toString() {
+    return this.value;
+  }
+}
+
 class HTMLNode {
   #node = null;
   #tag = null;
@@ -34,7 +44,7 @@ class HTMLNode {
     this.#options = options;
     this.#tag = options.customTags[this.#node.rawTagName];
     this.attributes = this.#node.attributes;
-  
+    
     this.#node.getContext = () => {
       return {...this.#node.parentNode?.getContext(), ...(this.#node.context ?? {})};
     }
@@ -67,6 +77,36 @@ class HTMLNode {
     return undoSpecialCharactersInHTML(this.#node.innerHTML);
   }
   
+  clone() {
+    const outerHTML = this.#node.toString();
+    const clonedNode = (parse(outerHTML)).childNodes[0];
+  
+    clonedNode.context = {...this.#node.context};
+    clonedNode.parentNode.getContext = () => ({})
+    
+    return new HTMLNode(clonedNode, this.#options);
+  }
+  
+  duplicate(context = {}) {
+    const outerHTML = this.#node.toString();
+    const clonedNode = parse(outerHTML).childNodes[0];
+    
+    clonedNode.context = {...this.#node.context, ...context};
+    clonedNode.parentNode = this.#node.parentNode;
+  
+    if (clonedNode.parentNode) {
+      const index = clonedNode.parentNode.childNodes.indexOf(this.#node);
+  
+      if (index >= 0) {
+        this.#node.parentNode.childNodes.splice(index, 0, clonedNode)
+      } else {
+        this.#node.parentNode.appendChild(clonedNode)
+      }
+    }
+    
+    return new HTMLNode(clonedNode, this.#options);
+  }
+  
   setAttribute(key, value) {
     if (typeof key === 'string' && typeof value === 'string') {
       this.#node.setAttribute(key, value);
@@ -97,7 +137,7 @@ class HTMLNode {
     }
   }
   
-  #childNodes(data = {}, render = false) {
+  #childNodes(data = {}) {
     return this.#node.childNodes.map(childNode => {
       if (childNode instanceof TextNode) {
         const text = bindData(childNode.rawText, {
@@ -107,12 +147,10 @@ class HTMLNode {
           ...data
         });
         
-        return render ? text : new TextNode(text);
+        return new TextNode(text);
       }
       
-      const node = new HTMLNode(childNode, this.#options);
-  
-      return render ? node.render() : node;
+      return new HTMLNode(childNode, this.#options);
     })
   }
   
@@ -121,8 +159,7 @@ class HTMLNode {
   }
   
   renderChildren(data = {}) {
-    const renderList = this.#childNodes(data, true);
-    console.log('-- renderList', this.tagName, this.#node.rawAttrs, renderList);
+    const renderList = this.#childNodes(data);
     return renderList.join('');
   }
   
@@ -157,6 +194,10 @@ class HTMLNode {
     } catch (e) {
       handleError(e, this.#node, this.#options);
     }
+  }
+  
+  toString() {
+    return this.render();
   }
 }
 

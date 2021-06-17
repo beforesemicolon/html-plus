@@ -1,5 +1,4 @@
 const {HTMLNode} = require("../parser/HTMLNode");
-const {renderChildren} = require("../parser/render-children");
 
 class Inject{
   constructor(node, options) {
@@ -51,7 +50,7 @@ class Inject{
   }
   
   render() {
-    return renderChildren(this.content);
+    return this.content.join('');
   }
 }
 

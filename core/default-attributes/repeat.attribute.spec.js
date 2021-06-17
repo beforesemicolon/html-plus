@@ -62,12 +62,23 @@ describe('Repeat Attribute', () => {
   });
   
   it('should handle nested repeats', () => {
-    expect(transform(`
-      <li class="outer" #repeat="1">
-        item {$item}
-        <li class="inner" #repeat="1">sub-item {$item}</li>
-      </li>
-    `))
-      .toEqual('')
+    expect(transform('<div #repeat="3">outer<div #repeat="2">inner</div></div>'.replace(/\s+/g, '')))
+      .toEqual(`
+      <div>
+        outer
+        <div>inner</div>
+        <div>inner</div>
+      </div>
+      <div>
+        outer
+        <div>inner</div>
+        <div>inner</div>
+      </div>
+      <div>
+        outer
+        <div>inner</div>
+        <div>inner</div>
+      </div>
+      `.replace(/\s+/g, ''))
   });
 });
