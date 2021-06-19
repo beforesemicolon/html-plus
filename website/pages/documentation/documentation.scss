@@ -89,13 +89,6 @@
             }
           }
 
-          &:focus-within,
-          &:hover {
-            ul {
-              display: block;
-            }
-          }
-
           &.current {
             & > a {
               font-weight: 600;
@@ -128,7 +121,13 @@
     }
 
     li {
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+    }
+
+    a {
+      color: $black;
+      font-weight: 300;
+      font-style: italic;
     }
 
     footer {
@@ -146,6 +145,7 @@
         a {
           font-weight: 400;
           text-decoration: none;
+          color: $brand;
         }
       }
     }

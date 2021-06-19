@@ -1,4 +1,5 @@
 module.exports = {
   path: "/learn",
-  title: "HTML+ Learn"
+  title: "HTML+ Learn",
+  description: "HTML+ - HTML template language, engine and site builder",
 }

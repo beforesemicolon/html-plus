@@ -1,6 +1,13 @@
-<variable name="page" value="$data.pages.documentation"></variable>
+<variable name="page"
+          value="$data.pages.documentation"></variable>
+<variable name="currentGroup"
+          value="page.docs_menu.list.find((item) => $data.path.startsWith(item.path)) ?? page"></variable>
+<variable name="currentPage"
+          value="currentGroup.path === $data.path
+	            ? currentGroup
+	            : currentGroup.list.find((item) => item.path === $data.path)"></variable>
 
-<include partial="layout" data="page">
+<include partial="layout" data="{...page, title: `${page.title}: ${currentPage.title ?? currentPage.label}`}">
 	<link rel="stylesheet" href="documentation.scss" inject-id="style">
 	<main class="documentation wrapper">
 		<aside>
@@ -30,18 +37,9 @@
 				</ul>
 			</section>
 		</aside>
-		<variable name="currentGroup"
-		          value="page.docs_menu.list.find((item) => $data.path.startsWith(item.path))"></variable>
-		<variable name="currentPage"
-		          value="currentGroup.path === $data.path
-		            ? currentGroup
-		            : currentGroup.list.find((item) => item.path === $data.path)"></variable>
 		<article #if="currentPage">
 			<h2>{currentPage.label}</h2>
 			<inject html="currentPage.content"></inject>
-		</article>
-		<article #if="$data.path === page.path">
-			<inject html="page.content"></inject>
 		</article>
 	</main>
 

@@ -27,15 +27,22 @@ class CodeSnippet {
     const {type = 'terminal'} = node.attributes;
     let content = this.node.innerHTML.trim();
     
-    if (type === 'terminal') {
-      content = content
-        .replace(commandsPattern, (m) => `<span style="color: #2fe99e">${m}</span>`)
-    } else if(type === 'js') {
-      content = content
-        .replace(varsPattern, (m) => `<span style="color: #f072ff">${m}</span>`)
-        .replace(importPattern, (m) => `<span style="color: #11d0ad">${m}</span>`)
-        .replace(propertyPattern, (m) => `<span style="color: #ffc107">${m}</span>`)
-        .replace(jsKeywordsPattern, (m) => `<span style="color: #2eefdf">${m}</span>`)
+    switch (type) {
+      case 'js':
+        content = content
+          .replace(varsPattern, (m) => `<span style="color: #f072ff">${m}</span>`)
+          .replace(importPattern, (m) => `<span style="color: #11d0ad">${m}</span>`)
+          .replace(propertyPattern, (m) => `<span style="color: #ffc107">${m}</span>`)
+          .replace(jsKeywordsPattern, (m) => `<span style="color: #2eefdf">${m}</span>`);
+        break;
+      case 'html':
+        content = content
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        break;
+      default:
+        content = content
+          .replace(commandsPattern, (m) => `<span style="color: #2fe99e">${m}</span>`)
     }
     
     this.content = content

@@ -25,7 +25,7 @@ engine(app, path.resolve(__dirname, './pages'), {
     },
     params: {},
     query: {},
-    url_path: '/'
+    path: '/'
   },
   customTags: [
     CodeSnippet,

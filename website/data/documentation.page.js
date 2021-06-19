@@ -9,9 +9,10 @@ const faqLink = '/documentation/faq';
 module.exports = {
   path: "/documentation",
   title: "HTML+ Documentation",
+  label: "Welcome",
+  description: "HTML+ - HTML template language, engine and site builder",
   searchLabel: 'Search...',
   content: `
-    <h2>Welcome</h2>
     <p>The <strong>HTML+</strong> documentation will help you understand it in details and as always,
     it is better if you learn by doing by following the <a href="/learn" class="link-button secondary">learn</a>
     step by step project tutorial.</p>
@@ -193,22 +194,149 @@ module.exports = {
       {
         label: "Data",
         path: `${dataLink}`,
-        content: ``,
+        content: `
+          <p><strong>HTML+</strong> templates can be made fully aware of your data files and injecting or creating
+          context data is super easy to do either inside the template itself or the initial configuration.</p>
+          <p>Another spetacular aspect of the data is that it can be contextualized and there is no need to
+          keep passing data to partial files when you include them.</p>
+          <p>Data can be provided or created in few ways:</p>
+          <ul>
+            <li><a href="${dataLink}/static-data"><strong>Through initial engine configuration</strong></a>: This is great for when you want to fetch data from database when
+            server starts and make it available inside templates.</li>
+            <li><a href="${dataLink}/dynamic-data"><strong>On every page request</strong></a>: This is particular great
+            when you want to inject data specific to that template or something from the request made like form data or uploaded
+            file details.</li>
+            <li><a href="${dataLink}/context-data"><strong>On includes and with local scoped variables</strong></a>: This
+            is great when you wan for a specific part of the template to have a unique sample of the data and even
+            override to global data provided.</li>
+          </ul>
+          <p>With <strong>HTML+</strong> templates, data can be global and scoped(context) which allows for unique templates
+          to be build to fit the exact need you have.</p>
+          <p>The templates are built in a way to enforce data imutability. This is so when you override data in one
+          template will never affect how data is in another.</p>
+          <footer>
+            <p><strong>Next:</strong> <a href="${dataLink}/static-data">Static Data</a></p>
+            <p><strong>Prev:</strong> <a href="${routesLink}/reuse-pages">Reuse Pages</a></p>
+          </footer>
+        `,
         list: [
           {
             label: "Static Data",
             path: `${dataLink}/static-data`,
-            content: ``
+            content: `
+            <p>Static data is any data you provide through the initial engine configuration when the server runs.</p>
+            <p>This data is kept unchanged and every template file is given access to it.</p>
+            <code-snippet type="js">
+            const {engine} = require('@beforesemicolon/html-plus');
+            
+            const app = express();
+            
+            engine(app, path.resolve(__dirname, './pages'), {
+              staticData: {
+                site: {
+                  version: "2.4.1",
+                  license: "MIT"
+                }
+              }
+            });
+            </code-snippet>
+            <p>Inside the template you can reference this data by using <strong>$data</strong> variable.</p>
+            <code-snippet type="html">
+              <header><h1>HTML+</h1> <p>version {$data.site.version}, license {$data.site.license}</p></header>
+            </code-snippet>
+            <p>Static data is an excellent place to provide data fetched from databases or somewhere in the cloud when
+            server is starting. Any data can be made available to all templates using the <a href="">staticData</a>
+            engine option.</p>
+            <footer>
+              <p><strong>Next:</strong> <a href="${dataLink}/dynamic-data">Dynamic Data</a></p>
+              <p><strong>Prev:</strong> <a href="${dataLink}">Data</a></p>
+            </footer>
+            `
           },
           {
             label: "Dynamic Data",
             path: `${dataLink}/dynamic-data`,
-            content: ``
+            content: `
+            <p>There are two ways you can pass data dynamically to the templates on every page request:</p>
+            <ul>
+                <li><a href="#on-page-request">onPageRequest engine option</a></li>
+                <li><a href="#on-express-route-request">On custom express route page request</a></li>
+            </ul>
+            <h3 id="on-page-request">On Page Request</h3>
+            <p>One of the <a href="">engine</a> options is the <a href="">onPageRequest</a> which must be a function
+            that is called on every page request with the <a href="http://expressjs.com/en/api.html#req">express request object</a>
+            and must return an object to be used as the data in the template.</p>
+            <code-snippet type="js">
+            const {engine} = require('@beforesemicolon/html-plus');
+            
+            const app = express();
+            
+            engine(app, path.resolve(__dirname, './pages'), {
+              onPageRequest: (req) => {
+                return {
+                  path: req.path,
+                  params: req.params
+                }
+              }
+            });
+            </code-snippet>
+            <p>This data can be accessed inside the template using the <strong>$data</strong> variable.</p>
+            <h3 id="on-express-route-request">On Express Route Request</h3>
+            <p>You can also setup dynamic custom routes to handle page requests which will give you the opportunity
+             to call the <a href="">express response render method</a> to render a particular template.</p>
+            <p>This render method also takes a second argument which is the object data to be passed to the
+            template.</p>
+            <code-snippet type="js">
+                app.get('/projects/:projectName', (req, res) => {
+                    res.render(\`project/custom/\${req.params.projectName}\`, {
+                        params: req.params,
+                        title: 'Projects'
+                    })
+                });
+            </code-snippet>
+            <p>Both options to inject data into templates are great ways to collect data from any data storage source
+            and handle it right inside the templates so it is composed right inside the templates.</p>
+            <footer>
+              <p><strong>Next:</strong> <a href="${dataLink}/context-data">Context Data</a></p>
+              <p><strong>Prev:</strong> <a href="${dataLink}/static-data">Static Data</a></p>
+            </footer>
+            `
           },
           {
             label: "Context Data",
             path: `${dataLink}/context-data`,
-            content: ``
+            content: `
+            <p>Every page template is its own context. Any additional data created inside the template is made available
+            deeply even inside included partials.</p>
+            <p>You can create <a href="">variables</a> which value can only
+            be accessed after declaration and inside the tag it was declared at.</p>
+            <code-snippet type="html">
+              <main>
+                <!-- cant access "page" before declaration  -->
+                <variable name="page"
+                        value="$data.pages.documentation"></variable>
+                <h3>{page.title}</h3>
+                <p>{page.description}</p>
+              </main>
+              <!-- cant access "page" outside the tag it was declared at -->
+            </code-snippet>
+            <p>Variables declare at the beginning of the template is available everywhere inside the template, even
+            inside the partials you include in your template.</p>
+            <code-snippet type="html">
+              <variable name="page"
+                        value="$data.pages.documentation"></variable>
+              <main>
+                <h3>{page.title}</h3>
+                <p>{page.description}</p>
+                <!-- page can be referenced inside the "products" partial template -->
+                <include partial="products"></include>
+              </main>
+            </code-snippet>
+            <footer>
+              <p><strong>Next:</strong> <a href="${templatingLink}">Templating</a></p>
+              <p><strong>Prev:</strong> <a href="${dataLink}/dynamic-data">Dynamic Data</a></p>
+            </footer>
+            `
           }
         ]
       },
