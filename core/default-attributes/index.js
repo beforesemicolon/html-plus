@@ -3,12 +3,14 @@ const {If} = require('./if.attribute');
 const {Repeat} = require('./repeat.attribute');
 const {Fragment} = require('./fragment.attribute');
 const {Ignore} = require('./ignore.attribute');
+const {Attr} = require('./attr.attribute');
 
 const defaultAttributes = [
   If,
   Repeat,
   Fragment,
-  Ignore
+  Attr,
+  Ignore,
 ]
 
 const defaultAttributesName = defaultAttributes.map(attr => turnCamelOrPascalToKebabCasing(attr.name));
