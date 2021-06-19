@@ -127,6 +127,10 @@
       margin: 35px 0 10px;
     }
 
+    li {
+      margin-bottom: 25px;
+    }
+
     footer {
       padding: 15px 20px;
       display: flex;
@@ -134,6 +138,7 @@
       align-items: center;
       background: $secondary;
       border-radius: 5px;
+      flex-direction: row-reverse;
 
       p {
         margin: 0;

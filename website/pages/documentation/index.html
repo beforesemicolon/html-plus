@@ -30,8 +30,12 @@
 				</ul>
 			</section>
 		</aside>
+		<variable name="currentGroup"
+		          value="page.docs_menu.list.find((item) => $data.path.startsWith(item.path))"></variable>
 		<variable name="currentPage"
-		          value="page.docs_menu.list.find((item) => item.path === $data.path)"></variable>
+		          value="currentGroup.path === $data.path
+		            ? currentGroup
+		            : currentGroup.list.find((item) => item.path === $data.path)"></variable>
 		<article #if="currentPage">
 			<h2>{currentPage.label}</h2>
 			<inject html="currentPage.content"></inject>

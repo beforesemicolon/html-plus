@@ -41,6 +41,7 @@ class CodeSnippet {
     this.content = content
       .replace(/@beforesemicolon\/html-plus/g, (m) => `<span style="color: #feffa2">${m}</span>`)
       .replace(/express/g, (m) => `<span style="color: #feffa2">${m}</span>`)
+      .replace(/engine/g, (m) => `<span style="color: #feffa2">${m}</span>`)
   }
   
   render() {
