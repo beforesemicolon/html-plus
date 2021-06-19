@@ -38,7 +38,9 @@ class HTMLNode {
   constructor(nodeORHTMLString, options) {
     options = {...defaultOptions, ...options}
     this.#node = typeof nodeORHTMLString === 'string'
-      ? parse(replaceSpecialCharactersInHTML(nodeORHTMLString))
+      ? parse(replaceSpecialCharactersInHTML(nodeORHTMLString), {
+        comment: true
+      })
       : nodeORHTMLString;
     this.#node.context = {...this.#node.context};
     this.#options = options;
