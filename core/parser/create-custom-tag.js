@@ -20,7 +20,7 @@ function createCustomTag(tag, rawNode, node, nodeOptions) {
     instance = tag(node, options);
   }
   
-  if (Object.keys(node.context ?? {}).length) {
+  if (rawNode.parentNode && Object.keys(node.context ?? {}).length) {
     const parentChildNodes = rawNode.parentNode.childNodes;
     // find the current child index in its parent child nodes list
     const childIndex = parentChildNodes.indexOf(rawNode);

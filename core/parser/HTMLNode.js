@@ -12,8 +12,8 @@ const defaultOptions = {
   env: 'development',
   data: {},
   rootNode: null,
-  customTags: [],
-  customAttributes: [],
+  customTags: {},
+  customAttributes: {},
   fileObject: null,
   onTraverse() {
   },
@@ -77,10 +77,20 @@ class HTMLNode {
     return undoSpecialCharactersInHTML(this.#node.innerHTML);
   }
   
-  clone() {
-    const outerHTML = this.#node.toString();
-    const clonedNode = (parse(outerHTML)).childNodes[0];
+  get rawAttributes() {
+    return this.#node.rawAttrs;
+  }
   
+  get _options() {
+    return this.#options;
+  }
+  
+  clone() {
+    const outerHTML = this.tagName
+      ? composeTagString(this, this.#node.innerHTML)
+      : `<fragment>${this.#node.outerHTML}</fragment>`;
+    const clonedNode = (parse(outerHTML)).childNodes[0];
+    
     clonedNode.context = {...this.#node.context};
     clonedNode.parentNode.getContext = () => ({})
     
@@ -88,7 +98,9 @@ class HTMLNode {
   }
   
   duplicate(context = {}) {
-    const outerHTML = this.#node.toString();
+    const outerHTML = this.tagName
+      ? composeTagString(this, this.#node.innerHTML)
+      : `<fragment>${this.#node.outerHTML}</fragment>`;
     const clonedNode = parse(outerHTML).childNodes[0];
     
     clonedNode.context = {...this.#node.context, ...context};

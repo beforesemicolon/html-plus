@@ -2,6 +2,7 @@ const {HTMLElement} = require("node-html-parser");
 const {composeTagString} = require("./compose-tag-string");
 const {HTMLNode} = require("./HTMLNode");
 const {Variable} = require("./../default-tags/variable.tag");
+const {defaultTagsMap} = require("../default-tags");
 
 describe('HTMLNode', () => {
   it('should create with minimal detail and default options', () => {
@@ -147,22 +148,22 @@ describe('HTMLNode', () => {
   describe('should clone', () => {
     it('without context', () => {
       const el = '<li>item</li>';
-      const node = new HTMLNode(el);
+      const node = new HTMLNode(el, {customTags: defaultTagsMap});
       const nodeClone = node.clone();
       
-      expect(node.toString()).toEqual('<li>item</li>')
-      expect(nodeClone.toString()).toEqual('<li>item</li>')
+      expect(node.render()).toEqual('<li>item</li>')
+      expect(nodeClone.render()).toEqual('<li>item</li>')
     })
   
     it('with context', () => {
       const el = '<li>{item}</li>';
-      const node = new HTMLNode(el);
+      const node = new HTMLNode(el, {customTags: defaultTagsMap});
       node.setContext('item', 'my item')
       const nodeClone = node.clone();
       nodeClone.setContext('item', 'my cloned item')
     
-      expect(node.toString()).toEqual('<li>my item</li>')
-      expect(nodeClone.toString()).toEqual('<li>my cloned item</li>')
+      expect(node.render()).toEqual('<li>my item</li>')
+      expect(nodeClone.render()).toEqual('<li>my cloned item</li>')
     })
   
     it('without inheriting parent context', () => {
@@ -172,55 +173,53 @@ describe('HTMLNode', () => {
       });
       const nodeClone = node.childNodes()[1].childNodes()[0].clone();
     
-      expect(node.toString()).toEqual('<ul><li>my item</li></ul>');
+      expect(node.render()).toEqual('<ul><li>my item</li></ul>');
       expect(nodeClone.context).toEqual({})
-      expect(() => nodeClone.toString()).toThrowError('item is not defined')
+      expect(() => nodeClone.render()).toThrowError('item is not defined')
     })
   });
   
   describe('should duplicate', () => {
     it('without context', () => {
       const el = '<li>item</li>';
-      const node = new HTMLNode(el);
+      const node = new HTMLNode(el, {customTags: defaultTagsMap});
       const nodeClone = node.duplicate();
     
-      expect(node.toString()).toEqual('<li>item</li>')
-      expect(nodeClone.toString()).toEqual('<li>item</li>')
+      expect(node.render()).toEqual('<li>item</li>')
+      expect(nodeClone.render()).toEqual('<li>item</li>')
     })
   
     it('with context', () => {
       const el = '<li>{item}</li>';
-      const node = new HTMLNode(el);
+      const node = new HTMLNode(el, {customTags: defaultTagsMap});
       node.setContext('item', 'my item')
       const nodeClone = node.duplicate();
       nodeClone.setContext('item', 'my cloned item')
     
-      expect(node.toString()).toEqual('<li>my item</li>')
-      expect(nodeClone.toString()).toEqual('<li>my cloned item</li>')
+      expect(node.render()).toEqual('<li>my item</li>')
+      expect(nodeClone.render()).toEqual('<li>my cloned item</li>')
     })
   
     it('by passing context', () => {
       const el = '<li>{item}</li>';
-      const node = new HTMLNode(el);
+      const node = new HTMLNode(el, {customTags: defaultTagsMap});
       node.setContext('item', 'my item')
       const nodeClone = node.duplicate({
         item: 'my cloned item'
       });
     
-      expect(node.toString()).toEqual('<li>my item</li>')
-      expect(nodeClone.toString()).toEqual('<li>my cloned item</li>')
+      expect(node.render()).toEqual('<li>my item</li>')
+      expect(nodeClone.render()).toEqual('<li>my cloned item</li>')
     })
   
     it('inheriting parent context', () => {
       const el = '<variable name="item">my item</variable><ul><li>{item}</li></ul>';
-      const node = new HTMLNode(el, {
-        customTags: {'variable': Variable}
-      });
+      const node = new HTMLNode(el, {customTags: defaultTagsMap});
       const nodeClone = node.childNodes()[1].childNodes()[0].duplicate();
     
-      expect(node.toString()).toEqual('<ul><li>my item</li><li>my item</li></ul>');
+      expect(node.render()).toEqual('<ul><li>my item</li><li>my item</li></ul>');
       expect(nodeClone.context).toEqual({item: 'my item'})
-      expect(nodeClone.toString()).toEqual('<li>my item</li>')
+      expect(nodeClone.render()).toEqual('<li>my item</li>')
     })
   });
 });
