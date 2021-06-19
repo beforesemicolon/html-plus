@@ -51,18 +51,6 @@
             }
           }
 
-          &.current {
-            & > a {
-              font-weight: 600;
-              color: $brand;
-              background: rgba($brand, 0.1);
-
-              &::before {
-                background: $brand;
-              }
-            }
-          }
-
           .expand-indicator {
             --bg: #{$dark};
             position: absolute;
@@ -84,6 +72,8 @@
           }
 
           ul {
+            display: none;
+
             li {
               a {
                 font-weight: 300;
@@ -91,6 +81,29 @@
                 &::before {
                   height: 1px;
                 }
+              }
+            }
+
+            &.expanded {
+              display: block;
+            }
+          }
+
+          &:focus-within,
+          &:hover {
+            ul {
+              display: block;
+            }
+          }
+
+          &.current {
+            & > a {
+              font-weight: 600;
+              color: $brand;
+              background: rgba($brand, 0.1);
+
+              &::before {
+                background: $brand;
               }
             }
           }

@@ -143,6 +143,11 @@ module.exports = {
             path: `${templatingLink}/fragments-and-ignore`,
             content: ``
           },
+          {
+            label: "Debuging",
+            path: `${templatingLink}/debuging`,
+            content: ``
+          },
         ]
       },
       {

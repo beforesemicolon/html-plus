@@ -7,14 +7,24 @@
 			<include partial="search-field" data="{placeholder: 'Search...'}"></include>
 			<section>
 				<h2>{page.docs_menu.title}</h2>
-				<ul>
-					<li #repeat="page.docs_menu.list" class="{$data.path.startsWith($item.path) ? 'current' : ''}">
-						<a href="{$item.path}">{$item.label}</a>
-						<span #if="$item.list?.length"
-						      class="expand-indicator {$data.path.startsWith($item.path) ? 'expanded' : ''}"></span>
-						<ul #if="$item.list?.length"
-						    style="display: {$data.path.startsWith($item.path) ? 'block' : 'none'}">
-							<li #repeat="$item.list"><a href="{$item.path}">{$item.label}</a></li>
+				<ul role="menu">
+					<li #repeat="page.docs_menu.list" #attr="class, current, $data.path === $item.path">
+						<variable name="hasSubmenu"
+						          value="Boolean($item.list?.length)"></variable>
+						<variable name="expanded"
+						          value="hasSubmenu && $data.path.startsWith($item.path)"></variable>
+
+						<a href="{$item.path}"
+						   aria-haspopup="{hasSubmenu}"
+						   aria-expanded="{expanded}"
+						   role="menuitem">{$item.label}</a>
+
+						<span #if="hasSubmenu" class="expand-indicator {expanded ? 'expanded' : ''}"></span>
+
+						<ul #if="hasSubmenu" #attr="class, expanded, expanded">
+							<li #repeat="$item.list" #attr="class, current, $data.path === $item.path">
+								<a href="{$item.path}">{$item.label}</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
