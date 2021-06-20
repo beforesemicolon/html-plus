@@ -24,7 +24,7 @@ class CodeSnippet {
   
   constructor(node) {
     this.node = node;
-    const {type = 'terminal'} = node.attributes;
+    const {type} = node.attributes;
     let content = this.node.innerHTML.trim();
     
     switch (type) {
@@ -33,16 +33,21 @@ class CodeSnippet {
           .replace(varsPattern, (m) => `<span style="color: #f072ff">${m}</span>`)
           .replace(importPattern, (m) => `<span style="color: #11d0ad">${m}</span>`)
           .replace(propertyPattern, (m) => `<span style="color: #ffc107">${m}</span>`)
-          .replace(jsKeywordsPattern, (m) => `<span style="color: #2eefdf">${m}</span>`);
+          .replace(jsKeywordsPattern, (m) => `<span style="color: #2eefdf">${m}</span>`)
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
         break;
       case 'html':
         content = content
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;');
         break;
-      default:
+      case 'terminal':
+      case 'bash':
         content = content
-          .replace(commandsPattern, (m) => `<span style="color: #2fe99e">${m}</span>`)
+          .replace(commandsPattern, (m) => `<span style="color: #2fe99e">${m}</span>`);
+        break;
+      default:
     }
     
     this.content = content

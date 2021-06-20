@@ -29,11 +29,11 @@
             font-size: 1rem;
             font-weight: 400;
             color: $dark;
-            height: 35px;
+            min-height: 35px;
             display: flex;
             align-items: center;
             position: relative;
-            padding-left: 20px;
+            padding: 5px 5px 5px 20px;
 
             &::before {
               content: '';
@@ -125,8 +125,16 @@
     }
 
     a {
-      color: $black;
       font-weight: 300;
+      font-style: italic;
+    }
+
+    blockquote {
+      line-height: 150%;
+      background: $secondary-lighter;
+      margin: 0;
+      padding: 20px;
+      border-radius: 5px;
       font-style: italic;
     }
 
