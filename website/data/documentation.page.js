@@ -1077,6 +1077,16 @@ module.exports = {
         label: "Scripting",
         path: `${scriptingLink}`,
         content: `
+        <p><strong>HTML+</strong> engine allows you to specify a Typescript file in your template and it will
+        compile it for you and serve it to the browser.</p>
+        <code-snippet type="html">
+            <!-- index.html -->
+            <link rel="stylesheet" href="app.ts">
+        </code-snippet>
+        <p>You can add a <a href="">tsconfig.json</a> file at the root of your project to control things but no errors
+        will be thrown in the console. For the browser, all typescript errors are ignore but you can setup linters
+        and run <a href="">tsnode</a> process along with the server's to be notified of errors.</p>
+        <p>This feature allows you to write future Javascript for the browser and no setup is needed for your projects.</p>
         <footer>
           <p hidden></p>
           <p><strong>Prev:</strong> <a href="${stylingLink}">Styling</a></p>
