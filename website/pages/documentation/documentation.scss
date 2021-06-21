@@ -138,6 +138,69 @@
       font-style: italic;
     }
 
+    table {
+      background: rgba($brand, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+
+      caption {
+        display: none;
+      }
+
+      tr {
+        height: 35px;
+
+        &:first-of-type {
+          td {
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+          }
+        }
+
+        &:last-of-type {
+          td {
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
+          }
+        }
+
+        th {
+          color: $light;
+          font-weight: 400;
+          letter-spacing: 1px;
+        }
+
+        td {
+          background: $light;
+          padding: 10px 15px;
+          line-height: 135%;
+          vertical-align: top;
+
+          &:first-of-type {
+            background: $secondary;
+            color: $black;
+            font-weight: 400;
+          }
+        }
+      }
+    }
+
+    dl {
+      dt {
+        margin: 25px 0 5px;
+        font-weight: 500;
+      }
+
+      dd {
+        margin-left: 20px;
+        line-height: 145%;
+
+        em {
+          color: $brand;
+        }
+      }
+    }
+
     footer {
       padding: 15px 20px;
       display: flex;

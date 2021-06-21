@@ -6,6 +6,38 @@ const templatingLink = '/documentation/templating';
 const stylingLink = '/documentation/styling';
 const scriptingLink = '/documentation/scripting';
 const faqLink = '/documentation/faq';
+const apiReferenceLink = '/documentation/api-reference';
+const vocabularyLink = '/documentation/vocabulary';
+
+function getAPIDetailsTable(name, details) {
+  let content = '';
+  
+  for (let key in details) {
+    if (details.hasOwnProperty(key)) {
+      content += `
+      <tr>
+        <td>${key}</td>
+        <td>${details[key]}</td>
+      </tr>
+      `;
+    }
+  }
+  
+  return `
+  <table>
+    <caption>${name} details</caption>
+    <thead>
+      <tr>
+        <th colspan="2" style="text-align: left">Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${content}
+    </tbody>
+  </table>
+  `;
+}
+
 
 module.exports = {
   path: "/documentation",
@@ -21,7 +53,7 @@ module.exports = {
     and subscribe for real world project building examples.</p>
     <a href="/documentation/getting-started" class="link-button cta">Get Started</a>
   `,
-  docs_menu: {
+  menu: {
     title: 'Documentation',
     list: [
       {
@@ -1092,87 +1124,121 @@ module.exports = {
           <p><strong>Prev:</strong> <a href="${stylingLink}">Styling</a></p>
         </footer>`
       },
+      {
+        label: 'API Reference',
+        path: apiReferenceLink,
+        content: ``,
+        list: [
+          {
+            label: "Attribute",
+            path: `${apiReferenceLink}/attribute-class`,
+            content: `
+            ${getAPIDetailsTable('Attribute',{
+              name: 'Attribute',
+              type: 'class',
+              properties: 'execute, bind',
+              methods: 'process, render',
+              description: 'A class to extend in order to create custom HTML+ attributes',
+            })}
+            <h3>Constructor</h3>
+            <p>The constructor takes no argument.</p>
+            <h3>Properties</h3>
+            <dl>
+              <dt>execute</dt>
+              <dd><em>type: boolean</em>, <em>optional</em>: flags whether to execute the string value to a Javascript value.</dd>
+          
+              <dt>bind</dt>
+              <dd><em>type: boolean</em>, <em>optional</em>: flags whether to bind the string value to another string value.</dd>
+            </dl>
+            <h3>Methods</h3>
+            <dl>
+              <dt>process</dt>
+              <dd><em>arguments: attribute value</em>: a function called before value bind and execution that must
+              return a new string representing the new attribute value to be bind or executed.</dd>
+          
+              <dt>render</dt>
+              <dd><em>arguments: attribute value, <a href="">HTMLNode</a> instance</em>: a function called on
+              node render that must return the node or a new HTML markup string.</dd>
+            </dl>
+            `
+          },
+          {
+            label: "composeTagString()",
+            path: `${apiReferenceLink}/compose-tag-string`,
+            content: ``
+          },
+          {
+            label: "engine()",
+            path: `${apiReferenceLink}/engine`,
+            content: ``
+          },
+          {
+            label: "File",
+            path: `${apiReferenceLink}/file-class`,
+            content: ``
+          },
+          {
+            label: "<fragment/>",
+            path: `${apiReferenceLink}/fragment-tag`,
+            content: ``
+          },
+          {
+            label: "#fragment",
+            path: `${apiReferenceLink}/fragment-attribute`,
+            content: ``
+          },
+          {
+            label: "#if",
+            path: `${apiReferenceLink}/if-attribute`,
+            content: ``
+          },
+          {
+            label: "<ignore/>",
+            path: `${apiReferenceLink}/ignore-tag`,
+            content: ``
+          },
+          {
+            label: "<include/>",
+            path: `${apiReferenceLink}/include-tag`,
+            content: ``
+          },
+          {
+            label: "<inject/>",
+            path: `${apiReferenceLink}/inject-tag`,
+            content: ``
+          },
+          {
+            label: "<log/>",
+            path: `${apiReferenceLink}/log-tag`,
+            content: ``
+          },
+          {
+            label: "PartialFile",
+            path: `${apiReferenceLink}/partial-file-class`,
+            content: ``
+          },
+          {
+            label: "#repeat",
+            path: `${apiReferenceLink}/repeat-attribute`,
+            content: ``
+          },
+          {
+            label: "transform()",
+            path: `${apiReferenceLink}/transform`,
+            content: ``
+          },
+          {
+            label: "<variable/>",
+            path: `${apiReferenceLink}/variable-tag`,
+            content: ``
+          },
+        ]
+      },
       // {
       //   label: "FAQ",
       //   path: `${faqLink}`,
       //   content: ``,
       // },
     ]
-  },
-  api_menu: {
-    title: 'API Reference',
-    list: [
-      {
-        label: "Attribute",
-        list: []
-      },
-      {
-        label: "composeTagString",
-        list: []
-      },
-      {
-        label: "engine",
-        list: []
-      },
-      {
-        label: "File",
-        list: []
-      },
-      {
-        label: "<fragment>",
-        list: []
-      },
-      {
-        label: "#fragment",
-        list: []
-      },
-      {
-        label: "#if",
-        list: []
-      },
-      {
-        label: "<ignore>",
-        list: []
-      },
-      {
-        label: "#ignore",
-        list: []
-      },
-      {
-        label: "<include>",
-      },
-      {
-        label: "<inject>",
-        list: []
-      },
-      {
-        label: "<log>",
-        list: []
-      },
-      {
-        label: "PartialFile",
-        list: []
-      },
-      {
-        label: "#repeat",
-        list: []
-      },
-      {
-        label: "<script>",
-        list: []
-      },
-      {
-        label: "<style>",
-        list: []
-      },
-      {
-        label: "transform",
-        list: []
-      },
-      {
-        label: "<variable>",
-        list: []
-      },
-    ]
-  },
+  }
 }

@@ -1,7 +1,7 @@
 <variable name="page"
           value="$data.pages.documentation"></variable>
 <variable name="currentGroup"
-          value="page.docs_menu.list.find((item) => $data.path.startsWith(item.path)) ?? page"></variable>
+          value="page.menu.list.find((item) => $data.path.startsWith(item.path)) ?? page"></variable>
 <variable name="currentPage"
           value="currentGroup.path === $data.path
 	            ? currentGroup
@@ -13,9 +13,9 @@
 		<aside>
 			<include partial="search-field" data="{placeholder: 'Search...'}"></include>
 			<section>
-				<h2>{page.docs_menu.title}</h2>
+				<h2>{page.menu.title}</h2>
 				<ul role="menu">
-					<li #repeat="page.docs_menu.list" #attr="class, current, $data.path === $item.path">
+					<li #repeat="page.menu.list" #attr="class, current, $data.path === $item.path">
 						<variable name="hasSubmenu"
 						          value="Boolean($item.list?.length)"></variable>
 						<variable name="expanded"
@@ -30,7 +30,7 @@
 
 						<ul #if="hasSubmenu" #attr="class, expanded, expanded">
 							<li #repeat="$item.list" #attr="class, current, $data.path === $item.path">
-								<a href="{$item.path}">{$item.label}</a>
+								<a href="{$item.path}"><ignore value="$item.label" escape></ignore></a>
 							</li>
 						</ul>
 					</li>
@@ -38,7 +38,7 @@
 			</section>
 		</aside>
 		<article #if="currentPage">
-			<h2>{currentPage.label}</h2>
+			<h2><ignore value="currentPage.label" escape></ignore></h2>
 			<inject html="currentPage.content"></inject>
 		</article>
 	</main>
