@@ -44,4 +44,20 @@ header {
       }
     }
   }
+
+  @media screen and (max-width: 625px) {
+    nav {
+      a:any-link {
+        display: none;
+
+        &.link-button {
+          display: none
+        }
+
+        &.version-link {
+          display: inline-block;
+        }
+      }
+    }
+  }
 }

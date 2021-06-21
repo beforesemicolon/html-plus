@@ -35,6 +35,24 @@ section[role="banner"] {
       font-weight: 200;
     }
   }
+
+  @media screen and (max-width: 625px) {
+    padding-top: 80px;
+    padding-bottom: 80px;
+
+    h2 {
+      font-size: #{"min(max(1.4rem, 6vw), 1.8rem)"};
+      margin: 0 5vw 25px;
+
+      a {
+        padding: 6px 10px;
+      }
+
+      & + p {
+        display: none;
+      }
+    }
+  }
 }
 
 .features {
@@ -89,6 +107,14 @@ section[role="banner"] {
       }
     }
   }
+
+  @media screen and (max-width: 760px) {
+    .feature-list {
+      .feature-card {
+        width: 100%;
+      }
+    }
+  }
 }
 
 .quick-start {
@@ -112,5 +138,14 @@ section[role="banner"] {
   a.link-button {
     margin: 45px 0 0;
     padding: 10px 20px;
+  }
+
+  @media screen and (max-width: 625px) {
+    h3 {
+
+      & + p {
+        padding: 0 5%;
+      }
+    }
   }
 }

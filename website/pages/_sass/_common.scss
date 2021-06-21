@@ -71,7 +71,8 @@ abbr {
   background: $secondary;
   color: $dark;
   font-weight: 400;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
 
   &.cta {
     background: $cta;
@@ -93,6 +94,11 @@ abbr {
 .wrapper {
   padding-left: calc((100vw - min(960px, calc(100vw - 50px))) / 2);
   padding-right: calc((100vw - min(960px, calc(100vw - 50px))) / 2);
+
+  @media screen and (max-width: 375px) {
+    padding-left: calc((100vw - min(960px, calc(100vw - 30px))) / 2);
+    padding-right: calc((100vw - min(960px, calc(100vw - 30px))) / 2);
+  }
 }
 
 @mixin wrapper($max-width) {

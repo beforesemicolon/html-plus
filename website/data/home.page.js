@@ -14,7 +14,7 @@ module.exports = {
     }
   },
   features: {
-    title: "What makes it stand-out?",
+    title: "Why HTML+?",
     description: "In short, it is familiar, fast, powerful and allows you to write less and powerfully. Here is more:",
     link_label: "learn more",
     list: [
