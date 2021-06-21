@@ -42,6 +42,8 @@ class CodeSnippet {
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;');
         break;
+      case 'css':
+        break;
       case 'terminal':
       case 'bash':
         content = content

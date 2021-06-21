@@ -993,18 +993,100 @@ module.exports = {
       {
         label: "Styling",
         path: `${stylingLink}`,
-        content: ``
+        content: `
+        <p><strong>HTML+</strong> engine allows you to specify a CSS preprocessor file in your template and it will
+        compile it for your and serve it to the browser.</p>
+        <code-snippet type="html">
+            <!-- index.html -->
+            <link rel="stylesheet" href="app.scss">
+        </code-snippet>
+        <p>It supports all major CSS preprocessors extensions like:</p>
+        <ul>
+            <li><a href=""><strong>.sass/.scss</strong></a></li>
+            <li><a href=""><strong>.less</strong></a></li>
+            <li><a href=""><strong>.styl</strong></a></li>
+        </ul>
+        <h3>Write future CSS</h3>
+        <p>If you don't use CSS preprocessors, writing simple CSS is powered by <a href="https://postcss.org/">POST CSS</a> with default
+        <a href="https://github.com/csstools/postcss-preset-env">preset env</a> and other that allows you to:</p>
+        <ul>
+            <li>Nest style</li>
+            <li>Import partial CSS (<a href="https://github.com/postcss/postcss-import">read more</a>)</li>
+            <li>Use modern CSS without worrying about browser support</li>
+            <li>Autoprefix where needed (<a href="https://github.com/postcss/autoprefixer">read more</a>)</li>
+            <li>Use CSS properties and variables</li>
+            <li>Purge unused CSS (<a href="https://www.npmjs.com/package/@fullhuman/postcss-purgecss">read more</a>)</li>
+        </ul>
+        <code-snippet type="css">
+            <!-- app.css -->
+            @import "normalizer.css";
+            @custom-media --viewport-medium (width <= 50rem);
+            @custom-selector :--heading h1, h2, h3, h4, h5, h6;
+            
+            :root {
+              --mainColor: #12345678;
+            }
+            
+            body {
+              color: var(--mainColor);
+              font-family: system-ui;
+              overflow-wrap: break-word;
+            }
+            
+            input {
+              appearance: none;
+            }
+            ::placeholder {
+              color: gray;
+            }
+            
+            .image {
+              background-image: url(image@1x.png);
+            }
+            @keyframes test {
+              100% {opacity: 1}
+            }
+            @media (min-resolution: 2dppx) {
+              .image {
+                background-image: url(image@2x.png);
+              }
+            }
+            
+            :--heading {
+              background-image: image-set(url(img/heading.png) 1x, url(img/heading@2x.png) 2x);
+            
+              @media (--viewport-medium) {
+                margin-block: 0;
+              }
+            }
+            
+            a {
+              color: rgb(0 0 100% / 90%);
+            
+              &:hover {
+                color: rebeccapurple;
+              }
+            }
+        </code-snippet>
+        <footer>
+          <p><strong>Next:</strong> <a href="${scriptingLink}">Scripting</a></p>
+          <p><strong>Prev:</strong> <a href="${templatingLink}/debuging">Debuging</a></p>
+        </footer>`
       },
       {
         label: "Scripting",
         path: `${scriptingLink}`,
-        content: ``
+        content: `
+        <footer>
+          <p hidden></p>
+          <p><strong>Prev:</strong> <a href="${stylingLink}">Styling</a></p>
+        </footer>`
       },
-      {
-        label: "FAQ",
-        path: `${faqLink}`,
-        content: ``,
-      },
+      // {
+      //   label: "FAQ",
+      //   path: `${faqLink}`,
+      //   content: ``,
+      // },
     ]
   },
   api_menu: {
