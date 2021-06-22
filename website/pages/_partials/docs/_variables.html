@@ -2,21 +2,29 @@
 <p>When it comes to templating, variables help with reusing logic and piece of data to clean things
    a litle and make templates easier to understand.</p>
 <p>Instead of this:</p>
-<code-snippet type="html">
-	<ul>
-		<li #repeat="$data.list.filter(n => n.price > 0)">{$item.name}</li>
-	</ul>
-	<p>Total price: {$data.list.filter(n => n.size > 10).reduce((acc, n) => n.price), 0)}</p>
+<code-snippet language="html">
+<ul>
+	<li #repeat="$data.list.filter(n => n.price > 0)">{$item.name}</li>
+</ul>
+<p>
+	Total price: {
+		$data.list
+			.filter(n => n.size > 10).reduce((acc, n) => n.price), 0)
+	}
+</p>
 </code-snippet>
 <p>Do this:</p>
-<code-snippet type="html">
-	<variable name="pricedList"
-	          value="$data.list.filter(n => n.price > 0)"></variable>
-	<ul>
-		<li #repeat="pricedList">{$item.name}</li>
-	</ul>
-	<variable name="total"
-	          value="pricedList.reduce((acc, n) => n.price), 0)"></variable>
-	<p>Total price: {total}</p>
+<code-snippet language="html">
+<variable name="pricedList"
+          value="$data.list.filter(n => n.price > 0)"></variable>
+
+<ul>
+	<li #repeat="pricedList">{$item.name}</li>
+</ul>
+
+<variable name="total"
+          value="pricedList.reduce((acc, n) => n.price), 0)"></variable>
+
+<p>Total price: {total}</p>
 </code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>

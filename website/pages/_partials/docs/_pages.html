@@ -1,11 +1,11 @@
 <p>To create pages you must first specify in which directory relative to the server you will be placing
    your HTML pages.</p>
-<code-snippet type="js">
-	const {engine} = require('@beforesemicolon/html-plus');
+<code-snippet language="js">
+const {engine} = require('@beforesemicolon/html-plus');
 
-	const app = express();
+const app = express();
 
-	engine(app, path.resolve(__dirname, './pages'));
+engine(app, path.resolve(__dirname, './pages'));
 </code-snippet>
 <p>Once you have your pages directory, which you can name anything you want, you can start creating
    HTML files which will be used as pages.</p>
@@ -25,16 +25,16 @@
 	    if you setup the page in your <a href="/documentation/routes/express-routes">express custom route</a> you create.</li>
 </ul>
 <code-snippet>
-	# File Structrure           # Routes
+# File Structrure         # Routes
 
-	- server.js
-	- pages
-	- index.html              /
-	- contact.html            /contact
-	- about.html              /about
-	- 404.html                /404
-	- projects
-	- index.html            /projects
-	- todo-project.html     /projects/todo-project
+- server.js
+- pages
+- index.html              /
+- contact.html            /contact
+- about.html              /about
+- 404.html                /404
+- projects
+- index.html              /projects
+- todo-project.html       /projects/todo-project
 </code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>

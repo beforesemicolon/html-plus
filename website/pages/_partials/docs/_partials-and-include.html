@@ -1,45 +1,45 @@
 <p>Partials are simply a way to split your templates into parts that can be reused in different templates.</p>
 <h3>Create Partials</h3>
 <p>To create a partial files all you have to do is create an HTML file which the name starts with an underscore.</p>
-<code-snippet highligh="_layout.html, _header.html">
-	# File Structrure           # Routes
+<code-snippet>
+# File Structrure         # Routes
 
-	- server.js
-	- pages
-	- partials
-	- _layout.html
-	- _header.html
-	- index.html              /
-	- contact.html            /contact
-	- about.html              /about
-	- 404.html                /404
-	- projects
-	- index.html            /projects
-	- todo-project.html     /projects/todo-project
+- server.js
+- pages
+- partials
+- _layout.html
+- _header.html
+- index.html              /
+- contact.html            /contact
+- about.html              /about
+- 404.html                /404
+- projects
+- index.html              /projects
+- todo-project.html       /projects/todo-project
 </code-snippet>
 <p>Partial files are ignored by the routes and can only be included in a page templates.</p>
 <h3>Include partials</h3>
 <p>To include a partial in your page template you must use the <a href="">include tag</a>.</p>
-<code-snippet type="html">
-	<!-- _header.html  -->
-	<header>
-		<h1>Projects</h1>
-		<p class="description">Welcome to the projects page</p>
-	</header>
+<code-snippet language="html">
+<!-- _header.html  -->
+<header>
+	<h1>Projects</h1>
+	<p class="description">Welcome to the projects page</p>
+</header>
 </code-snippet>
 <p>The <a href="">include</a> tag takes the name of the partial file (without underscore and extension)
    as the value of the <a href="">partial attribute</a> and will include the partial file content in your template.</p>
-<code-snippet type="html">
-	<!-- project.html  -->
-	<include partial="header"></include>
+<code-snippet language="html">
+<!-- project.html  -->
+<include partial="header"></include>
 </code-snippet>
 <p>This means that <strong>partial file names must be unique</strong> and they can be placed anywhere inside
    your pages directory.</p>
 <p>You can also use the <a href="">partial-path attribute</a> to include another template or partial file.</p>
-<code-snippet type="html">
-	<!-- project.html  -->
-	<include partial="header"></include>
-	<include partial-path="../content.html"></include>
+<code-snippet language="html">
+<!-- project.html  -->
+<include partial="header"></include>
+<include partial-path="../content.html"></include>
 </code-snippet>
 <p>When using the <a href="">partial-path attribute</a> the file you include does not have to be a partial file
    which means the file name may not need to start with an underscore.</p>
@@ -47,29 +47,33 @@
 <p>Our partial file example above has hardcoded title and description which does not make it reusable.</p>
 <p>We can use <a href="">template binding</a> to expect a value for the title and description so it can be set
    to match the pages it is included at.</p>
-<code-snippet type="html">
-	<!-- _header.html  -->
-	<header>
-		<h1>{title}</h1>
-		<p class="description">{description}</p>
-	</header>
+<code-snippet language="html">
+<!-- _header.html  -->
+<header>
+	<h1>{title}</h1>
+	<p class="description">{description}</p>
+</header>
 </code-snippet>
 <p>By default partial files inherit the context of the template file they are include in.</p>
 <p>By declaring the title and description in our project template it will automatically be inherited
    by the partial included after the declaration.</p>
-<code-snippet type="html">
-	<!-- project.html  -->
-	<variable name="title">Projects</variable>
-	<variable name="description">Welcome to the projects page</variable>
-	<include partial="header"></include>
+<code-snippet language="html">
+<!-- project.html  -->
+<variable name="title">Projects</variable>
+<variable name="description">Welcome to the projects page</variable>
+
+<include partial="header"></include>
 </code-snippet>
 <p>Creating variable solely to be inherited by the partial may not be a good option because it is not
    obvious that the declaration is needed by the partial.</p>
 <p>To make it more explicit, the <a href="">include tag</a> takes context data for the partial as data attribute
    value which the value must be a Javascript object literal.</p>
-<code-snippet type="html">
-	<!-- project.html  -->
-	<include partial="header"
-	         data="{title: 'Projects', description: 'Welcome to the projects page'}"></include>
+<code-snippet language="html">
+<!-- project.html  -->
+<include partial="header"
+         data="{
+            title: 'Projects',
+            description: 'Welcome to the projects page'
+         }"></include>
 </code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>

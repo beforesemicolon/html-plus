@@ -9,6 +9,8 @@
 
 <include partial="layout" data="{...page, title: `${page.title}: ${currentPage.title}`}">
 	<link rel="stylesheet" href="documentation.scss" inject-id="style">
+	<link rel="stylesheet" href="./../../node_modules/highlight.js/styles/github-dark-dimmed.css" inject-id="style">
+
 	<main class="documentation wrapper">
 		<aside>
 			<include partial="search-field" data="{placeholder: 'Search...'}"></include>

@@ -1,22 +1,25 @@
 <p>Static data is any data you provide through the initial engine configuration when the server runs.</p>
 <p>This data is kept unchanged and every template file is given access to it.</p>
-<code-snippet type="js">
-	const {engine} = require('@beforesemicolon/html-plus');
+<code-snippet language="js">
+const {engine} = require('@beforesemicolon/html-plus');
 
-	const app = express();
+const app = express();
 
-	engine(app, path.resolve(__dirname, './pages'), {
+engine(app, path.resolve(__dirname, './pages'), {
 	staticData: {
-	site: {
-	version: "2.4.1",
-	license: "MIT"
+		site: {
+			version: "2.4.1",
+			license: "MIT"
+		}
 	}
-	}
-	});
+});
 </code-snippet>
 <p>Inside the template you can reference this data by using <strong>$data</strong> variable.</p>
-<code-snippet type="html">
-	<header><h1>HTML+</h1> <p>version {$data.site.version}, license {$data.site.license}</p></header>
+<code-snippet language="html">
+<header>
+	<h1>HTML+</h1>
+	<p>version {$data.site.version}, license {$data.site.license}</p>
+</header>
 </code-snippet>
 <p>Static data is an excellent place to provide data fetched from databases or somewhere in the cloud when
    server is starting. Any data can be made available to all templates using the <a href="">staticData</a>

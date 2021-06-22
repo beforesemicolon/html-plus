@@ -1,20 +1,22 @@
 <p><strong>HTML+</strong> uses curly braces to indicate mark the data you want to bind to the template.</p>
-<code-snippet type="html">
-	<button type="{type}">{label}</button>
+<code-snippet language="html">
+<button type="{type}">{label}</button>
 </code-snippet>
 <p>This syntax work for attributes as well it is a simple way to mark the variable which can also contain logic.</p>
-<code-snippet type="html">
-	<button type="{type}">{type === 'button' ? 'Send' : 'Submit'}</button>
+<code-snippet language="html">
+<button type="{type}">
+   {type === 'button' ? 'Send' : 'Submit'}
+</button>
 </code-snippet>
 <p>You may also contactinate these curly braces to form a string you want.</p>
-<code-snippet type="html">
-	<button type="button">{label} Button</button>
+<code-snippet language="html">
+<button type="button">{label} Button</button>
 </code-snippet>
 <p>You <strong>don't need to use curly braces</strong> for any <strong>HTML+</strong> <a href="">default attributes</a>
    and don't need it also for some attributes specific to a <strong>HTML+</strong> <a href="">default attributes</a></p>
 <p>because the curly braces has meaning for <strong>HTML+</strong> you should escape it or use correct
    HTML entity for it.</p>
-<code-snippet type="html">
-	<button type="button">Save \{Button\}</button>
+<code-snippet language="html">
+<button type="button">Save &#123;Button&#125;</button>
 </code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>

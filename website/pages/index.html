@@ -2,6 +2,7 @@
 
 <include partial="layout" data="page">
 	<link rel="stylesheet" href="./home.scss" inject-id="style">
+	<link rel="stylesheet" href="./../../node_modules/highlight.js/styles/github-dark-dimmed.css" inject-id="style">
 
 	<section role="banner" class="wrapper">
 		<h2>{$data.site.description}</h2>
@@ -29,20 +30,22 @@
 	<section class="quick-start wrapper">
 		<h3>{page.quick_start.title}</h3>
 		<p>{page.quick_start.description}</p>
-		<code-snippet type="js">
-			const express = require('express');
-			const http = require('http');
-			const path = require('path');
-			const {engine} = require('@beforesemicolon/html-plus');
+<code-snippet language="js">
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const {engine} = require('@beforesemicolon/html-plus');
 
-			const app = express();
+const app = express();
 
-			engine(app, path.resolve(__dirname, './pages'));
+engine(app, path.resolve(__dirname, './pages'));
 
-			const server = http.createServer(app);
+const server = http.createServer(app);
 
-			server.listen(3000)
-		</code-snippet>
+server.listen(3000, () => {
+	console.log('server live on port 3000')
+})
+</code-snippet>
 		<a href="{page.quick_start.link.path}" class="link-button cta">{page.quick_start.link.title}</a>
 	</section>
 

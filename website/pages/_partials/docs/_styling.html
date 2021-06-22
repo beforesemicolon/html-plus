@@ -1,6 +1,6 @@
 <p><strong>HTML+</strong> engine allows you to specify a CSS preprocessor file in your template and it will
                           compile it for your and serve it to the browser.</p>
-<code-snippet type="html">
+<code-snippet language="html">
 	<!-- index.html -->
 	<link rel="stylesheet" href="app.scss">
 </code-snippet>
@@ -21,55 +21,56 @@
 	<li>Use CSS properties and variables</li>
 	<li>Purge unused CSS (<a href="https://www.npmjs.com/package/@fullhuman/postcss-purgecss">read more</a>)</li>
 </ul>
-<code-snippet type="css">
-	<!-- app.css -->
-	@import "normalizer.css";
-	@custom-media --viewport-medium (width <= 50rem);
-	@custom-selector :--heading h1, h2, h3, h4, h5, h6;
+<code-snippet language="css">
+<!-- app.css -->
+@import "normalizer.css";
+@custom-media --viewport-medium (width <= 50rem);
+@custom-selector :--heading h1, h2, h3, h4, h5, h6;
 
-	:root {
+:root {
 	--mainColor: #12345678;
-	}
+}
 
-	body {
+body {
 	color: var(--mainColor);
 	font-family: system-ui;
 	overflow-wrap: break-word;
-	}
+}
 
-	input {
+input {
 	appearance: none;
-	}
-	::placeholder {
+}
+::placeholder {
 	color: gray;
-	}
+}
 
-	.image {
+.image {
 	background-image: url(image@1x.png);
-	}
-	@keyframes test {
+}
+@keyframes test {
 	100% {opacity: 1}
-	}
-	@media (min-resolution: 2dppx) {
-	.image {
-	background-image: url(image@2x.png);
-	}
-	}
+}
 
-	:--heading {
+@media (min-resolution: 2dppx) {
+	.image {
+		background-image: url(image@2x.png);
+	}
+}
+
+:--heading {
 	background-image: image-set(url(img/heading.png) 1x, url(img/heading@2x.png) 2x);
 
 	@media (--viewport-medium) {
-	margin-block: 0;
+		margin-block: 0;
 	}
-	}
+}
 
-	a {
+a {
 	color: rgb(0 0 100% / 90%);
 
 	&:hover {
-	color: rebeccapurple;
+		color: rebeccapurple;
 	}
-	}
+}
 </code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>

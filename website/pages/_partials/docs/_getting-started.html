@@ -12,33 +12,33 @@
 <h3>Create Your Project</h3>
 <p>You can create your node project how you normally do by using some tool or executing the following commands:</p>
 <code-snippet>
-	mkdir my-app
-	cd my-app
-	npm init
+mkdir my-app
+cd my-app
+npm init
 </code-snippet>
 <h3>Installation</h3>
 <p>Inside your project you can proceed to install <strong>HTML+</strong> and express:</p>
 <code-snippet>
-	npm install express
-	npm install @beforesemicolon/html-plus
+npm install express
+npm install @beforesemicolon/html-plus
 </code-snippet>
 <h3>Server Setup</h3>
 <p>The simplest setup you can have is importing <strong>HTML+</strong>, create your express app to pass it to
    the engine along with the directory where you will put the html page files.</p>
 <p><strong>HTML+ engine</strong> will setup your <a href="/documentation/routing">Routes</a> and all handlers for
                                  CSS(including preprocessors), Javascript and Typescript.</p>
-<code-snippet type="js">
-	const express = require('express');
-	const http = require('http');
-	const path = require('path');
-	const {engine} = require('@beforesemicolon/html-plus');
+<code-snippet language="js">
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const {engine} = require('@beforesemicolon/html-plus');
 
-	const app = express();
+const app = express();
 
-	engine(app, path.resolve(__dirname, './pages'));
+engine(app, path.resolve(__dirname, './pages'));
 
-	const server = http.createServer(app);
+const server = http.createServer(app);
 
-	server.listen(3000)
+server.listen(3000)
 </code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>
