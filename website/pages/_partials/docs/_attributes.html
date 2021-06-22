@@ -1,0 +1,40 @@
+<include partial="api-table-details" data="{
+	name: 'Attribute',
+	details: {
+		name: 'Attribute',
+		type: 'class',
+		properties: 'execute, bind',
+		methods: 'process, render',
+		description: 'A class to extend in order to create custom HTML+ attributes',
+	}
+}"></include>
+<h3>Constructor</h3>
+<p>The constructor takes no argument.</p>
+<h3>Properties</h3>
+<include partial="api-description-list" data="{
+	descriptions: [
+		{
+			concept: 'execute',
+			type: 'type: boolean, optional',
+			description: 'flags whether to execute the string value to a Javascript value.'},
+		{
+			concept: 'render',
+			type: 'type: boolean, optional',
+			description: 'flags whether to bind the string value to another string value.'
+		},
+	]
+}"></include>
+<h3>Methods</h3>
+<include partial="api-description-list" data="{
+	descriptions: [
+		{
+			concept: 'process',
+			type: 'arguments: raw attribute value',
+			description: 'a function called before value bind and execution that must return a new string representing the new attribute value to be bind or executed.'},
+		{
+			concept: 'render',
+			type: 'arguments: processed attribute value, HTMLNode instance',
+			description: 'a function called on node render that must return the node or a new HTML markup string.'
+		},
+	]
+}"></include>

@@ -1,0 +1,48 @@
+@import "../_sass/colors";
+
+#api-reference-details {
+  background: rgba($brand, 0.8);
+  padding: 10px;
+  border-radius: 5px;
+
+  caption {
+    display: none;
+  }
+
+  tr {
+    height: 35px;
+
+    &:first-of-type {
+      td {
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+      }
+    }
+
+    &:last-of-type {
+      td {
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+      }
+    }
+
+    th {
+      color: $light;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    td {
+      background: $light;
+      padding: 10px 15px;
+      line-height: 135%;
+      vertical-align: top;
+
+      &:first-of-type {
+        background: $secondary;
+        color: $black;
+        font-weight: 400;
+      }
+    }
+  }
+}

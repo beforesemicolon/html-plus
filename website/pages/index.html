@@ -7,8 +7,9 @@
 		<h2>{$data.site.description}</h2>
 		<p>{page.banner.description}</p>
 		<div class="doc-links">
-			<a href="{page.banner.learn_link.path}" class="link-button cta">{page.banner.learn_link.label}</a>
-			<a href="{page.banner.documentation_link.path}" class="link-button">{page.banner.documentation_link.label}</a>
+			<a #repeat="page.banner.links"
+			   #attr="class, cta, $item.path === '/learn'"
+			   href="{$item.path}" class="link-button">{$item.label}</a>
 		</div>
 		<p>License: <strong>{$data.site.license}</strong></p>
 	</section>
@@ -42,7 +43,7 @@
 
 			server.listen(3000)
 		</code-snippet>
-		<a href="{page.quick_start.link.path}" class="link-button cta">{page.quick_start.link.label}</a>
+		<a href="{page.quick_start.link.path}" class="link-button cta">{page.quick_start.link.title}</a>
 	</section>
 
 </include>

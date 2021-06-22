@@ -1,0 +1,35 @@
+<p><strong>HTML+</strong> provides you with the <a href="">fragment tag</a> which is useful
+                          for when you dont need the wrapping tag and still want to apply logic like repeating and conditional
+                          rendering.</p>
+<code-snippet type="html">
+	<fragment #if="user.isAdmin">
+		<section id="control-pannel">...</section>
+		<section id="user-manegement">...</section>
+	</fragment>
+</code-snippet>
+<p>The above can also be accomplished with the <a href="">#fragment attribute</a>.</p>
+<code-snippet type="html">
+	<div #fragment #if="user.isAdmin">
+		<section id="control-pannel">...</section>
+		<section id="user-manegement">...</section>
+	</div>
+</code-snippet>
+<h3>Improve render time</h3>
+<p>Another very special tag and attribute is <a href="">ignore</a>. They pretty much signal to the
+   compiler that the markup content does not need to be compiled and should be shown as is.</p>
+<code-snippet type="html">
+	<ignore #if="user.isAdmin">
+		<section id="control-pannel">...</section>
+		<section id="user-manegement">...</section>
+	</ignore>
+</code-snippet>
+<p>This can save compiling time and make your template render faster.</p>
+<code-snippet type="html">
+	<div #ignore #if="user.isAdmin">
+		<section id="control-pannel">...</section>
+		<section id="user-manegement">...</section>
+	</div>
+</code-snippet>
+<p>Both, fragment and ignore tag and attribute options, will render the inner content only but ignore
+   will not compile the content.</p>
+<include partial="documentation-menu" data="{currentPage}"></include>

@@ -1,0 +1,145 @@
+<p>The real power of <strong>HTML+</strong> is in its ability to create custom tags and attributes
+   that can handle more complex logic and calculations.</p>
+<h3>Custom Tags</h3>
+<p>A custom tag can be a class or a function which must contain a or return a render function. And that's the
+   ony rule.</p>
+<p>The below search field class will can be used as <strogn>search-field</strogn> tag. That means that how you
+   name your class and function is how the tag name will be called.</p>
+<code-snippet type="js">
+	class SearchField {
+	render() {
+	return \`
+	<label class="search-field" aria-label="search field">
+		<input type="search" name="search" placeholder="Search...">
+	</label>
+	\`;
+	}
+	}
+</code-snippet>
+<p>After, it must be registered by passing it to the engine on start.</p>
+<code-snippet type="js">
+	const {engine} = require('@beforesemicolon/html-plus');
+	const {SearchField} = require('./SearchField.js');
+
+	const app = express();
+
+	engine(app, path.resolve(__dirname, './pages'), {
+	customTags: [SearchField]
+	});
+</code-snippet>
+<p>We can now used it our template as so.</p>
+<code-snippet type="html">
+	<search-field></search-field>
+</code-snippet>
+<p>You may also pass attributes and custom tag and attribute will be initialized with two arguments. The
+	<a href="">HTMLNode</a> object and the <a href="">options</a> the node was created with.</p>
+<p>To add accept a <em>value</em> and <em>placeholder</em> attribute we can use a constructor in our example.</p>
+<code-snippet type="js">
+	class SearchField {
+	constructor(node, options) {
+	this.node = node;
+	}
+
+	render() {
+	const {value = '', placeholder = 'Search...'} = this.node.attributes;
+	return \`
+	<label class="search-field" aria-label="search field">
+		<input type="search" name="search" placeholder="\${placeholder}" value="\${value}">
+	</label>
+	\`;
+	}
+	}
+</code-snippet>
+<code-snippet type="html">
+	<search-field value="sample" placeholder="Find..."></search-field>
+</code-snippet>
+<p>The node object will contain things like the <a href="">attributes</a>, <a href="">context</a> and
+   other very useful <a href="">methods and properties</a>.</p>
+<p>The options object will contain things like the <a href="">data</a>, the <a href="">file object</a> and
+   other <a href="">details</a>.</p>
+<h3>Custom Attributes</h3>
+<p>Custom attributes must all be a class that extends the <a href="">Attribute class</a>. This class must
+   also contain a render method which is called the value of the attribute and the <a href="">HTMLNode</a> instance.</p>
+<p>A optional method of you custom attribute is the <a href="">process</a> method which is called with the value
+   of the attribute which you can tweak into a different srting to be bind or executed before the rendering.</p>
+<p>The below <em>WrapWith</em> custom attribute will receive a comma separated name of tags and wrap
+   the tag it is placed on with those.</p>
+<code-snippet type="js">
+	const {Attribute} = request('@beforesemicolon/html-plus');
+
+	class WrapWith extends Attribute {
+	process(value) {
+	this.tags = value.split(',');
+
+	return value;
+	}
+
+	render(value, node) {
+	return this.tags.reduce((content, tag) => {
+	return \`<\${tag}>\${content}</\${tag}>\`;
+}, node.render());
+}
+}
+</code-snippet>
+<p>With the class, we register it with the engine.</p>
+<code-snippet type="js">
+	const {engine} = require('@beforesemicolon/html-plus');
+	const {WrapWith} = require('./WrapWith.js');
+
+	const app = express();
+
+	engine(app, path.resolve(__dirname, './pages'), {
+	customAttributes: [WrapWith]
+	});
+</code-snippet>
+<p>We can now use it as such</p>
+<code-snippet type="html">
+	<p #wrap-with="div">wrapped</p>
+	<!-- becomes: <div><p>wrapped</p></div> -->
+	<p #wrap-with="section,div">wrapped</p>
+	<!-- becomes: <section><div><p>wrapped</p></div></section>-->
+</code-snippet>
+<blockquote><strong>Note:</strong> both, custom attributes and tags render function, must return the final html. This
+                                   html must not contain any markup to be compiled.</blockquote>
+<h3>Custom Tag Custom Attributes</h3>
+<p>Your custom tags can also contain specific attributes. These attributes won't be marked with hash symbol(#).</p>
+<p>You may define them as a static property on a class or function.</p>
+<code-snippet type="js">
+	const {Attribute} = request('@beforesemicolon/html-plus');
+
+	class SearchField {
+	render() {
+	return \`
+	<label class="search-field" aria-label="search field">
+		<input type="search" name="search" placeholder="Search...">
+	</label>
+	\`;
+	}
+
+	static get customAttributes() {
+	return {
+	value: new Attribute('value', '', false, true)
+	}
+	}
+	}
+</code-snippet>
+<p>These custom attributes can be simple objects as well. Not necessary a Attribute instance unless you want
+   to calculate something more complex.</p>
+<code-snippet type="js">
+	class SearchField {
+	render() {
+	return \`
+	<label class="search-field" aria-label="search field">
+		<input type="search" name="search" placeholder="Search...">
+	</label>
+	\`;
+	}
+
+	static get customAttributes() {
+	return {
+	value: {execute: true}
+	}
+	}
+	}
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

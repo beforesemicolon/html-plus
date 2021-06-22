@@ -1,10 +1,13 @@
 @import "../_sass/common";
 @import "../_partials/layout";
 @import "../_partials/search-field";
+@import "../_partials/documentation-menu";
+@import "../_partials/api-table-details";
+@import "../_partials/api-description-list";
 
 .documentation {
   display: flex;
-  margin: 50px 0;
+  margin-top: 50px;
 
   aside {
     width: 300px;
@@ -137,87 +140,22 @@
       border-radius: 5px;
       font-style: italic;
     }
+  }
 
-    table {
-      background: rgba($brand, 0.8);
-      padding: 10px;
-      border-radius: 5px;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
 
-      caption {
-        display: none;
-      }
-
-      tr {
-        height: 35px;
-
-        &:first-of-type {
-          td {
-            border-top-left-radius: 3px;
-            border-top-right-radius: 3px;
-          }
-        }
-
-        &:last-of-type {
-          td {
-            border-bottom-left-radius: 3px;
-            border-bottom-right-radius: 3px;
-          }
-        }
-
-        th {
-          color: $light;
-          font-weight: 400;
-          letter-spacing: 1px;
-        }
-
-        td {
-          background: $light;
-          padding: 10px 15px;
-          line-height: 135%;
-          vertical-align: top;
-
-          &:first-of-type {
-            background: $secondary;
-            color: $black;
-            font-weight: 400;
-          }
-        }
-      }
+    aside {
+      width: 100%;
     }
+  }
 
-    dl {
-      dt {
-        margin: 25px 0 5px;
-        font-weight: 500;
-      }
-
-      dd {
-        margin-left: 20px;
-        line-height: 145%;
-
-        em {
-          color: $brand;
-        }
-      }
-    }
-
-    footer {
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: $secondary;
-      border-radius: 5px;
-      flex-direction: row-reverse;
-
-      p {
-        margin: 0;
-
-        a {
-          font-weight: 400;
-          text-decoration: none;
-          color: $brand;
-        }
+  @media screen and (max-width: 425px) {
+    article {
+      footer {
+        padding: 15px 0;
+        background: none;
+        border-top: 2px solid $secondary;
       }
     }
   }

@@ -7,14 +7,14 @@
 	            ? currentGroup
 	            : currentGroup.list.find((item) => item.path === $data.path)"></variable>
 
-<include partial="layout" data="{...page, title: `${page.title}: ${currentPage.title ?? currentPage.label}`}">
+<include partial="layout" data="{...page, title: `${page.title}: ${currentPage.title}`}">
 	<link rel="stylesheet" href="documentation.scss" inject-id="style">
 	<main class="documentation wrapper">
 		<aside>
 			<include partial="search-field" data="{placeholder: 'Search...'}"></include>
 			<section>
 				<h2>{page.menu.title}</h2>
-				<ul role="menu">
+				<ul role="menu" aria-label="Documentation Menu">
 					<li #repeat="page.menu.list" #attr="class, current, $data.path === $item.path">
 						<variable name="hasSubmenu"
 						          value="Boolean($item.list?.length)"></variable>
@@ -24,22 +24,22 @@
 						<a href="{$item.path}"
 						   aria-haspopup="{hasSubmenu}"
 						   aria-expanded="{expanded}"
-						   role="menuitem">{$item.label}</a>
+						   role="menuitem">{$item.title}</a>
 
 						<span #if="hasSubmenu" class="expand-indicator {expanded ? 'expanded' : ''}"></span>
 
 						<ul #if="hasSubmenu" #attr="class, expanded, expanded">
 							<li #repeat="$item.list" #attr="class, current, $data.path === $item.path">
-								<a href="{$item.path}"><ignore value="$item.label" escape></ignore></a>
+								<a href="{$item.path}"><ignore value="$item.title" escape></ignore></a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 			</section>
 		</aside>
-		<article #if="currentPage">
-			<h2><ignore value="currentPage.label" escape></ignore></h2>
-			<inject html="currentPage.content"></inject>
+		<article #if="currentPage" id="documentation">
+			<h2><ignore value="currentPage.title" escape></ignore></h2>
+			<include partial="{currentPage.partial}"></include>
 		</article>
 	</main>
 

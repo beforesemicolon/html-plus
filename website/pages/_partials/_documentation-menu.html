@@ -1,0 +1,8 @@
+<ul role="menu" id="documentation-menu" aria-label="Navigation Menu" #if="currentPage.next || currentPage.prev">
+	<li #if="currentPage.prev" class="prev">
+		<strong>Prev:</strong> <a href="{currentPage.prev.path}">{currentPage.prev.title}</a>
+	</li>
+	<li #if="currentPage.next" class="next">
+		<strong>Next:</strong> <a href="{currentPage.next.path}">{currentPage.next.title}</a>
+	</li>
+</ul>

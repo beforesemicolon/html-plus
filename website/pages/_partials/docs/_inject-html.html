@@ -1,0 +1,127 @@
+<p>The <a href="">inject tag</a> is a powerful tag that when used inside partial files. It is a
+   placeholder tag much like the HTML <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot">slot tag</a>.
+</p>
+<h3>Inject any markup</h3>
+<p>Simply adding a <a href="">inject tag</a> inside a partial file means that any content you put
+   inside the <a href="">include tag</a> will be injected at that spot.</p>
+<code-snippet type="html">
+	<!-- _header.html  -->
+	<header>
+		<h1>{title}</h1>
+		<p class="description">{description}</p>
+		<inject></inject>
+	</header>
+</code-snippet>
+<code-snippet type="html">
+	<!-- project.html  -->
+	<include partial="header"
+	         data="{title: 'Projects', description: 'Welcome to the projects page'}">
+		<nav>
+			<a href="/project-1">Project 1</a>
+			<a href="/project-2">Project 2</a>
+			<a href="/project-3">Project 3</a>
+		</nav>
+	</include>
+</code-snippet>
+<p>The above project template will look like this:</p>
+<code-snippet type="html">
+	<!-- project.html  -->
+	<h1>Projects</h1>
+	<p class="description">Welcome to the projects page</p>
+	<nav>
+		<a href="/project-1">Project 1</a>
+		<a href="/project-2">Project 2</a>
+		<a href="/project-3">Project 3</a>
+	</nav>
+</code-snippet>
+<p>As you can see, any markup you put inside <a href="">include tag</a> is content to be injected inside
+   the partial.</p>
+<h3>Inject specific markup</h3>
+<p>You can be more specific of what type of content must be inject if you specify an id.</p>
+<p>Take the following layout template</p>
+<code-snippet type="html">
+	<!-- _layout.html  -->
+	<!doctype html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<inject id="style"></inject>
+	</head>
+	<body>
+		<inject></inject>
+		<inject id="script"></inject>
+	</body>
+	</html>
+</code-snippet>
+<p>When including this template we can specify the part to match the inject tags. That is done by adding the
+	<a href="">inject-id</a> attribute on the tag you want to match the inject tag id.</p>
+<code-snippet type="html">
+	<!-- index.html  -->
+	<include partial="layout">
+		<link rel="stylesheet" href="style.scss" inject-id="style">
+		<h1>Welcome!</h1>
+		<script src="app.ts" inject-id="script"></script>
+	</include>
+</code-snippet>
+<p>The above index.html template will resolve to be:</p>
+<code-snippet type="html">
+	<!-- index.html  -->
+	<!doctype html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="style.scss">
+	</head>
+	<body>
+		<h1>Welcome!</h1>
+		<script src="app.ts"></script>
+	</body>
+	</html>
+</code-snippet>
+<h3>Default Content</h3>
+<p>You can also specify a default content to be used in case the include tag contain no inner HTML.</p>
+<code-snippet type="html">
+	<!-- _search-results.html  -->
+	<section class="searh-results">
+		<h2>Search results for "{searchTerm}"</h2>
+		<inject>
+			<p>No Results matched your search</p>
+		</inject>
+	</section>
+</code-snippet>
+<p>The above search results partial will show a paragraph tag with "No Results matched your search" text
+   if the include tag resolves to have empty content.</p>
+<code-snippet type="html">
+	<!-- search.html  -->
+	<include partial="search-results" data="{searchTerm: term}">
+		<div #if="results.length" #repeat="results">
+			<h3>{$item.title}</h3>
+			<p>{$item.description}</p>
+		</div>
+	</include>
+</code-snippet>
+<h3>Inject markup from variables</h3>
+<p>Another thing the <a href="">inject tag</a> can do for you is allow you to inject HTML markup that probably
+   is store in a data variable.</p>
+<p>You can always use template data binding to inject HTML into your template but if this markup is a HTML+
+   markup nothing will compiled.</p>
+<code-snippet type="html">
+	<!-- blog.html  -->
+	<article>
+		<h2>{$data.article.title}</h2>
+		{$data.article.body}
+	</article>
+</code-snippet>
+<p>The above example will show the HTML as is without compiling and if the HTML happens to be HTML+
+   the tags and attributes specific to it will not be compiled</p>
+<p>The below example is better if you want the HTML+ markup to be compiled.</p>
+<code-snippet type="html">
+	<!-- blog.html  -->
+	<article>
+		<h2>{$data.article.title}</h2>
+		<inject html="$data.article.body"></inject>
+	</article>
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

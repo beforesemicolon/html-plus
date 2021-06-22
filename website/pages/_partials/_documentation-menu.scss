@@ -1,0 +1,38 @@
+@import "../_sass/colors";
+
+#documentation-menu {
+  padding: 15px;
+  background: $secondary;
+  border-radius: 5px;
+  flex-direction: row-reverse;
+  list-style-type: none;
+
+  li {
+    margin: 0;
+    padding: 0;
+
+    &::marker {
+      content: '';
+    }
+
+    &.prev {
+      float: left;
+    }
+
+    &.next {
+      float: right;
+    }
+
+    a {
+      font-weight: 400;
+      text-decoration: none;
+      color: $brand;
+    }
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+}

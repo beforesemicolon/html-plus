@@ -1,0 +1,21 @@
+@import "../_sass/colors";
+
+.api-description-list {
+  dt {
+    margin: 25px 0 5px;
+    font-weight: 500;
+  }
+
+  dd {
+    margin-top: 10px;
+    margin-left: 20px;
+    line-height: 165%;
+
+    span {
+      background: $brand-light;
+      color: $dark;
+      padding: 5px;
+      font-style: italic;
+    }
+  }
+}
