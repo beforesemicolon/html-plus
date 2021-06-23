@@ -45,17 +45,17 @@ your page routes to be.
 
 The way you organize your page structure will be used to create your website route.
 ```
-# File Structrure           # Routes
+# File Structure             # Routes
 
 - server.js
 - pages
-  - index.html              /
-  - contact.html            /contact
-  - about.html              /about
-  - 404.html                /404
-  - projects
-    - index.html            /projects
-    - todo-project.html     /projects/todo-project
+   - index.html                /
+   - contact.html              /contact
+   - about.html                /about
+   - 404.html                  /404
+   - projects
+      - index.html             /projects
+      - todo-project.html      /projects/todo-project
 ```
 
 ## Template Tags & Attributes

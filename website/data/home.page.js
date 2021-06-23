@@ -23,52 +23,62 @@ module.exports = {
       {
         title: "It is just HTML",
         description: "There is no weird syntax. You already know this language.",
-        path: "/documenation#just-html"
+        path: "/documenation#just-html",
+        partial: "just-html"
       },
       {
         title: "Simple and small list of tags and attributes",
         description: "There are only few new tags and attributes to learn and they still look like HTML.",
-        path: "/documenation#tags-and-attributes"
+        path: "/documenation#tags-and-attributes",
+        partial: "attributes-tags"
       },
       {
         title: "Powerful data binding and data contextualization",
         description: "It allows you to reference data in separate files and create data context for specific parts of the page.",
-        path: "/documenation#data-bind-and-context"
+        path: "/documenation#data-bind-and-context",
+        partial: "data-binding"
       },
       {
         title: "Create your custom HTML tags and attributes",
-        description: "You can create custom tags and attributes to handle a specific situation of your project. It is like <abbr title=\"Server Side Rendering\">SSR</abbr> components.",
-        path: "/documenation#custom-tags-and-attributes"
+        description: "You can create custom tags and attributes to handle a specific situation of your project.",
+        path: "/documenation#custom-tags-and-attributes",
+        partial: "custom-tags"
       },
       {
         title: "Support for typescript, CSS pre and post-processors",
         description: "Simply link or write your SASS, LESS, Typescript and more",
-        path: "/documenation#css-processors-and-typescript-support"
+        path: "/documenation#css-processors-and-typescript-support",
+        partial: "support"
       },
       {
         title: "Write Future CSS",
-        description: "<a href=\"/documenation#engine\">HTML+ engine</a> allows you to write future and safe CSS that works in any browser",
-        path: "/documenation#write-future-CSS"
+        description: "<a href=\"/documenation#engine\">HTML+ engine</a> allows you to write future and modern CSS that works in any browser",
+        path: "/documenation#write-future-CSS",
+        partial: "future-css"
       },
       {
         title: "Static and Dynamic <abbr title=\"Server Side Rendering\">SSR</abbr> website",
         description: "Create faster website by rendering on the Server with static or dynamic pages.",
-        path: "/documenation#static-and-dynamic-website"
+        path: "/documenation#static-and-dynamic-website",
+        partial: ""
       },
       {
         title: "A site builder",
         description: "<a href=\"/documenation#site-builder\">HTML+ builder</a> takes care of exporting production ready site files to be hosted anywhere.",
-        path: "/documenation#site-builder"
+        path: "/documenation#site-builder",
+        partial: ""
       },
       {
         title: "Page file directory as route",
         description: "You can creat your website router by simply using the pages file structure. The rest is taken care by the engine.",
-        path: "/documenation#page-structure-route"
+        path: "/documenation#page-structure-route",
+        partial: ""
       },
       {
         title: "Generates optimal code for production",
         description: "The site builder will only export optimal and needed CSS, Javascript and HTML for production.",
-        path: "/documenation#production-optimization"
+        path: "/documenation#production-optimization",
+        partial: ""
       }
     ]
   },

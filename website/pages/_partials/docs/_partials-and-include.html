@@ -2,20 +2,17 @@
 <h3>Create Partials</h3>
 <p>To create a partial files all you have to do is create an HTML file which the name starts with an underscore.</p>
 <code-snippet>
-# File Structrure         # Routes
+# File Structure                # Routes
 
 - server.js
-- pages
-- partials
-- _layout.html
-- _header.html
-- index.html              /
-- contact.html            /contact
-- about.html              /about
-- 404.html                /404
-- projects
-- index.html              /projects
-- todo-project.html       /projects/todo-project
+	- pages
+	- index.html                /
+	- contact.html              /contact
+	- about.html                /about
+	- 404.html                  /404
+	- projects
+		- index.html            /projects
+		- todo-project.html     /projects/todo-project
 </code-snippet>
 <p>Partial files are ignored by the routes and can only be included in a page templates.</p>
 <h3>Include partials</h3>

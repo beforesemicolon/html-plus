@@ -2,7 +2,7 @@ const hljs = require('highlight.js');
 
 class CodeSnippet {
   preStyle = `
-    padding: 20px 30px;
+    padding: 15px;
     display: block;
     overflow: auto;
     font-size: 0.9rem;

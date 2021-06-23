@@ -20,8 +20,11 @@
 		<p>{page.features.description}</p>
 		<div class="feature-list">
 			<div #repeat="page.features.list as feature" class="feature-card">
-				<h4>{feature.title}</h4>
-				<p>{feature.description}</p>
+				<div>
+					<h4>{feature.title}</h4>
+					<p>{feature.description}</p>
+					<include #if="feature.partial" partial="{feature.partial}"></include>
+				</div>
 				<a href="{feature.path}">{page.features.link_label}</a>
 			</div>
 		</div>
