@@ -81,4 +81,48 @@ describe('Repeat Attribute', () => {
       </div>
       `.replace(/\s+/g, ''))
   });
+  
+  describe('should not repeat', () => {
+    it('if invalid value', () => {
+      expect(transform('<b #repeat>item</b>')).toEqual('<b>item</b>');
+      expect(transform('<b #repeat="">item</b>')).toEqual('<b>item</b>');
+      expect(() => transform('<b #repeat>${item}</b>')).toThrowError('item is not defined');
+      expect(() => transform('<b #repeat="">${item}</b>')).toThrowError('item is not defined');
+    });
+    
+    it('if number is less or equal to zero', () => {
+      expect(transform('<b #repeat="0">item</b>')).toEqual('<b>item</b>');
+      expect(transform('<b #repeat="-1">item</b>')).toEqual('<b>item</b>');
+      expect(() => transform('<b #repeat="0">${item}</b>')).toThrowError('item is not defined');
+      expect(() => transform('<b #repeat="-1">${item}</b>')).toThrowError('item is not defined');
+    });
+    
+    it('if list is empty', () => {
+      expect(transform('<b #repeat="[]">item</b>')).toEqual('<b>item</b>');
+      expect(transform('<b #repeat="{}">item</b>')).toEqual('<b>item</b>');
+      expect(() => transform('<b #repeat="[]">${item}</b>')).toThrowError('item is not defined');
+      expect(() => transform('<b #repeat="{}">${item}</b>')).toThrowError('item is not defined');
+    });
+  })
+  
+  describe('should work with other attributes', () => {
+    it('attr', () => {
+      expect(transform('<b #attr="class, cls, true" #repeat="3">{$item}</b>'))
+        .toEqual('<b class="cls">1</b><b class="cls">2</b><b class="cls">3</b>');
+    });
+    
+    it('fragment', () => {
+      expect(transform('<b #fragment #repeat="3">{$item}</b>')).toEqual('123');
+    });
+    
+    it('if', () => {
+      expect(transform('<b #if="true" #repeat="3">{$item}</b>'))
+        .toEqual('<b>1</b><b>2</b><b>3</b>');
+    });
+    
+    it('ignore', () => {
+      expect(transform('<b #ignore #repeat="3">{$item}</b>'))
+        .toEqual('<b>{$item}</b><b>{$item}</b><b>{$item}</b>');
+    });
+  });
 });

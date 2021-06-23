@@ -2,7 +2,8 @@ const path = require('path');
 const postcss = require('postcss');
 const url = require('postcss-url');
 const postcssPresetEnv = require('postcss-preset-env');
-const purgecss = require('@fullhuman/postcss-purgecss')
+const purgecss = require('@fullhuman/postcss-purgecss');
+const atImport = require("postcss-import");
 const cssnano = require('cssnano');
 
 const resolveUrl = assetsPath => (urlInfo) => {
@@ -12,10 +13,11 @@ const resolveUrl = assetsPath => (urlInfo) => {
 const defaultOptions = {
   prefixes: [],
   destPath: undefined,
-  assetsPath: './assets',
+  fromFile: undefined,
+  assetsPath: '',
   env: 'development',
   map: false,
-  fileObject: null
+  fileObject: null,
 };
 
 async function cssTransformer(content, opt = defaultOptions) {
@@ -23,6 +25,7 @@ async function cssTransformer(content, opt = defaultOptions) {
   content = content ?? '';
   
   const prefixes = [
+    atImport(),
     postcssPresetEnv({
       stage: 0
     }),
@@ -31,6 +34,7 @@ async function cssTransformer(content, opt = defaultOptions) {
   
   const options = {
     to: opt.destPath,
+    from: opt.fromFile || opt?.fileObject?.fileAbsolutePath,
   }
   
   let post = null;
@@ -48,16 +52,20 @@ async function cssTransformer(content, opt = defaultOptions) {
       }),
       cssnano
     ]);
-    post.use(url({
-      url: resolveUrl(opt.assetsPath)
-    }));
+    
+    if (opt.assetsPath) {
+      post.use(url({
+        url: resolveUrl(opt.assetsPath)
+      }));
+    }
+    
     options.map = true;
   } else {
     post = postcss(prefixes);
   }
   
   return post
-    .process(content, {from: opt?.fileObject?.fileAbsolutePath, ...options})
+    .process(content, options)
     .then(res => {
       return res.css;
     })

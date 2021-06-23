@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HTMLNode should throw error for a specific tag where it failed: Error: x is not defined 
+Markup: <li #repeat="3">
+item {x + $item} <= Error: x is not defined 
+</li> 1`] = `
+"Error: [91mx is not defined [39m
+Markup: [32m<li #repeat=\\"3\\">[91m[39m[32m[39m
+[32m[91mitem {x + $item} <= Error: x is not defined [39m[32m[39m
+[32m[91m[39m[32m</li>[39m"
+`;

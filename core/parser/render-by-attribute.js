@@ -18,9 +18,13 @@ function renderByAttribute(node, options) {
       node.removeAttribute(attr)
       
       const result = handler.render(value, node);
-      
-      if (result === null || typeof result === 'string') {
-        return result;
+
+      if (!result || typeof result === 'string') {
+        return result ?? '';
+        // return (result ?? '').replace(
+        //   new RegExp(` #(${Object.keys(options.customAttributes).join('|')})(?:="[^"]+")?`, 'gm'),
+        //   ''
+        // );
       }
     }
   }

@@ -5,12 +5,13 @@ const {Fragment} = require('./fragment.attribute');
 const {Ignore} = require('./ignore.attribute');
 const {Attr} = require('./attr.attribute');
 
+// the order of this list is essential to make things work
 const defaultAttributes = [
   If,
   Repeat,
-  Fragment,
   Attr,
   Ignore,
+  Fragment,
 ]
 
 const defaultAttributesName = defaultAttributes.map(attr => turnCamelOrPascalToKebabCasing(attr.name));

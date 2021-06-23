@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`handleError should throw error with markup and file info replacing text: Error: Failed 
+File: /path/to/file.html
+Markup: <h1 id=\\"main-title\\">
+my title <= Error: Failed 
+</h1> 1`] = `
+"Error: [91mFailed [39m
+File: [33m/path/to/file.html[39m
+Markup: [32m<h1 id=\\"main-title\\">[91m[39m[32m[39m
+[32m[91mmy title <= Error: Failed [39m[32m[39m
+[32m[91m[39m[32m</h1>[39m"
+`;
+
+exports[`handleError should throw error with markup and file info: Error: not so good
+File: /path/to/file.html
+Markup: <h1 id="main-title">my title</h1> 1`] = `
+"Error: [91mnot so good[39m
+File: [33m/path/to/file.html[39m
+Markup: [32m<h1 id=\\"main-title\\">my title</h1>[39m"
+`;
+
+exports[`handleError should throw error with markup: Error: failed at something
+Markup: <h1 id="main-title">my title</h1> 1`] = `
+"Error: [91mfailed at something[39m
+Markup: [32m<h1 id=\\"main-title\\">my title</h1>[39m"
+`;

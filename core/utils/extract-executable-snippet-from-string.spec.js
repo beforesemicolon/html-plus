@@ -61,4 +61,8 @@ describe('extractExecutableSnippetFromString', () => {
     ]);
     
   });
+  
+  it('should ignore escaped curly braces', () => {
+  
+  });
 });

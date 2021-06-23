@@ -82,6 +82,27 @@ describe('Attr Attribute', () => {
     expect(transform(str2)).toEqual('<button style="color: blue; display:block;align: left">child text</button>');
     expect(transform(str3)).toEqual('<button id="btn">child text</button>');
   });
+  
+  describe('should work with other attributes', () => {
+    it('repeat', () => {
+      expect(transform('<b #attr="class, cls, true" #repeat="3">{$item}</b>'))
+        .toEqual('<b class="cls">1</b><b class="cls">2</b><b class="cls">3</b>');
+    });
+  
+    it('fragment', () => {
+      expect(transform('<b #attr="class, cls, true" #fragment>item</b>')).toEqual('item');
+    });
+  
+    it('if', () => {
+      expect(transform('<b #if="false" #attr="id, imp, true">item</b>')).toEqual('');
+      expect(transform('<b #if="true" #attr="id, imp, true">item</b>')).toEqual('<b id="imp">item</b>');
+    });
+    
+    it('ignore', () => {
+      expect(transform('<b #attr="class, cls, true" #ignore>{item}</b>'))
+        .toEqual('<b class="cls">{item}</b>');
+    });
+  });
 });
 
 

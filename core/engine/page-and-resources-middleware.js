@@ -1,4 +1,5 @@
 const path = require("path");
+const {readFileContent} = require("../utils/readFileContent");
 const {transform: transformResource} = require('../transformers');
 const {File} = require('../File');
 
@@ -19,11 +20,33 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
     const ext = path.extname(req.path);
     
     if (ext && sourcesExtensions.has(ext)) {
-      const resourcePath = path.join(pagesDirectoryPath, req.path);
-      let content = ''
-      
+      let content = '';
+      let resourcePath = '';
+  
+      if (/node_modules/.test(req.path)) {
+        resourcePath = path.join(process.cwd(), req.path);
+  
+        try {
+          content = readFileContent(resourcePath);
+          
+          if (ext === '.css') {
+            res.setHeader('Content-Type', 'text/css');
+          } else if(ext === '.js' || ext === '.mjs') {
+            res.setHeader('Content-Type', 'application/javascript');
+          }
+          
+          return res.send(content);
+        } catch(e) {
+          console.error(`Failed to load page resource "${req.path}"`, e);
+          return res.sendStatus(404);
+        }
+      }
+  
+      resourcePath = path.join(pagesDirectoryPath, req.path);
+  
       try {
         const fileObject = new File(resourcePath);
+        
         switch (ext) {
           case '.scss':
           case '.sass':
@@ -46,6 +69,7 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
           case '.jsx':
           case '.ts':
           case '.tsx':
+          case '.mjs':
             content = await transformResource.js(null, {fileObject, env});
             res.setHeader('Content-Type', 'application/javascript');
             break;

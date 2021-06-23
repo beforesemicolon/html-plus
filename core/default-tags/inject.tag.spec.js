@@ -19,10 +19,12 @@ describe('Inject Tag', () => {
     await exec(`rm ${partialAbsPath}`);
   });
   
-  it('should render blank if no root children', () => {
-    const str = '<inject></inject>';
-
-    expect(transform(str)).toEqual('');
+  describe('should render blank', () => {
+    it('if no root children', () => {
+      const str = '<inject></inject>';
+    
+      expect(transform(str)).toEqual('');
+    });
   });
   
   it('should render all include children if no id provided', () => {
@@ -51,14 +53,16 @@ describe('Inject Tag', () => {
       partialFileObjects: [partialFile]
     })).toEqual('<p>2</p>');
   });
-
-  it('should render own children if no include children has same id', () => {
-    partialFile.content = '<inject id="target"><p>default</p></inject>'
-    const str = '<include partial="inj-partial"><p>1</p><p>2</p><p>3</p><</include>';
-
-    expect(transform(str, {
-      partialFileObjects: [partialFile]
-    })).toEqual('<p>default</p>');
+  
+  describe('should render own children', () => {
+    it('if no include children has same id', () => {
+      partialFile.content = '<inject id="target"><p>default</p></inject>'
+      const str = '<include partial="inj-partial"><p>1</p><p>2</p><p>3</p><</include>';
+    
+      expect(transform(str, {
+        partialFileObjects: [partialFile]
+      })).toEqual('<p>default</p>');
+    });
   });
   
   it('should maintain context', () => {

@@ -23,7 +23,7 @@ function composeTagString(node = {}, content = '', excludedAttributes = []) {
       }
     }
   }
-  
+
   let markup = `<${tagName}${attributesList.length ? ' ' + attributesList.join(' ') : ''}`;
   
   if (selfClosingTags.includes(tagName)) {

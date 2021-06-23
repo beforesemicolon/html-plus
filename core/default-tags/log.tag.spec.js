@@ -11,24 +11,32 @@ describe('Log Tag', () => {
     logSpy.mockRestore();
   })
   
-  it('should log context if no value specified', () => {
-    const str = '<variable name="sample">{x: 10}</variable><log></log>'
+  it('should log null if no value specified', () => {
+    const str = '<variable name="sample" value="{x: 10}"></variable><log></log>'
     
-    expect(transform(str)).toEqual('<p>log</p><pre style="overflow: scroll">null</pre>');
+    expect(transform(str)).toEqual('<pre style="overflow: scroll">null</pre>');
     expect(logSpy).toHaveBeenCalled()
   });
   
   it('should log specified value', () => {
-    const str = '<variable name="sample">{x: 10}</variable><log value="sample"></log>'
+    const str = '<variable name="sample" value="{x: 10}"></variable><log value="sample"></log>'
   
-    expect(transform(str)).toEqual('<p>log</p><pre style="overflow: scroll">{x: 10}</pre>');
+    expect(transform(str)).toEqual('<pre style="overflow: scroll">{\n' +
+      '  "value": {\n' +
+      '    "x": 10\n' +
+      '  }\n' +
+      '}</pre>');
     expect(logSpy).toHaveBeenCalled()
   });
   
   it('should add label to log', () => {
-    const str = '<variable name="sample">{x: 10}</variable><log value="sample">my sample</log>'
+    const str = '<variable name="sample" value="{x: 10}"></variable><log value="sample">my sample</log>'
   
-    expect(transform(str)).toEqual('<p>my sample</p><pre style="overflow: scroll">{x: 10}</pre>');
+    expect(transform(str)).toEqual('<p>my sample</p><pre style="overflow: scroll">{\n' +
+      '  "value": {\n' +
+      '    "x": 10\n' +
+      '  }\n' +
+      '}</pre>');
     expect(logSpy).toHaveBeenCalled()
   });
 });

@@ -9,6 +9,7 @@ const {File} = require('../File');
 const defaultOptions = {
   staticData: {},
   customTags: [],
+  customAttributes: [],
   env: 'development',
   onPageRequest() {}
 }
@@ -53,6 +54,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
               data: {...opt.staticData, ...data},
               fileObject,
               customTags: opt.customTags,
+              customAttributes: opt.customAttributes,
               partialFileObjects: partials,
               onTraverse: (node, file) => {
                 let attrName = '';
@@ -64,8 +66,14 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
                 }
   
                 const srcPath = node.attributes[attrName];
-  
-                if (srcPath) {
+                let isURL = false;
+                
+                try {
+                  new URL(srcPath);
+                  isURL = true;
+                } catch(e) {}
+                
+                if (srcPath && !isURL) {
                   const resourceFullPath = path.resolve(file.fileDirectoryPath, srcPath);
     
                   if (resourceFullPath.startsWith(pagesDirectoryPath)) {
@@ -95,7 +103,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
         opt
       ))
       
-      console.log('HTML+ templates ready');
+      console.log('HTML+ engine is ready');
     })
 };
 

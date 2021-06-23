@@ -14,12 +14,12 @@ function Log(node, options) {
   }
   
   return () => {
-    const msg = (node.renderChildren()) || 'log';
+    const msg = (node.renderChildren());
     let result = ''
     
     try {
       result = value && typeof value === 'object'
-        ? JSON.stringify({_: value}, null, 2)
+        ? JSON.stringify({value}, null, 2)
         : `${value}`;
     } catch (e) {
       result = e.message;
@@ -27,7 +27,7 @@ function Log(node, options) {
     
     console.log(`\n${chalk.green(msg)}:\n${result}`);
     
-    return `<p>${msg}</p><pre style="overflow: scroll">${result}</pre>`;
+    return (msg ? `<p>${msg}</p>` : '') + `<pre style="overflow: scroll">${result}</pre>`;
   };
 }
 

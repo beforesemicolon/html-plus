@@ -38,4 +38,26 @@ describe('If Attribute', () => {
       data: {checked: true}
     })).toEqual('');
   });
+  
+  describe('should work with other attributes', () => {
+    it('repeat', () => {
+      expect(transform('<b #if="false" #repeat="3">{$item}</b>')).toEqual('');
+      expect(transform('<b #if="true" #repeat="3">{$item}</b>')).toEqual('<b>1</b><b>2</b><b>3</b>');
+    });
+    
+    it('attr', () => {
+      expect(transform('<b #if="false" #attr="id, imp, true">item</b>')).toEqual('');
+      expect(transform('<b #if="true" #attr="id, imp, true">item</b>')).toEqual('<b id="imp">item</b>');
+    });
+    
+    it('fragment', () => {
+      expect(transform('<b #if="false" #fragment>item</b>')).toEqual('');
+      expect(transform('<b #if="true" #fragment>item</b>')).toEqual('item');
+    });
+    
+    it('ignore', () => {
+      expect(transform('<b #if="false" #ignore>{item}</b>')).toEqual('');
+      expect(transform('<b #if="true" #ignore>{item}</b>')).toEqual('<b>{item}</b>');
+    });
+  });
 });

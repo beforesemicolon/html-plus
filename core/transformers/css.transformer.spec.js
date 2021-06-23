@@ -10,16 +10,20 @@ const exec = promisify(cp.exec);
 describe('cssTransformer', () => {
   describe('should transform from file', () => {
     const cssFile = path.resolve(__dirname, '__style.css');
+    const css2File = path.resolve(__dirname, '__box.css');
     const htmlFile = path.resolve(__dirname, '__index.html');
-    const fileObject = new File(cssFile, __dirname);
+    let fileObject = null;
     
     beforeAll(async () => {
-      await exec(`echo "${data.css.trim()}" >> ${cssFile}`);
-      await exec(`echo "<body><div class="image"></div></body>" >> ${htmlFile}`);
+      await exec(`echo "${data.css.trim()}" > ${cssFile}`);
+      await exec(`echo "* {box-sizing: border-box;}" > ${css2File}`);
+      await exec(`echo "<body><div class="image"></div></body>" > ${htmlFile}`);
+      fileObject = new File(cssFile, __dirname);
     })
     
     afterAll(async () => {
       await exec(`rm ${cssFile}`);
+      await exec(`rm ${css2File}`);
       await exec(`rm ${htmlFile}`);
     });
     
@@ -44,6 +48,12 @@ describe('cssTransformer', () => {
         expect(res).toEqual(expect.stringContaining('.image{background-image:url(./files/image@1x.png)}'));
       })
     });
+  
+    it('should import', () => {
+      return cssTransformer('@import "./__box.css";', {fileObject}).then(res => {
+        expect(res).toEqual('* {box-sizing: border-box;}');
+      })
+    });
   });
   
   it('should return empty string if no content provided', () => {
@@ -53,6 +63,4 @@ describe('cssTransformer', () => {
       expect(res).toEqual('');
     })
   });
-  
-  it.todo('should extend options');
 });

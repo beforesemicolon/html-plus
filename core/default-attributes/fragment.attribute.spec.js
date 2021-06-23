@@ -12,4 +12,22 @@ describe('Fragment Attribute', () => {
     
     expect(transform(str)).toEqual('');
   });
+  
+  describe('should work with other attributes', () => {
+    it('repeat', () => {
+      expect(transform('<b #fragment #repeat="3">{$item}</b>')).toEqual('123');
+    });
+    
+    it('attr', () => {
+      expect(transform('<b #attr="class, cls, true" #fragment>item</b>')).toEqual('item');
+    });
+    
+    it('if', () => {
+      expect(transform('<b #if="true" #fragment>item</b>')).toEqual('item');
+    });
+    
+    it('ignore', () => {
+      expect(transform('<b #ignore #fragment>{item}</b>')).toEqual('<b>{item}</b>');
+    });
+  });
 });
