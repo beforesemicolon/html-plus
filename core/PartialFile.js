@@ -25,10 +25,16 @@ class PartialFile extends File {
   }
   
   render(contextData = {}) {
-    const parsedHTML = parse(replaceSpecialCharactersInHTML(this.content));
+    const parsedHTML = parse(replaceSpecialCharactersInHTML(this.content), {
+      comment: true
+    });
     parsedHTML.context = contextData;
     const partialNode = new HTMLNode(parsedHTML, this.options);
     return partialNode.render()
+  }
+  
+  toString() {
+    return this.render();
   }
 }
 

@@ -365,6 +365,12 @@ describe('HTMLNode', () => {
     });
   });
   
+  it('should keep comments', () => {
+    const node = new HTMLNode('<!-- cant access "page" before declaration  -->');
+    
+    expect(node.innerHTML).toEqual('<!-- cant access "page" before declaration  -->')
+  });
+  
   it('should throw error for a specific tag where it failed', () => {
     const node = new HTMLNode(`
       <div class="list"><ul><li #repeat="3">item {x + $item}</li></div>

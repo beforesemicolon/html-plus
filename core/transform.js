@@ -7,6 +7,7 @@ const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-t
 const defaultOptions = {
   env: 'development',
   data: {},
+  context: {},
   customTags: [],
   customAttributes: [],
   fileObject: null,

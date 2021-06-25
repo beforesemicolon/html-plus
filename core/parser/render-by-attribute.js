@@ -21,10 +21,6 @@ function renderByAttribute(node, options) {
 
       if (!result || typeof result === 'string') {
         return result ?? '';
-        // return (result ?? '').replace(
-        //   new RegExp(` #(${Object.keys(options.customAttributes).join('|')})(?:="[^"]+")?`, 'gm'),
-        //   ''
-        // );
       }
     }
   }

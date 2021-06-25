@@ -38,7 +38,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
     .then(files => {
       const {partials, pagesRoutes} = extractPartialAndPageRoutes(files, pagesDirectoryPath)
       
-      app.engine('html', (filePath, {settings, _locals, cache, ...data}, callback) => {
+      app.engine('html', (filePath, {settings, _locals, cache, ...context}, callback) => {
         const fileName = path.basename(filePath);
         
         if (fileName.startsWith('_')) {
@@ -51,7 +51,8 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
           fileObject.content = content.toString();
           try {
             const result = transform(fileObject.content, {
-              data: {...opt.staticData, ...data},
+              data: opt.staticData,
+              context,
               fileObject,
               customTags: opt.customTags,
               customAttributes: opt.customAttributes,

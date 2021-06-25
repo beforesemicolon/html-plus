@@ -11,6 +11,7 @@ const {processNodeAttributes} = require("./utils/process-node-attributes");
 const defaultOptions = {
   env: 'development',
   data: {},
+  context: {},
   rootNode: null,
   customTags: {},
   customAttributes: {},
@@ -42,7 +43,7 @@ class HTMLNode {
         comment: true
       })
       : nodeORHTMLString;
-    this.#node.context = {...this.#node.context};
+    this.#node.context = {...this.#node.context, ...options.context};
     this.#options = options;
     this.#tag = options.customTags[this.#node.rawTagName];
     this.attributes = this.#node.attributes;
@@ -54,12 +55,16 @@ class HTMLNode {
     // need to process custom tag early so any context that is set
     // is kept and used to update the nodes before it gets to rendering
     if (this.#tag) {
-      this.attributes = processNodeAttributes(
-        this.#node.attributes,
-        this.#tag.customAttributes,
-        {$data: this.#options.data, ...this.context}
-      );
-      this.#tag = createCustomTag(this.#tag, this.#node, this, this.#options);
+      try {
+        this.attributes = processNodeAttributes(
+          this.#node.attributes,
+          this.#tag.customAttributes,
+          {$data: this.#options.data, ...this.context}
+        );
+        this.#tag = createCustomTag(this.#tag, this.#node, this, this.#options);
+      } catch(e) {
+        handleError(e, this.#node, this.#options);
+      }
     }
     
     if (typeof options.onTraverse === 'function') {
@@ -91,7 +96,9 @@ class HTMLNode {
     const outerHTML = this.tagName
       ? composeTagString(this, this.#node.innerHTML)
       : `<fragment>${this.#node.outerHTML}</fragment>`;
-    const clonedNode = (parse(outerHTML)).childNodes[0];
+    const clonedNode = (parse(outerHTML, {
+      comment: true
+    })).childNodes[0];
     
     clonedNode.context = {...this.#node.context};
     clonedNode.parentNode.getContext = () => ({})
@@ -103,7 +110,9 @@ class HTMLNode {
     const outerHTML = this.tagName
       ? composeTagString(this, this.#node.innerHTML)
       : `<fragment>${this.#node.outerHTML}</fragment>`;
-    const clonedNode = parse(outerHTML).childNodes[0];
+    const clonedNode = parse(outerHTML, {
+      comment: true
+    }).childNodes[0];
     
     clonedNode.context = {...this.#node.context, ...context};
     clonedNode.parentNode = this.#node.parentNode;
@@ -202,11 +211,15 @@ class HTMLNode {
       return this.#tag.render();
     }
   
-    this.attributes = processNodeAttributes(
-      this.#node.attributes,
-      {},
-      {$data: this.#options.data, ...this.context}
-    );
+    try {
+      this.attributes = processNodeAttributes(
+        this.#node.attributes,
+        {},
+        {$data: this.#options.data, ...this.context}
+      );
+    } catch(e) {
+      handleError(e, this.#node, this.#options);
+    }
   
     return (this.tagName
         ? composeTagString(this, this.renderChildren(), Object.keys(this.#options.customAttributes))
