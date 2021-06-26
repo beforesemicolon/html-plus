@@ -21,6 +21,13 @@
     position: sticky;
     top: 0;
     left: 0;
+    overflow: auto;
+
+    header {
+      .menu-toggle {
+        display: none;
+      }
+    }
 
     section {
       margin-top: 25px;
@@ -177,11 +184,75 @@
   @media screen and (max-width: 768px) {
     flex-direction: column;
     height: auto;
+    margin-top: 25px;
 
     article,
     aside {
       width: 100%;
       position: static;
+    }
+
+    aside {
+      padding: 15px;
+
+      #menu-check {
+        & ~ section {
+          display: none;
+        }
+
+        &:checked {
+          & ~ section {
+            display: block;
+          }
+
+          & ~ header .menu-toggle::before,
+          & ~ header .menu-toggle::after {
+            top: 50%;
+            transform: rotate(30deg);
+          }
+
+          & ~ header .menu-toggle::after {
+            transform: rotate(-30deg);
+          }
+        }
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+
+        .menu-toggle {
+          display: inline-block;
+          margin-right: 15px;
+          width: 45px;
+          height: 35px;
+          border: 1px solid $secondary;
+          background: $light;
+          border-radius: 3px;
+          position: relative;
+
+          &::before,
+          &::after {
+            content: '';
+            height: 2px;
+            background: $dark;
+            border-radius: 2px;
+            width: calc(100% - 16px);
+            position: absolute;
+            display: inline-block;
+            top: calc(50% - 5px);
+            left: 8px;
+          }
+
+          &::after {
+            top: calc(50% + 4px);
+          }
+        }
+
+        .search-field {
+          flex: 1;
+        }
+      }
     }
 
     article {

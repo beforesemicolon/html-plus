@@ -13,7 +13,11 @@
 
 	<main class="documentation wrapper">
 		<aside>
-			<include partial="search-field" data="{placeholder: 'Search...'}"></include>
+			<input id="menu-check" type="checkbox" style="display: none">
+			<header>
+				<label class="menu-toggle" for="menu-check" aria-label="mobile menu toggle"></label>
+				<include partial="search-field" data="{placeholder: 'Search...'}"></include>
+			</header>
 			<section>
 				<h2>{page.menu.title}</h2>
 				<ul role="menu" aria-label="Documentation Menu">
