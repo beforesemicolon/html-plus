@@ -50,19 +50,19 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
         switch (ext) {
           case '.scss':
           case '.sass':
-            content = await transformResource.sass(null, {file, env});
+            content = await transformResource.sass({file, env});
             res.setHeader('Content-Type', 'text/css');
             break;
           case '.less':
-            content = await transformResource.less(null, {file, env});
+            content = await transformResource.less({file, env});
             res.setHeader('Content-Type', 'text/css');
             break;
           case '.styl':
-            content = await transformResource.stylus(null, {file, env});
+            content = await transformResource.stylus({file, env});
             res.setHeader('Content-Type', 'text/css');
             break;
           case '.css':
-            content = await transformResource.css(null, {file, env});
+            content = await transformResource.css({file, env});
             res.setHeader('Content-Type', 'text/css');
             break;
           case '.js':
@@ -70,7 +70,7 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
           case '.ts':
           case '.tsx':
           case '.mjs':
-            content = await transformResource.js(null, {file, env});
+            content = await transformResource.js({file, env});
             res.setHeader('Content-Type', 'application/javascript');
             break;
         }

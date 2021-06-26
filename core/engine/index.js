@@ -48,7 +48,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
         fs.readFile(filePath, (err, content) => {
           if (err) return callback(err);
           const file = new File(filePath, settings.views);
-          file.content = content.toString();
+          file.content = content;
           try {
             const result = transform(file.content, {
               data: opt.staticData,

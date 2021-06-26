@@ -32,7 +32,7 @@ class File {
   set content(value) {
     if (typeof value === "string" || value instanceof Buffer) {
       this.#loaded = true;
-      return this.#content = value;
+      return this.#content = value.toString();
     }
     
     throw new Error('File content can only be a string or a Buffer type')

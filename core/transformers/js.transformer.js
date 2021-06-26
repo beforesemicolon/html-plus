@@ -34,7 +34,17 @@ const getConfig = (opt, configPath) => {
 }
 
 async function jsTransformer(content, opt = defaultOptions) {
+  if (content && typeof content === 'object') {
+    opt = content;
+    content = null;
+  
+    if (!opt.file) {
+      throw new Error('If no string content is provided, the "file" option must be provided.')
+    }
+  }
+  
   opt = {...defaultOptions, ...opt};
+
   const isProduction = opt.env === 'production';
   const workingDirectory = opt.workingDirectoryPath || process.cwd();
   const configPath = opt.tsConfigPath || path.resolve(__dirname, workingDirectory, 'tsconfig.json');

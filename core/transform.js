@@ -12,12 +12,24 @@ const defaultOptions = {
   customAttributes: [],
   file: null,
   rootNode: null,
-  onTraverse() {},
+  onTraverse() {
+  },
   partialFiles: [],
 };
 
 function transform(content, options = defaultOptions) {
-  if (!content || typeof content !== 'string') return '';
+  if (content && typeof content === 'object') {
+    options = content;
+    
+    if (!options.file) {
+      throw new Error('If no string content is provided, the "file" option must be provided.')
+    }
+    
+    options.file.load();
+    
+    content = options.file.content;
+  }
+  
   content = content.replace(/\s+/, ' ');
   
   options = {...defaultOptions, ...options};

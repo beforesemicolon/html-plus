@@ -97,7 +97,7 @@ describe('jsTransformer', () => {
 
       const file = new File(path.join(src, 'app.js'));
 
-      return jsTransformer(null, {file})
+      return jsTransformer({file})
         .then(res => {
           expect(res.replace(/\s+/g, ''))
             .toEqual(data.jsFileResult.replace(/\s+/g, ''));
@@ -109,7 +109,7 @@ describe('jsTransformer', () => {
 
       const file = new File(path.join(src, 'app.ts'));
 
-      return jsTransformer(null, {file})
+      return jsTransformer({file})
         .then(res => {
           expect(res.replace(/\s+/g, ''))
             .toEqual(data.tsFileResult.replace(/\s+/g, ''));
@@ -121,7 +121,7 @@ describe('jsTransformer', () => {
 
       const file = new File(path.join(src, 'app.jsx'));
 
-      return jsTransformer(null, {file})
+      return jsTransformer({file})
         .then(res => {
           expect(res.replace(/\s+/g, ''))
             .toEqual(data.reactResult.replace(/\s+/g, ''));
