@@ -2,7 +2,7 @@ const {HTMLNode} = require("../parser/HTMLNode");
 
 class Variable {
   constructor(node) {
-    const {attributes, innerHTML} = node;
+    const {attributes} = node;
     
     const name = attributes.name;
     let value = '';

@@ -10,10 +10,10 @@ const defaultOptions = {
   context: {},
   customTags: [],
   customAttributes: [],
-  fileObject: null,
+  file: null,
   rootNode: null,
   onTraverse() {},
-  partialFileObjects: [],
+  partialFiles: [],
 };
 
 function transform(content, options = defaultOptions) {

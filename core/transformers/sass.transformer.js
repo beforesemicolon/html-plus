@@ -5,7 +5,7 @@ const render = promisify(nodeSass.render);
 
 const defaultOptions = {
   env: 'development',
-  fileObject: null,
+  file: null,
   outputStyle: 'nested',
   includePaths: []
 }
@@ -19,11 +19,11 @@ async function sassTransformer(content, opt = defaultOptions) {
   }
   
   return render({
+    ...opt,
     data: content,
-    file: opt.fileObject?.fileAbsolutePath,
-    indentedSyntax: opt?.fileObject?.ext === '.sass',
-    // ...(opt.env === 'development' && {sourceMap: true}),
-    ...opt
+    file: opt.file?.fileAbsolutePath,
+    indentedSyntax: opt?.file?.ext === '.sass',
+    ...(opt.env === 'production' && {sourceMap: true}),
   }).then(res => res.css.toString())
 }
 

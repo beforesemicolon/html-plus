@@ -30,7 +30,7 @@ describe('sassTransformer', () => {
     it('from sass string', () => {
       expect.assertions(1);
     
-      return sassTransformer(data.sass, {fileObject: {ext: '.sass'}}).then(res => {
+      return sassTransformer(data.sass, {file: {ext: '.sass'}}).then(res => {
         expect(res.replace(/\s/g, '')).toEqual(data.sassResult.replace(/\s/g, ''));
       })
     });
@@ -71,13 +71,13 @@ describe('sassTransformer', () => {
     });
   
     it('at same directory ', () => {
-      return sassTransformer('@import "./style2";', {fileObject: new File(file1)}).then(res => {
+      return sassTransformer('@import "./style2";', {file: new File(file1)}).then(res => {
         expect(res.replace(/\s/g, '')).toEqual(baseStyle);
       })
     });
   
     it('at above directory ', () => {
-      return sassTransformer('@import "../style3";', {fileObject: new File(file1)}).then(res => {
+      return sassTransformer('@import "../style3";', {file: new File(file1)}).then(res => {
         expect(res.replace(/\s/g, '')).toEqual(baseStyle);
       })
     });

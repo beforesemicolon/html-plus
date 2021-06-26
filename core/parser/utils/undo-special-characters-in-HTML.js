@@ -5,8 +5,8 @@ function undoSpecialCharactersInHTML(html) {
     .replace(attributePattern,
       (match) => {
         return match
-          .replace('&lt;', '<')
-          .replace('&gt;', '>');
+          .replace(new RegExp('&lt;', 'gm'), '<')
+          .replace(new RegExp('&gt;', 'gm'), '>');
       });
 }
 

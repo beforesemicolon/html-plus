@@ -2,7 +2,7 @@ const path = require('path');
 const postcss = require('postcss');
 const url = require('postcss-url');
 const postcssPresetEnv = require('postcss-preset-env');
-const purgecss = require('@fullhuman/postcss-purgecss');
+const purgeCSS = require('@fullhuman/postcss-purgecss');
 const atImport = require("postcss-import");
 const cssnano = require('cssnano');
 
@@ -17,7 +17,7 @@ const defaultOptions = {
   assetsPath: '',
   env: 'development',
   map: false,
-  fileObject: null,
+  file: null,
 };
 
 async function cssTransformer(content, opt = defaultOptions) {
@@ -34,7 +34,7 @@ async function cssTransformer(content, opt = defaultOptions) {
   
   const options = {
     to: opt.destPath,
-    from: opt.fromFile || opt?.fileObject?.fileAbsolutePath,
+    from: opt.fromFile || opt?.file?.fileAbsolutePath,
   }
   
   let post = null;
@@ -42,12 +42,12 @@ async function cssTransformer(content, opt = defaultOptions) {
   if (opt.env === 'production') {
     post = postcss([
       ...prefixes,
-      purgecss({
+      purgeCSS({
         content: [
-          `${opt.fileObject.srcDirectoryPath}/**/*.html`
+          `${opt.file.srcDirectoryPath}/**/*.html`
         ],
         css: [
-          opt.fileObject.fileAbsolutePath
+          opt.file.fileAbsolutePath
         ]
       }),
       cssnano

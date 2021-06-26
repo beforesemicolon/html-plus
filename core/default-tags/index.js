@@ -5,8 +5,12 @@ const {Include} = require("./include.tag");
 const {Inject} = require("./inject.tag");
 const {Log} = require("./log.tag");
 const {Ignore} = require("./ignore.tag");
+const {Style} = require("./style.tag");
+const {Script} = require("./script.tag");
 
 const defaultTags = [
+  Style,
+  Script,
   Variable,
   Fragment,
   Include,

@@ -3,7 +3,7 @@ const {PartialFile} = require("../PartialFile");
 
 class Include {
   constructor(node, options) {
-    const {fileObject, partialFileObjects} = options;
+    const {file, partialFiles} = options;
   
     this.node = node;
     this.partial = null;
@@ -16,22 +16,22 @@ class Include {
     }
     
     if (partialName || partialPath) {
-      if (partialFileObjects.length ) {
+      if (partialFiles.length ) {
         if (partialPath) {
-          partialPath = path.resolve(fileObject.fileDirectoryPath, partialPath);
+          partialPath = path.resolve(file.fileDirectoryPath, partialPath);
         } else {
           partialName = '_' + partialName.replace(/^_+/, '');
         }
 
-        this.partial = partialFileObjects.find(obj => {
+        this.partial = partialFiles.find(obj => {
           return obj.name === partialName || obj.fileAbsolutePath === partialPath;
         });
       }
 
       if (!this.partial && partialPath) {
-        const partialAbsolutePath = path.resolve(fileObject.fileDirectoryPath, partialPath);
+        const partialAbsolutePath = path.resolve(file.fileDirectoryPath, partialPath);
 
-        this.partial = new PartialFile(partialAbsolutePath, fileObject.srcDirectoryPath, tagInfo);
+        this.partial = new PartialFile(partialAbsolutePath, file.srcDirectoryPath, tagInfo);
       }
     }
   }

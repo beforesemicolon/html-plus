@@ -7,7 +7,7 @@ const defaultOptions = {
   env: 'development',
   assetsPath: './',
   plugins: [],
-  fileObject: null
+  file: null
 }
 
 async function lessTransformer(content, opt = defaultOptions) {
@@ -17,7 +17,7 @@ async function lessTransformer(content, opt = defaultOptions) {
   const options = {
     ...defaultOptions,
     env: opt.env,
-    filename: opt.fileObject?.fileAbsolutePath,
+    filename: opt.file?.fileAbsolutePath,
     // ...(opt.env === 'development' && {sourceMap: {}})
   }
   

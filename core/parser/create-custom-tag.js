@@ -3,8 +3,8 @@ function createCustomTag(tag, rawNode, node, nodeOptions) {
   
   const options = {
     ...nodeOptions,
-    get partialFileObjects() {
-      return nodeOptions.partialFileObjects.map(file => {
+    get partialFiles() {
+      return nodeOptions.partialFiles.map(file => {
         // partial files are created outside the context of the node, therefore
         // the file root node needs to be update with the current node
         file.options = {...nodeOptions, rootNode: node};
@@ -33,7 +33,7 @@ function createCustomTag(tag, rawNode, node, nodeOptions) {
   
   if (typeof instance === 'function') {
     return {
-      render: instance,
+      render: instance ?? (() => null),
     }
   }
   

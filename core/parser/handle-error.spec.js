@@ -29,7 +29,7 @@ describe('handleError', () => {
     expect(() => handleError(
       {message: 'not so good'},
       htmlNode,
-      {fileObject: {filePath: '/path/to/file.html'}})
+      {file: {filePath: '/path/to/file.html'}})
     )
       .toThrowErrorMatchingSnapshot('Error: not so good\n' +
         'File: /path/to/file.html\n' +
@@ -43,7 +43,7 @@ describe('handleError', () => {
     expect(() => handleError(
       {message: 'Failed <=> my title'},
       htmlNode,
-      {fileObject: {filePath: '/path/to/file.html'}})
+      {file: {filePath: '/path/to/file.html'}})
     )
       .toThrowErrorMatchingSnapshot('Error: Failed \n' +
         'File: /path/to/file.html\n' +

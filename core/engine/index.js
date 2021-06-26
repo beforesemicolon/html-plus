@@ -47,16 +47,16 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
         
         fs.readFile(filePath, (err, content) => {
           if (err) return callback(err);
-          const fileObject = new File(filePath, settings.views);
-          fileObject.content = content.toString();
+          const file = new File(filePath, settings.views);
+          file.content = content.toString();
           try {
-            const result = transform(fileObject.content, {
+            const result = transform(file.content, {
               data: opt.staticData,
               context,
-              fileObject,
+              file,
               customTags: opt.customTags,
               customAttributes: opt.customAttributes,
-              partialFileObjects: partials,
+              partialFiles: partials,
               onTraverse: (node, file) => {
                 let attrName = '';
                 

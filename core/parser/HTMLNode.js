@@ -15,10 +15,10 @@ const defaultOptions = {
   rootNode: null,
   customTags: {},
   customAttributes: {},
-  fileObject: null,
+  file: null,
   onTraverse() {
   },
-  partialFileObjects: [],
+  partialFiles: [],
 };
 
 class Text{
@@ -68,7 +68,7 @@ class HTMLNode {
     }
     
     if (typeof options.onTraverse === 'function') {
-      options.onTraverse(this, options.fileObject);
+      options.onTraverse(this, options.file);
     }
   }
   

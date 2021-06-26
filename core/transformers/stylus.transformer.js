@@ -5,7 +5,7 @@ const render = promisify(stylus.render);
 
 const defaultOptions = {
   env: 'development',
-  fileObject: null,
+  file: null,
 }
 
 async function stylusTransformer(content = null, opt = defaultOptions) {
@@ -13,7 +13,7 @@ async function stylusTransformer(content = null, opt = defaultOptions) {
   content = content ?? '';
   
   return await render(content, {
-    filename: opt.fileObject?.fileAbsolutePath,
+    filename: opt.file?.fileAbsolutePath,
     // ...(opt.env === 'development' && {sourceMap: 'inline'}),
   })
     .then(css => {

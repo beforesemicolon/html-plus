@@ -28,7 +28,7 @@ describe('Include Tag', () => {
     const str = '<include partial="inc-partial" data="{title: \'include partial\'}"></include>'
 
     expect(transform(str, {
-      partialFileObjects: [partialFile]
+      partialFiles: [partialFile]
     })).toEqual('<div>include partial</div>');
   });
 
@@ -36,8 +36,8 @@ describe('Include Tag', () => {
     const str = '<include partial-path="_inc-partial.html" data="{title: \'include partial\'}"></include>'
 
     expect(transform(str, {
-      partialFileObjects: [partialFile],
-      fileObject: {fileDirectoryPath: __dirname}
+      partialFiles: [partialFile],
+      file: {fileDirectoryPath: __dirname}
     })).toEqual('<div>include partial</div>');
   });
   
@@ -46,8 +46,8 @@ describe('Include Tag', () => {
     const str = '<include partial-path="_inc-partial.html" data="{title: \'include partial\'}"></include>'
     
     expect(transform(str, {
-      partialFileObjects: [partialFile, nestedPartialFile],
-      fileObject: {fileDirectoryPath: __dirname}
+      partialFiles: [partialFile, nestedPartialFile],
+      file: {fileDirectoryPath: __dirname}
     })).toEqual('<div>Nested: include partial</div>');
   });
 

@@ -22,8 +22,8 @@ function handleError(e, node = {}, options = {}) {
     ? ((node).outerHTML ?? '').replace(new RegExp(escapeRegex(text), 'gm'), chalk.redBright(`\n${text.trim()} <= Error: ${errMsg}\n`))
     : node.outerHTML ?? '';
   
-  const fileInfo = options.fileObject
-    ? `\nFile: ${chalk.yellow(options.fileObject.filePath)}`
+  const fileInfo = options.file
+    ? `\nFile: ${chalk.yellow(options.file.filePath)}`
     : '';
   
   throw new Error(

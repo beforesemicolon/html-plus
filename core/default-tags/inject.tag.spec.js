@@ -31,7 +31,7 @@ describe('Inject Tag', () => {
     const str = '<include partial="inj-partial">stuff: <p>1</p><p>2</p></include>';
   
     expect(transform(str, {
-      partialFileObjects: [partialFile]
+      partialFiles: [partialFile]
     })).toEqual('stuff:\n' +
       '<p>1</p><p>2</p>');
   });
@@ -41,7 +41,7 @@ describe('Inject Tag', () => {
     const str = '<include partial="inj-partial"></include>';
 
     expect(transform(str, {
-      partialFileObjects: [partialFile]
+      partialFiles: [partialFile]
     })).toEqual('<p>default content</p>');
   });
 
@@ -50,7 +50,7 @@ describe('Inject Tag', () => {
     const str = '<include partial="inj-partial"><p>1</p><p inject-id="target">2</p><p>3</p><</include>';
 
     expect(transform(str, {
-      partialFileObjects: [partialFile]
+      partialFiles: [partialFile]
     })).toEqual('<p>2</p>');
   });
   
@@ -60,7 +60,7 @@ describe('Inject Tag', () => {
       const str = '<include partial="inj-partial"><p>1</p><p>2</p><p>3</p><</include>';
     
       expect(transform(str, {
-        partialFileObjects: [partialFile]
+        partialFiles: [partialFile]
       })).toEqual('<p>default</p>');
     });
   });
@@ -73,7 +73,7 @@ describe('Inject Tag', () => {
       '</include>';
 
     expect(transform(str, {
-      partialFileObjects: [partialFile],
+      partialFiles: [partialFile],
       data: {
         documents: {
           currentPath: '/documentation'
