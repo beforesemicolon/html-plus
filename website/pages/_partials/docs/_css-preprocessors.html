@@ -1,0 +1,22 @@
+<p><strong>HTML+</strong> engine allows you to specify a CSS preprocessor file in your template and it will
+  compile it for you and serve it to the browser.</p>
+<code-snippet language="html">
+<!-- index.html -->
+<link rel="stylesheet" href="app.scss">
+</code-snippet>
+<p>It supports all major CSS preprocessors extensions like:</p>
+<ul>
+	<li><a href=""><strong>.sass/.scss</strong></a></li>
+	<li><a href=""><strong>.less</strong></a></li>
+	<li><a href=""><strong>.styl</strong></a></li>
+</ul>
+<p>This feature is also available for live production server where all files are processed and cached to be
+served optimally on every request.</p>
+<code-snippet language="html">
+<!-- project.html -->
+<link rel="stylesheet" href="project.less">
+<link rel="stylesheet" href="app.styl">
+</code-snippet>
+<p>For even more control over how these files get processed, consider using the <a href="">transform API</a> to
+compile your SASS, LESS or STYLUS into CSS.</p>
+<include partial="documentation-menu" data="{currentPage}"></include>

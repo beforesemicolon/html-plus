@@ -1,8 +1,8 @@
-<p><strong>HTML+ engine</strong> by default will use your pages file structure to create your site routes.</p>
+<p><strong>HTML+ engine</strong> by default will use your pages directory files structure to create your site routes.</p>
 <p>This means that all you have to do is organize your <a href="/documentation/routes/pages">HTML page</a> files
-   in a manner it reflects the routes you want by grouping and nesting files.</p>
+   in a manner it reflects the routes you want by grouping and nesting HTML files.</p>
 <code-snippet>
-# File Structure             # Routes
+# File Structure               # Routes
 
 - server.js
 - pages
@@ -14,4 +14,6 @@
       - index.html             /projects
       - todo-project.html      /projects/todo-project
 </code-snippet>
+<p>The name of the file is very important and <em>index.html</em> files will always resolve to <b>/</b> path or
+the directory name as you can see for projects path above.</p>
 <include partial="documentation-menu" data="{currentPage}"></include>

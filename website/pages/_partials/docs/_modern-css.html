@@ -1,0 +1,64 @@
+
+<h3>Write future CSS</h3>
+<p>If you don't use CSS preprocessors, writing simple CSS is powered by <a href="https://postcss.org/">POST CSS</a> with default
+	<a href="https://github.com/csstools/postcss-preset-env">preset env</a> and other that allows you to:</p>
+<ul>
+	<li>Nest style rules.</li>
+	<li>Import partial CSS (<a href="https://github.com/postcss/postcss-import">read more</a>)</li>
+	<li>Use modern CSS without worrying about browser support</li>
+	<li>Autoprefix where needed (<a href="https://github.com/postcss/autoprefixer">read more</a>)</li>
+	<li>Use CSS properties and variables.</li>
+	<li>Purge unused CSS (<a href="https://www.npmjs.com/package/@fullhuman/postcss-purgecss">read more</a>)</li>
+</ul>
+<code-snippet language="css">
+@import "normalizer.css";
+@custom-media --viewport-medium (width <= 50rem);
+@custom-selector :--heading h1, h2, h3, h4, h5, h6;
+
+:root {
+	--mainColor: #12345678;
+}
+
+body {
+	color: var(--mainColor);
+	font-family: system-ui;
+	overflow-wrap: break-word;
+}
+
+input {
+	appearance: none;
+}
+::placeholder {
+	color: gray;
+}
+
+.image {
+	background-image: url(image@1x.png);
+}
+@keyframes test {
+	100% {opacity: 1}
+}
+
+@media (min-resolution: 2dppx) {
+	.image {
+		background-image: url(image@2x.png);
+	}
+}
+
+:--heading {
+	background-image: image-set(url(img/heading.png) 1x, url(img/heading@2x.png) 2x);
+
+	@media (--viewport-medium) {
+		margin-block: 0;
+	}
+}
+
+a {
+	color: rgb(0 0 100% / 90%);
+
+	&:hover {
+		color: rebeccapurple;
+	}
+}
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

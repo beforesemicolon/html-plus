@@ -12,10 +12,10 @@
 <div #if="x === y">x equals to y</div>
 </code-snippet>
 <h3>The #attr attribute</h3>
-<p>There are some attributes you may want to be include only certain condition and that is what the
+<p>There are some attributes you may want to be include only under certain conditions and that is what the
 	<a href="">#attr attribute</a> is for.</p>
-<p>You use comma to separate the attribue name, value and the condition to include it where the value
-   is optional for boolead attributes like "hidden", "disabled<", "checked", etc.</p>
+<p>You use comma to separate the attribute name, value and the condition to include it where the value
+   is optional for booleans attributes like "hidden", "disabled", "checked", etc.</p>
 <code-snippet language="html">
 <variable name="saved" value="true"></variable>
 
@@ -34,6 +34,8 @@
 
 <button type="button"
         #attr="disabled, saved; class, readonly, saved">save</button>
-<!-- becomes: <button type="button" class="readonly" disabled>save</button>  -->
+<!-- becomes:
+	<button type="button" class="readonly" disabled>save</button>
+-->
 </code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>

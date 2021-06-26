@@ -17,67 +17,67 @@ module.exports = {
   },
   features: {
     title: "Why HTML+?",
-    description: "In short, it is familiar, fast, powerful and allows you to write less and powerfully. Here is more:",
+    description: "In short, it is familiar, fast, simple and allows you to write less and powerfully. Here is more:",
     link_label: "learn more",
     list: [
       {
         title: "It is just HTML",
         description: "There is no weird syntax. You already know this language.",
-        path: "/documenation#just-html",
+        path: "/documentation",
         partial: "just-html"
       },
       {
-        title: "Simple and small list of tags and attributes",
-        description: "There are only few new tags and attributes to learn and they still look like HTML.",
-        path: "/documenation#tags-and-attributes",
+        title: "Small learning curve",
+        description: "There are only few new tags and attributes with amazing capabilities to learn about.",
+        path: "/documentation/templating",
         partial: "attributes-tags"
+      },
+      {
+        title: "Support for SASS, LESS, STYLUS and Typescript out of the box",
+        description: "Simply link your SASS, LESS, STYLUS and Typescript files.",
+        path: "/documentation/styling",
+        partial: "support"
+      },
+      {
+        title: "Write Future CSS",
+        description: "<a href=\"/documenation#engine\">HTML+ engine</a> allows you to write modern CSS that works in any browser.",
+        path: "/documentation/styling",
+        partial: "future-css"
       },
       {
         title: "Powerful data binding and data contextualization",
         description: "It allows you to reference data in separate files and create data context for specific parts of the page.",
-        path: "/documenation#data-bind-and-context",
+        path: "/documentation/data",
         partial: "data-binding"
       },
       {
         title: "Create your custom HTML tags and attributes",
         description: "You can create custom tags and attributes to handle a specific situation of your project.",
-        path: "/documenation#custom-tags-and-attributes",
+        path: "/documentation/templating/custom-tags-and-attributes",
         partial: "custom-tags"
-      },
-      {
-        title: "Support for typescript, CSS pre and post-processors",
-        description: "Simply link or write your SASS, LESS, Typescript and more",
-        path: "/documenation#css-processors-and-typescript-support",
-        partial: "support"
-      },
-      {
-        title: "Write Future CSS",
-        description: "<a href=\"/documenation#engine\">HTML+ engine</a> allows you to write future and modern CSS that works in any browser",
-        path: "/documenation#write-future-CSS",
-        partial: "future-css"
       },
       {
         title: "Static and Dynamic <abbr title=\"Server Side Rendering\">SSR</abbr> website",
         description: "Create faster website by rendering on the Server with static or dynamic pages.",
-        path: "/documenation#static-and-dynamic-website",
+        path: "/documentation",
         partial: ""
       },
       {
         title: "A site builder",
         description: "<a href=\"/documenation#site-builder\">HTML+ builder</a> takes care of exporting production ready site files to be hosted anywhere.",
-        path: "/documenation#site-builder",
+        path: "/documentation",
         partial: ""
       },
       {
         title: "Page file directory as route",
         description: "You can creat your website router by simply using the pages file structure. The rest is taken care by the engine.",
-        path: "/documenation#page-structure-route",
+        path: "/documentation/routes/pages",
         partial: ""
       },
       {
         title: "Generates optimal code for production",
         description: "The site builder will only export optimal and needed CSS, Javascript and HTML for production.",
-        path: "/documenation#production-optimization",
+        path: "/documentation",
         partial: ""
       }
     ]

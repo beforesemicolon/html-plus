@@ -1,0 +1,71 @@
+<p>A custom tag can be a class or a function which can optionally contain or return a render function.</p>
+<p>This render function must return an HTML string, a node or null</p>
+<p>The below search field class will can be used as <strong>search-field</strong> tag. That means that how you
+   name your class and function is how the tag name will be called.</p>
+<code-snippet language="js">
+class SearchField {
+	render() {
+		return `
+			<label class="search-field" aria-label="search field">
+				<input type="search" name="search" placeholder="Search...">
+			</label>
+		`;
+	}
+}
+</code-snippet>
+<p>The same tag class can also be written as a function like so:</p>
+<code-snippet language="js">
+function SearchField {
+	return () => `
+		<label class="search-field" aria-label="search field">
+			<input type="search" name="search" placeholder="Search...">
+		</label>
+	`;
+}
+</code-snippet>
+<h3>Register your tag</h3>
+<p>After, it must be registered by passing it to the engine on start.</p>
+<code-snippet language="js">
+const {engine} = require('@beforesemicolon/html-plus');
+const {SearchField} = require('./SearchField.js');
+
+const app = express();
+
+engine(app, path.resolve(__dirname, './pages'), {
+	customTags: [SearchField]
+});
+</code-snippet>
+<h3>Use your tag</h3>
+<p>We can now use it in our template as so:</p>
+<code-snippet language="html">
+	<search-field></search-field>
+</code-snippet>
+<h3>Working with Attributes</h3>
+<p>The custom tag is initialized with two arguments. The
+	<a href="">HTMLNode</a> object and the <a href="">options</a> the node was created with.</p>
+<p>To accept a <em>value</em> and <em>placeholder</em> attribute we can use a constructor to collect the node.</p>
+<code-snippet language="js">
+class SearchField {
+	constructor(node, options) {
+		this.node = node;
+	}
+
+	render() {
+		const {value = '', placeholder = 'Search...'} = this.node.attributes;
+
+		return `
+			<label class="search-field" aria-label="search field">
+				<input type="search" name="search" placeholder="${placeholder}" value="${value}">
+			</label>
+		`;
+	}
+}
+</code-snippet>
+<p>Now we can pass value and placeholder to our tag like normal HTML.</p>
+<code-snippet language="html">
+<search-field value="sample" placeholder="Find..."></search-field>
+</code-snippet>
+<p>The node object will contain things like the <a href="">attributes</a> object and methods like
+	<a href="">getAttribute</a> and <a href="">setAttribute</a> that you can use.</p>
+<p>For more example of tags check <strong>HTML+</strong> <a href="">custom tags</a> code.</p>
+<include partial="documentation-menu" data="{currentPage}"></include>

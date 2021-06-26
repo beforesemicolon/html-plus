@@ -8,12 +8,19 @@
 .documentation {
   display: flex;
   margin-top: 50px;
+  margin-bottom: 50px;
+  position: relative;
+  overflow: auto;
+  height: 100vh;
 
   aside {
     width: 300px;
     background: $brand-light;
     padding: 25px;
     border-radius: 5px;
+    position: sticky;
+    top: 0;
+    left: 0;
 
     section {
       margin-top: 25px;
@@ -110,7 +117,7 @@
 
   article {
     flex: 1;
-    padding: 20px;
+    padding: 20px 20px 50px;
     font-weight: 300;
     width: calc(100% - 300px);
 

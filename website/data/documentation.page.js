@@ -3,8 +3,11 @@ const routesLink = '/documentation/routes';
 const dataLink = '/documentation/data';
 const templatingDataBindingLink = '/documentation/template-data-binding';
 const templatingLink = '/documentation/templating';
+const advTemplatingLink = '/documentation/advanced-templating';
 const stylingLink = '/documentation/styling';
 const scriptingLink = '/documentation/scripting';
+const buildLink = '/documentation/build';
+const transformLink = '/documentation/transform-files';
 const faqLink = '/documentation/faq';
 const apiReferenceLink = '/documentation/api-reference';
 const vocabularyLink = '/documentation/vocabulary';
@@ -67,15 +70,15 @@ module.exports = {
             title: "Dynamic Data",
             path: `${dataLink}/dynamic-data`,
             prev: {path: `${dataLink}/static-data`, title: 'Static Data'},
-            next: {path: `${dataLink}/context-data`, title: 'Context Data'},
+            next: {path: `${dataLink}/local-context-data`, title: 'Local Context Data'},
             partial: 'dynamic-data'
           },
           {
-            title: "Context Data",
-            path: `${dataLink}/context-data`,
+            title: "Local Context Data",
+            path: `${dataLink}/local-context-data`,
             prev: {path: `${dataLink}/dynamic-data`, title: 'Dynamic Data'},
             next: {path: templatingDataBindingLink, title: 'Template data binding'},
-            partial: 'context-data'
+            partial: 'local-context-data'
           }
         ]
       },
@@ -132,38 +135,107 @@ module.exports = {
             title: "Fragment & Ignore",
             path: `${templatingLink}/fragment-and-ignore`,
             prev: {path: `${templatingLink}/variables`, title: 'Variables'},
-            next: {path: `${templatingLink}/custom-tags-and-attributes`, title: 'Custom tags and attributes'},
-            partial: 'fragment-and-ignore'
-          },
-          {
-            title: "Custom tags and attributes",
-            path: `${templatingLink}/custom-tags-and-attributes`,
-            prev: {path: `${templatingLink}/fragment-and-ignore`, title: 'Fragment & Ignore'},
             next: {path: `${templatingLink}/debugging`, title: 'Debugging'},
-            partial: 'custom-tags-and-attributes'
+            partial: 'fragment-and-ignore'
           },
           {
             title: "Debugging",
             path: `${templatingLink}/debugging`,
-            prev: {path: `${templatingLink}/custom-tags-and-attributes`, title: 'Custom tags and attributes'},
-            next: {path: stylingLink, title: 'Styling'},
+            prev: {path: `${templatingLink}/fragment-and-ignore`, title: 'Fragment & Ignore'},
+            next: {path: advTemplatingLink, title: 'Advanced Templating'},
             partial: 'debugging'
+          },
+        ]
+      },
+      {
+        title: "Advanced Templating",
+        path: advTemplatingLink,
+        prev: {path: `${templatingLink}/debugging`, title: 'Debugging'},
+        next: {path: `${advTemplatingLink}/custom-tags`, title: 'Custom tags'},
+        partial: 'advanced-templating',
+        list: [
+          {
+            title: "Custom tags",
+            path: `${advTemplatingLink}/custom-tags`,
+            prev: {path: advTemplatingLink, title: 'Advanced Templating'},
+            next: {path: `${advTemplatingLink}/custom-attributes`, title: 'Custom attributes'},
+            partial: 'custom-tags'
+          },
+          {
+            title: "Custom attributes",
+            path: `${advTemplatingLink}/custom-attributes`,
+            prev: {path: `${advTemplatingLink}/custom-tags, title`, title: 'Custom tags'},
+            next: {path: `${advTemplatingLink}/partials-as-components`, title: 'Partials as Component'},
+            partial: 'custom-attributes'
+          },
+          {
+            title: "Partials as \"Component\"",
+            path: `${advTemplatingLink}/partials-as-components`,
+            prev: {path: `${advTemplatingLink}/custom-attributes`, title: 'Custom attributes'},
+            next: {path: stylingLink, title: 'Styling'},
+            partial: 'partials-as-components'
           },
         ]
       },
       {
         title: "Styling",
         path: stylingLink,
-        prev: {path: templatingLink, title: 'Debugging'},
-        next: {path: scriptingLink, title: 'Scripting'},
+        prev: {path: `${advTemplatingLink}/partials-as-components`, title: 'Partials as Component'},
+        next: {path: `${stylingLink}/css-preprocessors`, title: 'CSS Preprocessors'},
         partial: 'styling',
+        list: [
+          {
+            title: "CSS Preprocessors",
+            path: `${stylingLink}/css-preprocessors`,
+            prev: {path: stylingLink, title: 'Styling'},
+            next: {path: `${stylingLink}/modern-css`, title: 'Modern CSS'},
+            partial: 'css-preprocessors',
+          },
+          {
+            title: "Modern CSS",
+            path: `${stylingLink}/modern-css`,
+            prev: {path: `${stylingLink}/css-preprocessors`, title: 'CSS Preprocessors'},
+            next: {path: scriptingLink, title: 'Scripting'},
+            partial: 'modern-css',
+          }
+        ]
       },
       {
         title: "Scripting",
         path: scriptingLink,
-        prev: {path: stylingLink, title: 'Styling'},
-        next: {path: apiReferenceLink, title: 'API Reference'},
+        prev: {path: `${stylingLink}/modern-css`, title: 'Modern CSS'},
+        next: {path: transformLink, title: 'Transform Files'},
         partial: 'scripting',
+      },
+      {
+        title: "Transform Files",
+        path: transformLink,
+        prev: {path: scriptingLink, title: 'Scripting'},
+        next: {path: buildLink, title: 'Build Project'},
+        partial: 'transform-files',
+      },
+      {
+        title: "Build Project",
+        path: buildLink,
+        prev: {path: scriptingLink, title: 'Scripting'},
+        next: {path: `${buildLink}/static-pages`, title: 'Static Pages'},
+        partial: 'build',
+        list: [
+          {
+            title: "Static Pages",
+            path: `${buildLink}/static-pages`,
+            prev: {path: buildLink, title: 'Build'},
+            next: {path: `${buildLink}/by-data`, title: 'By Data'},
+            partial: 'static-pages',
+          },
+          {
+            title: "By Data",
+            path: `${buildLink}/by-data`,
+            prev: {path: scriptingLink, title: 'Scripting'},
+            next: {path: faqLink, title: 'FAQ'},
+            partial: 'by-data',
+          },
+        ]
       },
       {
         title: "FAQ",

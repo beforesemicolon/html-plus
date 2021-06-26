@@ -1,6 +1,6 @@
-<p><a href="">Variable tag</a> is one of the ways to create <a href="">scope data</a>.</p>
+<p><a href="">Variable tag</a> is one of the ways to create <a href="">local context data</a>.</p>
 <p>When it comes to templating, variables help with reusing logic and piece of data to clean things
-   a litle and make templates easier to understand.</p>
+   a little and make templates easier to understand.</p>
 <p>Instead of this:</p>
 <code-snippet language="html">
 <ul>
@@ -26,5 +26,15 @@
           value="pricedList.reduce((acc, n) => n.price), 0)"></variable>
 
 <p>Total price: {total}</p>
+</code-snippet>
+<h3>The value attribute</h3>
+<p>You can specify any value for your variable and you dont need curly braces.</p>
+<h3>Inner content</h3>
+<p>Anything you put inside the variable tag body will be treated as string. It cannot be HTML and templating binding
+won't work inside.</p>
+<code-snippet language="html">
+<variable name="title">My string title</variable>
+<!-- Same as above	-->
+<variable name="title" value="'My string title'"></variable>
 </code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>

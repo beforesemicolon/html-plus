@@ -1,11 +1,11 @@
 <variable name="page"
           value="$data.pages.documentation"></variable>
 <variable name="currentGroup"
-          value="page.menu.list.find((item) => $data.path.startsWith(item.path)) ?? page"></variable>
+          value="page.menu.list.find((item) => path.startsWith(item.path)) ?? page"></variable>
 <variable name="currentPage"
-          value="currentGroup.path === $data.path
+          value="currentGroup.path === path
 	            ? currentGroup
-	            : currentGroup.list.find((item) => item.path === $data.path)"></variable>
+	            : currentGroup.list.find((item) => item.path === path)"></variable>
 
 <include partial="layout" data="{...page, title: `${page.title}: ${currentPage.title}`}">
 	<link rel="stylesheet" href="documentation.scss" inject-id="style">
@@ -17,11 +17,11 @@
 			<section>
 				<h2>{page.menu.title}</h2>
 				<ul role="menu" aria-label="Documentation Menu">
-					<li #repeat="page.menu.list" #attr="class, current, $data.path === $item.path">
+					<li #repeat="page.menu.list" #attr="class, current, path === $item.path">
 						<variable name="hasSubmenu"
 						          value="Boolean($item.list?.length)"></variable>
 						<variable name="expanded"
-						          value="hasSubmenu && $data.path.startsWith($item.path)"></variable>
+						          value="hasSubmenu && path.startsWith($item.path)"></variable>
 
 						<a href="{$item.path}"
 						   aria-haspopup="{hasSubmenu}"
@@ -31,7 +31,7 @@
 						<span #if="hasSubmenu" class="expand-indicator {expanded ? 'expanded' : ''}"></span>
 
 						<ul #if="hasSubmenu" #attr="class, expanded, expanded">
-							<li #repeat="$item.list" #attr="class, current, $data.path === $item.path">
+							<li #repeat="$item.list" #attr="class, current, path === $item.path">
 								<a href="{$item.path}"><ignore value="$item.title" escape></ignore></a>
 							</li>
 						</ul>

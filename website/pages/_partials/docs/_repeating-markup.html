@@ -1,11 +1,13 @@
-<p>Making parts of the markup repeat for a list or certain times is always needed in templates in order
+<p>Making parts of the markup repeat for a list or certain count is always needed in templates in order
    to save the typing and only manipulate the data. <strong>HTML+</strong> allows you to do that using the
-	<a href="">#repeat attribute</a> which comes with extra magic.</p>
+	<a href="">#repeat attribute</a> which comes with extra associated variables.</p>
 <h3>Repeat specific number of times</h3>
 <p>You can repeat a markup for a specific number of times.</p>
 <code-snippet language="html">
 <button><span #repeat="3">*</span></button>
-<!-- becomes: <button><span>*</span><span>*</span><span>*</span></button>  -->
+<!-- becomes:
+<button><span>*</span><span>*</span><span>*</span></button>
+-->
 </code-snippet>
 <h3>The $item, $key and $index variables</h3>
 <p>The <a href="">#repeat attribute</a> creates three variables for you as context for the markup you

@@ -1,76 +1,9 @@
-<p><strong>HTML+</strong> engine allows you to specify a CSS preprocessor file in your template and it will
-                          compile it for your and serve it to the browser.</p>
-<code-snippet language="html">
-	<!-- index.html -->
-	<link rel="stylesheet" href="app.scss">
-</code-snippet>
-<p>It supports all major CSS preprocessors extensions like:</p>
-<ul>
-	<li><a href=""><strong>.sass/.scss</strong></a></li>
-	<li><a href=""><strong>.less</strong></a></li>
-	<li><a href=""><strong>.styl</strong></a></li>
-</ul>
-<h3>Write future CSS</h3>
-<p>If you don't use CSS preprocessors, writing simple CSS is powered by <a href="https://postcss.org/">POST CSS</a> with default
-	<a href="https://github.com/csstools/postcss-preset-env">preset env</a> and other that allows you to:</p>
-<ul>
-	<li>Nest style</li>
-	<li>Import partial CSS (<a href="https://github.com/postcss/postcss-import">read more</a>)</li>
-	<li>Use modern CSS without worrying about browser support</li>
-	<li>Autoprefix where needed (<a href="https://github.com/postcss/autoprefixer">read more</a>)</li>
-	<li>Use CSS properties and variables</li>
-	<li>Purge unused CSS (<a href="https://www.npmjs.com/package/@fullhuman/postcss-purgecss">read more</a>)</li>
-</ul>
-<code-snippet language="css">
-<!-- app.css -->
-@import "normalizer.css";
-@custom-media --viewport-medium (width <= 50rem);
-@custom-selector :--heading h1, h2, h3, h4, h5, h6;
-
-:root {
-	--mainColor: #12345678;
-}
-
-body {
-	color: var(--mainColor);
-	font-family: system-ui;
-	overflow-wrap: break-word;
-}
-
-input {
-	appearance: none;
-}
-::placeholder {
-	color: gray;
-}
-
-.image {
-	background-image: url(image@1x.png);
-}
-@keyframes test {
-	100% {opacity: 1}
-}
-
-@media (min-resolution: 2dppx) {
-	.image {
-		background-image: url(image@2x.png);
-	}
-}
-
-:--heading {
-	background-image: image-set(url(img/heading.png) 1x, url(img/heading@2x.png) 2x);
-
-	@media (--viewport-medium) {
-		margin-block: 0;
-	}
-}
-
-a {
-	color: rgb(0 0 100% / 90%);
-
-	&:hover {
-		color: rebeccapurple;
-	}
-}
-</code-snippet>
+<p>When you build your website you want it to look good and therefore, style it!</p>
+<p>Setting up the environment can come with some pain and may require learning about many different tooling
+and setup procedures.</p>
+<p>What <strong>HTML+</strong> does for you is set everything up for you so you can just start writing CSS using
+modern Syntax and preprocessors like <a href="https://sass-lang.com/">SASS</a>,
+	<a href="https://lesscss.org/">LESS</a> and <a href="https://stylus-lang.com/">STYLUS</a>.</p>
+<p>For more advanced users, it allows you to extend these setups with plugins or presets easily.</p>
+<p>All this is so you can get to coding sooner while your website benefits from modern CSS that works on most browsers.</p>
 <include partial="documentation-menu" data="{currentPage}"></include>

@@ -1,20 +1,22 @@
-<p><strong>HTML+</strong> templates can be made fully aware of your data files and injecting or creating
-	context data is super easy to do either inside the template itself or the initial configuration.</p>
-<p>Another spetacular aspect of the data is that it can be contextualized and there is no need to
+<p><strong>HTML+</strong> templates can be made fully aware of your data files. Injecting or creating
+	context data is super easy to do either inside the template itself or the initial engine setup.</p>
+<p>Another spectacular aspect of the data is that it can be contextualized and there is no need to
    keep passing data to partial files when you include them.</p>
 <p>Data can be provided or created in few ways:</p>
 <ul>
-	<li><a href="documentation/data/static-data"><strong>Through initial engine configuration</strong></a>:
+	<li><a href="documentation/data/static-data"><strong>Through initial engine setup</strong></a>:
 		This is great for when you want to fetch data from database when server starts and make it available inside templates.</li>
 	<li><a href="documentation/data/dynamic-data"><strong>On every page request</strong></a>: This is particular great
-		when you want to inject data specific to that template or something from the request made like form data or uploaded
-		file details.</li>
-	<li><a href="documentation/data/context-data"><strong>On includes and with local scoped variables</strong></a>: This
-		is great when you wan for a specific part of the template to have a unique sample of the data and even
-		override to global data provided.</li>
+		when you want to inject data specific to that template or something from the request like form data, cookies, params, query
+	    uploaded file details, etc.</li>
+	<li><a href="documentation/data/context-data"><strong>On includes</strong></a>: Partial files already inherit
+	the data and context from the file it was included in but you can pass additional context data as well.</li>
+	<li><a href="documentation/data/context-data"><strong>variables</strong></a>: This
+      is great when you wan for a specific part of the template to have a unique sample of the data and even
+      override to global data provided.</li>
 </ul>
 <p>With <strong>HTML+</strong> templates, data can be global and scoped(context) which allows for unique templates
-   to be build to fit the exact need you have.</p>
-<p>The templates are built in a way to enforce data imutability. This is so when you override data in one
-   template will never affect how data is in another.</p>
+   to be build to fit the exact need of your project.</p>
+<p>The templates are built in a way to enforce data immutability. This is so when you override data in one
+   template it will never affect how data is in another.</p>
 <include partial="documentation-menu" data="{currentPage}"></include>
