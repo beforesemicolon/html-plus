@@ -36,7 +36,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
   
   getDirectoryFilesDetail(pagesDirectoryPath, 'html')
     .then(files => {
-      const {partials, pagesRoutes} = extractPartialAndPageRoutes(files, pagesDirectoryPath)
+      const {partials, pagesRoutes} = extractPartialAndPageRoutes(files, pagesDirectoryPath);
       
       app.engine('html', (filePath, {settings, _locals, cache, ...context}, callback) => {
         const fileName = path.basename(filePath);

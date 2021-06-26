@@ -1,9 +1,16 @@
 const {PartialFile} = require("../PartialFile");
 
 function extractPartialAndPageRoutes(files, pagesDirectoryPath) {
+  const partialFileNames = new Set();
+  
   return files.reduce((acc, file) => {
     if (file.item.startsWith('_')) {
-      acc.partials.push(new PartialFile(file.itemPath, pagesDirectoryPath))
+      if (partialFileNames.has(file.item)) {
+          throw new Error(`You have duplicated partial "${file.item}". Partial file names must be unique.`);
+      }
+      
+      acc.partials.push(new PartialFile(file.itemPath, pagesDirectoryPath));
+      partialFileNames.add(file.item);
     } else {
       const template = `${file.itemRelativePath.replace(file.ext, '')}`.slice(1);
       
