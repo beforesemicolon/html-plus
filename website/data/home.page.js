@@ -54,7 +54,7 @@ module.exports = {
         title: "Create your custom HTML tags and attributes",
         description: "You can create custom tags and attributes to handle a specific situation of your project.",
         path: "/documentation/templating/custom-tags-and-attributes",
-        partial: "custom-tags"
+        partial: "custom-tag"
       },
       {
         title: "Static and Dynamic <abbr title=\"Server Side Rendering\">SSR</abbr> website",

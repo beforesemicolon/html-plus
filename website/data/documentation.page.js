@@ -11,6 +11,7 @@ const transformLink = '/documentation/transform-files';
 const faqLink = '/documentation/faq';
 const apiReferenceLink = '/documentation/api-reference';
 const vocabularyLink = '/documentation/vocabulary';
+const faqs = require('./faqs.json');
 
 module.exports = {
   path: docLink,
@@ -218,18 +219,18 @@ module.exports = {
         title: "Build Project",
         path: buildLink,
         prev: {path: scriptingLink, title: 'Scripting'},
-        next: {path: `${buildLink}/static-pages`, title: 'Static Pages'},
+        next: {path: `${buildLink}/static-pages`, title: 'Build Static Pages'},
         partial: 'build',
         list: [
           {
-            title: "Static Pages",
+            title: "Build Static Pages",
             path: `${buildLink}/static-pages`,
             prev: {path: buildLink, title: 'Build'},
-            next: {path: `${buildLink}/by-data`, title: 'By Data'},
+            next: {path: `${buildLink}/by-data`, title: 'Build By Data'},
             partial: 'static-pages',
           },
           {
-            title: "By Data",
+            title: "Build By Data",
             path: `${buildLink}/by-data`,
             prev: {path: scriptingLink, title: 'Scripting'},
             next: {path: faqLink, title: 'FAQ'},
@@ -240,9 +241,10 @@ module.exports = {
       {
         title: "FAQ",
         path: faqLink,
-        prev: {path: scriptingLink, title: 'Scripting'},
+        prev: {path: `${buildLink}/by-data`, title: 'By Data'},
         next: {path: apiReferenceLink, title: 'API Reference'},
         partial: 'faq',
+        data: faqs
       },
       {
         title: 'API Reference',

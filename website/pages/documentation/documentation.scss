@@ -148,28 +148,44 @@
       border-radius: 5px;
       font-style: italic;
     }
+
+    details {
+      border: 1px solid $secondary-darker;
+      border-radius: 3px;
+      padding: 10px 15px 0;
+      margin-bottom: 25px;
+      line-height: 150%;
+
+      summary {
+        font-weight: bold;
+        margin: -10px -10px 0;
+        padding: 10px;
+        cursor: pointer;
+      }
+
+      &[open] {
+        padding: 10px 15px;
+
+        &summary {
+          border-bottom: 1px solid #aaa;
+          margin-bottom: .5em;
+        }
+      }
+    }
   }
 
   @media screen and (max-width: 768px) {
     flex-direction: column;
+    height: auto;
 
     article,
     aside {
       width: 100%;
+      position: static;
     }
 
     article {
       padding: 20px 0;
-    }
-  }
-
-  @media screen and (max-width: 425px) {
-    article {
-      footer {
-        padding: 15px 0;
-        background: none;
-        border-top: 2px solid $secondary;
-      }
     }
   }
 }

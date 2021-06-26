@@ -1,0 +1,6 @@
+<details #repeat="currentPage.data">
+	<summary>{$item.question}</summary>
+	<inject html="$item.answer"></inject>
+</details>
+
+<include partial="documentation-menu" data="{currentPage}"></include>
