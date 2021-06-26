@@ -120,6 +120,19 @@
         }
       }
     }
+
+    .search-results {
+      a {
+        display: flex;
+        height: 35px;
+        align-items: center;
+        padding: 0 15px;
+        background: $secondary-lighter;
+        border-radius: 3px;
+        margin-top: 8px;
+        color: $dark;
+      }
+    }
   }
 
   article {

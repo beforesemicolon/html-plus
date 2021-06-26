@@ -11,5 +11,8 @@
     border-radius: 3px;
     padding: 5px 15px;
     background: $light;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
 }

@@ -16,11 +16,13 @@
 			<input id="menu-check" type="checkbox" style="display: none">
 			<header>
 				<label class="menu-toggle" for="menu-check" aria-label="mobile menu toggle"></label>
-				<include partial="search-field" data="{placeholder: 'Search...'}"></include>
+				<include partial="search-field" data="{
+					props: {placeholder: 'Search...', style: 'display: none;'}
+				}"></include>
 			</header>
-			<section>
+			<section class="doc-menu-section">
 				<h2>{page.menu.title}</h2>
-				<ul role="menu" aria-label="Documentation Menu">
+				<ul role="menu" aria-label="Documentation Menu" class="doc-menu">
 					<li #repeat="page.menu.list" #attr="class, current, path === $item.path">
 						<variable name="hasSubmenu"
 						          value="Boolean($item.list?.length)"></variable>
@@ -49,4 +51,5 @@
 		</article>
 	</main>
 
+	<script src="./documentation.ts" inject-id="script"></script>
 </include>
