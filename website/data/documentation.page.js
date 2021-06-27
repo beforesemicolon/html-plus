@@ -219,6 +219,11 @@ const data = {
             partial: 'attribute-class'
           },
           {
+            title: "Comment",
+            path: `${apiReferenceLink}/comment-class`,
+            partial: 'comment-class',
+          },
+          {
             title: "composeTagString()",
             path: `${apiReferenceLink}/compose-tag-string`,
             partial: 'compose-tag-string'
@@ -287,6 +292,11 @@ const data = {
             title: "#repeat",
             path: `${apiReferenceLink}/repeat-attribute`,
             partial: 'repeat-attribute',
+          },
+          {
+            title: "Text",
+            path: `${apiReferenceLink}/text-class`,
+            partial: 'text-class',
           },
           {
             title: "transform",

@@ -4,7 +4,7 @@
 		name: 'HTMLNode',
 		type: 'class',
 		arguments: 'HTML string, options',
-		properties: 'tagName, innerHTML, rawAttributes, attributes, context',
+		properties: 'tagName, innerHTML, rawAttributes, attributes, context, type',
 		methods: 'setAttribute, removeAttribute, setContext, removeContext, clone, duplicate, childNodes, renderChildren, render, toString',
 		description: 'A class representing HTML node tree.',
 	}
@@ -14,6 +14,11 @@
 <h3>Properties</h3>
 <include partial="api-description-list" data="{
 	descriptions: [
+		{
+			concept: 'type',
+			type: 'type: string, readonly',
+			description: 'Always returns \'node\'.'
+		},
 		{
 			concept: 'tagName',
 			type: 'type: string | null, readonly',
@@ -77,7 +82,7 @@
 		{
 			concept: 'childNodes',
 			type: 'type: function',
-			description: 'A function that takes an optional data context data object and return a list of child nodes.'
+			description: 'A function that takes an optional data context data object and returns a list of child nodes -- HTMLNode, <a href=\'/documentation/api-reference/text-class\'>Text</a> and <a href=\'/documentation/api-reference/comment-class\'>Comment</a>.'
 		},
 		{
 			concept: 'renderChildren',
