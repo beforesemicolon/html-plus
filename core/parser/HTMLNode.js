@@ -7,6 +7,8 @@ const {TextNode, CommentNode, parse} = require("node-html-parser");
 const {composeTagString} = require("./compose-tag-string");
 const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
 const {processNodeAttributes} = require("./utils/process-node-attributes");
+const {Text} = require('./Text');
+const {Comment} = require('./Comment');
 
 const defaultOptions = {
   env: 'development',
@@ -21,28 +23,18 @@ const defaultOptions = {
   partialFiles: [],
 };
 
-class Text{
-  constructor(value) {
-    this.value = value;
-  }
-  
-  toString() {
-    return this.value;
-  }
-}
-
 class HTMLNode {
   #node = null;
   #tag = null;
   #options = {};
   
-  constructor(nodeORHTMLString, options) {
+  constructor(htmlString, options) {
     options = {...defaultOptions, ...options}
-    this.#node = typeof nodeORHTMLString === 'string'
-      ? parse(replaceSpecialCharactersInHTML(nodeORHTMLString), {
+    this.#node = typeof htmlString === 'string'
+      ? parse(replaceSpecialCharactersInHTML(htmlString), {
         comment: true
       })
-      : nodeORHTMLString;
+      : htmlString;
     this.#node.context = {...this.#node.context, ...options.context};
     this.#options = options;
     this.#tag = options.customTags[this.#node.rawTagName];
@@ -70,6 +62,10 @@ class HTMLNode {
     if (typeof options.onTraverse === 'function') {
       options.onTraverse(this, options.file);
     }
+  }
+  
+  get type() {
+    return 'node';
   }
   
   get tagName() {
@@ -165,24 +161,16 @@ class HTMLNode {
   #childNodes(data = {}) {
     return this.#node.childNodes.map(childNode => {
       if (childNode instanceof TextNode) {
-        let text = '';
-        
-        try {
-          text = bindData(childNode.rawText, {
-            $data: this.#options.data,
-            ...this.context,
-            ...childNode.context,
-            ...data
-          });
-        } catch(e) {
-          handleError(e, childNode, this.#options);
-        }
-        
-        return new TextNode(text);
+        return new Text(childNode.rawText, {
+          $data: this.#options.data,
+          ...this.context,
+          ...childNode.context,
+          ...data
+        });
       }
       
       if (childNode instanceof CommentNode) {
-        return childNode;
+        return new Comment(childNode.rawText);
       }
       
       return new HTMLNode(childNode, this.#options);
@@ -245,3 +233,4 @@ class HTMLNode {
 }
 
 module.exports.HTMLNode = HTMLNode;
+

@@ -15,9 +15,9 @@ describe('Variable Tag', () => {
     });
   
     it('using name attribute and children text', () => {
-      const str = '<variable name="docs">{{page1: "Page 1", page2: "Page 2"}}</variable>';
+      const str = '<variable name="docs">{{page1: "Page 1", page2: "Page 2"}}</variable>{docs}';
     
-      expect(transform(str)).toEqual('');
+      expect(transform(str)).toEqual('[object Object]');
     });
   
     it('for all sibling nodes after', () => {

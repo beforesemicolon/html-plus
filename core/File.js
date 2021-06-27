@@ -32,7 +32,8 @@ class File {
   set content(value) {
     if (typeof value === "string" || value instanceof Buffer) {
       this.#loaded = true;
-      return this.#content = value.toString();
+      this.#content = value.toString();
+      return;
     }
     
     throw new Error('File content can only be a string or a Buffer type')
@@ -49,6 +50,10 @@ class File {
     }
     
     return this.#content.toString()
+  }
+  
+  toBuffer() {
+    return Buffer.from(this.toString(), "utf-8")
   }
 }
 

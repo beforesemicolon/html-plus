@@ -1,9 +1,10 @@
-const {TextNode, HTMLElement} = require("node-html-parser");
+const {HTMLElement} = require("node-html-parser");
 const {handleError} = require('./handle-error');
+const {Text} = require('./Text');
 
 describe('handleError', () => {
   it('should throw error message separated by <=> if text node', () => {
-    const text = new TextNode('some text');
+    const text = new Text('some text');
     
     expect(() => handleError({message: 'Failed'}, text)).toThrowError('Failed <=> some text')
   });

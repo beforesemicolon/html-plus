@@ -8,7 +8,6 @@ const defaultOptions = {
   target: 'es2016',
   envVariables: {},
   loader: 'js',
-  tsConfig: {},
   tsConfigPath: '',
   sourcemap: false,
   sourceFile: '',

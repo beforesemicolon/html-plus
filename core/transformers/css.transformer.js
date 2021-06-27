@@ -11,9 +11,8 @@ const resolveUrl = assetsPath => (urlInfo) => {
 };
 
 const defaultOptions = {
-  prefixes: [],
+  plugins: [],
   destPath: undefined,
-  fromFile: undefined,
   assetsPath: '',
   env: 'development',
   map: false,
@@ -33,24 +32,24 @@ async function cssTransformer(content, opt = defaultOptions) {
   opt = {...defaultOptions, ...opt};
   content = content ?? '';
   
-  const prefixes = [
+  const plugins = [
     atImport(),
     postcssPresetEnv({
       stage: 0
     }),
-    ...opt.prefixes
+    ...opt.plugins
   ];
   
   const options = {
     to: opt.destPath,
-    from: opt.fromFile || opt?.file?.fileAbsolutePath,
+    from: opt?.file?.fileAbsolutePath,
   }
   
   let post = null;
   
   if (opt.env === 'production') {
     post = postcss([
-      ...prefixes,
+      ...plugins,
       purgeCSS({
         content: [
           `${opt.file.srcDirectoryPath}/**/*.html`
@@ -70,7 +69,7 @@ async function cssTransformer(content, opt = defaultOptions) {
     
     options.map = true;
   } else {
-    post = postcss(prefixes);
+    post = postcss(plugins);
   }
   
   return post

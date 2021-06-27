@@ -5,8 +5,6 @@ const render = promisify(less.render);
 
 const defaultOptions = {
   env: 'development',
-  assetsPath: './',
-  plugins: [],
   file: null
 }
 

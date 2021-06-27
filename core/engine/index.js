@@ -11,10 +11,15 @@ const defaultOptions = {
   customTags: [],
   customAttributes: [],
   env: 'development',
-  onPageRequest() {}
+  onPageRequest() {
+  }
 }
 
 const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
+  if (!app) {
+    throw new Error('engine first argument must be provided and be a valid express app.')
+  }
+  
   opt = {...defaultOptions, ...opt}
   
   if (typeof opt.staticData !== 'object') {
@@ -65,18 +70,19 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
                 } else if (node.tagName === 'script') {
                   attrName = 'src';
                 }
-  
+                
                 const srcPath = node.attributes[attrName];
                 let isURL = false;
                 
                 try {
                   new URL(srcPath);
                   isURL = true;
-                } catch(e) {}
+                } catch (e) {
+                }
                 
                 if (srcPath && !isURL) {
                   const resourceFullPath = path.resolve(file.fileDirectoryPath, srcPath);
-    
+                  
                   if (resourceFullPath.startsWith(pagesDirectoryPath)) {
                     node.setAttribute(attrName, resourceFullPath.replace(pagesDirectoryPath, ''))
                   }
@@ -97,7 +103,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
       
       app.set('views', pagesDirectoryPath);
       app.set('view engine', 'html');
-  
+      
       app.use(pageAndResourcesMiddleware(
         pagesRoutes,
         pagesDirectoryPath,

@@ -48,7 +48,7 @@ describe('HTMLNode', () => {
     });
     
     it('and render', () => {
-      return expect(node.render()).toEqual('<ul class="list-items"><li class="item">item 1</li><li class="item">item 2</li><li class="item">item 3</li></ul>');
+      expect(node.render()).toEqual('<ul class="list-items"><li class="item">item 1</li><li class="item">item 2</li><li class="item">item 3</li></ul>');
     });
   });
   

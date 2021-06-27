@@ -6,8 +6,6 @@ const render = promisify(nodeSass.render);
 const defaultOptions = {
   env: 'development',
   file: null,
-  outputStyle: 'nested',
-  includePaths: []
 }
 
 async function sassTransformer(content, opt = defaultOptions) {

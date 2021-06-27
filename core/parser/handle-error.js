@@ -1,6 +1,5 @@
 const chalk = require("chalk");
 const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
-const {TextNode} = require("node-html-parser");
 
 function escapeRegex(string) {
   return string.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -9,8 +8,8 @@ function escapeRegex(string) {
 function handleError(e, node = {}, options = {}) {
   let error = e.message;
   
-  if (node instanceof TextNode) {
-    throw new Error(`${error} <=> ${node.rawText}`)
+  if (node.type === 'text' || node.type === 'comment') {
+    throw new Error(`${error} <=> ${node.value}`);
   }
   
   if (error && error.startsWith('Error: ')) {

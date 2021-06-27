@@ -32,7 +32,7 @@ class Inject{
           }
         } else {
           this.content = childNodes.filter(childNode => {
-            return !childNode.attributes || (
+            return !(childNode instanceof HTMLNode) || (
               childNode.attributes['inject-id'] === undefined &&
               (childNode.context && !childNode?.context['$$included'])
             );
