@@ -1,6 +1,6 @@
 <p><strong>HTML+</strong> errors will point exactly at the tag or text where it happened so you know where
   the fix needs o happen.</p>
-<p>On top of nice and specific error messages, there is a <a href="">log</a> tag which will log
+<p>On top of nice and specific error messages, there is a <a href="/documentation/api-reference/log-tag">log</a> tag which will log
    any value so you know under what context and what data the template is rendering.</p>
 <code-snippet language="html">
 <variable name="x" value="300"></variable>
@@ -11,7 +11,6 @@
 <code-snippet language="html">
 <log value="$current"></log>
 </code-snippet>
-<log value="this"></log>
 <p>This <strong>$current</strong> value is only valid for log tag. Obviously, you may also print the whole data as well.</p>
 <code-snippet language="html">
 <log value="$data"></log>

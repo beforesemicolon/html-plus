@@ -1,9 +1,9 @@
-<p>The <a href="">inject tag</a> is a powerful tag that when used inside partial files works as
+<p>The <a href="/documentation/api-reference/inject-tag">inject tag</a> is a powerful tag that when used inside partial files works as
    placeholder much like the HTML <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot">slot tag</a>.
 </p>
 <h3>Inject any markup</h3>
-<p>Simply adding a <a href="">inject tag</a> inside a partial file means that any content you put
-   inside the <a href="">include tag</a> will be injected at that spot.</p>
+<p>Simply adding a <strong>inject tag</strong> inside a partial file means that any content you put
+   inside the <strong>inject tag</strong> will be injected at that spot.</p>
 <code-snippet language="html">
 <!-- _header.html  -->
 <header>
@@ -37,7 +37,7 @@
 	<a href="/project-3">Project 3</a>
 </nav>
 </code-snippet>
-<p>As you can see, any markup you put inside <a href="">include tag</a> is content to be injected inside
+<p>As you can see, any markup you put inside <strong>inject tag</strong> is content to be injected inside
    the partial if it has a inject tag.</p>
 <h3>Inject specific markup</h3>
 <p>You can also be more specific of what type of content must be inject if you specify an id on the inject tag.</p>
@@ -58,7 +58,7 @@
 </html>
 </code-snippet>
 <p>When including this template we can specify the part to match the inject tags. That is done by adding the
-	<a href="">inject-id</a> attribute on the tag you want to match the inject tag id.</p>
+	<strong>inject-id</strong> attribute on the tag you want to match the inject tag id.</p>
 <code-snippet language="html">
 <!-- index.html  -->
 <include partial="layout">
@@ -112,7 +112,7 @@ to be injected at script inject id. The remainder, unmarked will be injected at 
 </include>
 </code-snippet>
 <h3>Inject markup from variables</h3>
-<p>Another thing the <a href="">inject tag</a> can do for you is allow you to inject HTML markup that
+<p>Another thing the <strong>inject tag</strong> can do for you is allow you to inject HTML markup that
    is stored in a data variable.</p>
 <p>You can always use template data binding to inject HTML into your template but if this markup is an <strong>HTML+</strong>
    markup, nothing will compiled.</p>

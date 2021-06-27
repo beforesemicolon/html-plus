@@ -42,7 +42,7 @@ engine(app, path.resolve(__dirname, './pages'), {
 </code-snippet>
 <h3>Working with Attributes</h3>
 <p>The custom tag is initialized with two arguments. The
-	<a href="">HTMLNode</a> object and the <a href="">options</a> the node was created with.</p>
+	<a href="/documentation/api-reference/html-node-class">HTMLNode</a> object and the <strong>options</strong> the node was created with.</p>
 <p>To accept a <em>value</em> and <em>placeholder</em> attribute we can use a constructor to collect the node.</p>
 <code-snippet language="js">
 class SearchField {
@@ -65,7 +65,6 @@ class SearchField {
 <code-snippet language="html">
 <search-field value="sample" placeholder="Find..."></search-field>
 </code-snippet>
-<p>The node object will contain things like the <a href="">attributes</a> object and methods like
-	<a href="">getAttribute</a> and <a href="">setAttribute</a> that you can use.</p>
-<p>For more example of tags check <strong>HTML+</strong> <a href="">custom tags</a> code.</p>
+<p>The node object will contain things like the <strong>attributes</strong> object and methods like
+	<strong>getAttribute</strong> and <strong>setAttribute</strong> that you can use.</p>
 <include partial="documentation-menu" data="{currentPage}"></include>

@@ -219,6 +219,11 @@ const data = {
             partial: 'attribute-class'
           },
           {
+            title: "#attr",
+            path: `${apiReferenceLink}/attr-attribute`,
+            partial: 'attr-attribute',
+          },
+          {
             title: "Comment",
             path: `${apiReferenceLink}/comment-class`,
             partial: 'comment-class',

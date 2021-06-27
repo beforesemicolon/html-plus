@@ -1,4 +1,4 @@
-<p><strong>HTML+</strong> provides you with the <a href="">fragment tag</a> which is useful
+<p><strong>HTML+</strong> provides you with the <a href="/documentation/api-reference/fragment-tag">fragment tag</a> which is useful
                           for when you dont need the wrapping tag and still want to apply logic like repeating and conditional
                           rendering.</p>
 <code-snippet language="html">
@@ -7,7 +7,7 @@
 	<section id="user-manegement">...</section>
 </fragment>
 </code-snippet>
-<p>The above can also be accomplished with the <a href="">#fragment attribute</a>. Both will only render what is inside only.</p>
+<p>The above can also be accomplished with the <a href="/documentation/api-reference/fragment-attribute">#fragment attribute</a>. Both will only render what is inside only.</p>
 <code-snippet language="html">
 <div #fragment #if="user.isAdmin">
 	<section id="control-pannel">...</section>
@@ -15,7 +15,7 @@
 </div>
 </code-snippet>
 <h3>Improve render time</h3>
-<p>Another very special tag and attribute is <a href="">ignore</a>. They pretty much signal to the
+<p>Another very special tag and attribute is <a href="/documentation/api-reference/ignore-tag">ignore</a>. They pretty much signal to the
    compiler that the markup content does not need to be compiled and should be shown as is.</p>
 <code-snippet language="html">
 <ignore #if="user.isAdmin">
@@ -32,7 +32,7 @@
 </code-snippet>
 <h4>Escape HTML</h4>
 <p>The main purpose of ignore attribute and tag is for cases you just want to render the HTML has it is. In case you
-want to escape the HTML all together, you can provide the <a href="">escape</a> attribute.</p>
+want to escape the HTML all together, you can provide the <strong>escape</strong> attribute.</p>
 <code-snippet language="html">
 <ignore escape>
 	<pre><code>
@@ -42,7 +42,7 @@ want to escape the HTML all together, you can provide the <a href="">escape</a> 
 </code-snippet>
 <h4>Ignore from value</h4>
 <p>Your HTML can also come from a variable in which in that case you can pass to it as the value to be shown on the page.</p>
-<p>You may also provide the <a href="">escape attribute</a> as well.</p>
+<p>You may also provide the <strong>escape attribute</strong> as well.</p>
 <code-snippet language="html">
 <ignore value="$data.htmlCode"></ignore>
 <!-- or	-->

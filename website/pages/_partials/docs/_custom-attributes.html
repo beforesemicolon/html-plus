@@ -1,6 +1,6 @@
-<p>Custom attributes must all be a class that extends the <a href="">Attribute class</a>. This class must
-   also contain a render method which is called the value of the attribute and the <a href="">HTMLNode</a> instance.</p>
-<p>A optional method of you custom attribute is the <a href="">process</a> method which is called with the value
+<p>Custom attributes must all be a class that extends the <a href="/documentation/api-reference/attribute-class">Attribute class</a>. This class must
+   also contain a render method which is called the value of the attribute and the <a href="/documentation/api-reference/html-node-class">HTMLNode</a> instance.</p>
+<p>A optional method of you custom attribute is the <strong>process</strong> method which is called with the value
    of the attribute which you can tweak into a different string to be bind or executed before the rendering.</p>
 <p>The below <em>WrapWith</em> custom attribute will receive a comma separated name of tags and wrap
    the tag it is placed on with those.</p>
@@ -88,5 +88,4 @@ class SearchField {
 }
 </code-snippet>
 <p>Please refer to the <a href="">HTMLNode</a> object documentation for a full list of methods and properties.</p>
-<p>For more example of attributes check <strong>HTML+</strong> <a href="">custom attributes</a> code.</p>
 <include partial="documentation-menu" data="{currentPage}"></include>
