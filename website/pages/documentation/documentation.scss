@@ -1,4 +1,5 @@
 @import "../_sass/common";
+@import "../_sass/colors";
 @import "../_partials/layout";
 @import "../_partials/search-field";
 @import "../_partials/documentation-menu";
@@ -151,8 +152,45 @@
       margin: 35px 0 10px;
     }
 
+    h4 {
+      margin: 25px 0 10px;
+    }
+
     li {
       margin-bottom: 20px;
+    }
+
+    .ref-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 0;
+      list-style: none;
+
+      li {
+        width: calc(50% - 12px);
+        margin-bottom: 25px;
+        border-radius: 2px;
+        background: $secondary-lighter;
+        padding: 0;
+        border-bottom: 3px solid $cta;
+
+        a {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          padding: 10px;
+          align-items: center;
+          color: $dark;
+          letter-spacing: 0.05rem;
+          text-decoration: none;
+          font-weight: 400;
+        }
+
+        &::marker {
+          content: '';
+        }
+      }
     }
 
     a {
@@ -270,6 +308,16 @@
 
     article {
       padding: 20px 0;
+    }
+  }
+
+  @media screen and (max-width: 425px) {
+    article {
+      .ref-list {
+        li {
+          width: 100%;
+        }
+      }
     }
   }
 }

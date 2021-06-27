@@ -1,0 +1,23 @@
+<include partial="api-table-details" data="{
+	name: 'fragment attribute',
+	details: {
+		name: 'fragment',
+		type: 'boolean attribute',
+		'related-attributes': 'none',
+		description: 'An attribute version of the <a href=\'/documentation/api-reference/fragment-tag\'>fragment tag</a>.',
+	}
+}"></include>
+<h3>Usage Examples</h3>
+<code-snippet language="html">
+<div #repeat="3" #fragment>
+	<label for="field-{$item}"></label>
+	<input id="field-{$item}" type="text">
+</div>
+</code-snippet>
+<code-snippet language="html">
+<div #if="$data.description" #fragment>
+	<h2>Description</h2>
+	<p>{$data.description}</p>
+</div>
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

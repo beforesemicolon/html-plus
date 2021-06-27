@@ -13,9 +13,9 @@
 <p>The <a href="">#repeat attribute</a> creates three variables for you as context for the markup you
    are repeating. These are:</p>
 <ul>
-	<li><a href="">$item</a>: contains the value of the item of the list</li>
-	<li><a href="">$key</a> contains the key or index value of the item in the list or dictionary</li>
-	<li><a href="">$index</a> contains the index of the item in the list</li>
+	<li><strong>$item</strong>: contains the value of the item of the list</li>
+	<li><strong>$key</strong> contains the key or index value of the item in the list or dictionary</li>
+	<li><strong>$index</strong> contains the index of the item in the list</li>
 </ul>
 <code-snippet language="html">
 <ul>
@@ -42,6 +42,7 @@
 <h3>Repeat as</h3>
 <p>By default, all item value is available under the <a href="">$item</a> variable but you can also
    override it by specifying the <strong>as</strong> value</p>
+<h3>Usage Examples</h3>
 <code-snippet language="html">
 <nav>
 	<a #repeat="navLinks as link" href="{link.path}">{link.label}</a>

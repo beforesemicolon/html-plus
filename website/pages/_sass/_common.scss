@@ -28,6 +28,8 @@ $headings: "h1, h2, h3, h4, h5, h6, p";
 #{$headings} {
   margin-top: 0;
   line-height: 120%;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 a:any-link {

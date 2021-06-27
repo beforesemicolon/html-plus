@@ -13,7 +13,29 @@ const apiReferenceLink = '/documentation/api-reference';
 const vocabularyLink = '/documentation/vocabulary';
 const faqs = require('./faqs.json');
 
-module.exports = {
+function addNextAndPrevPaths(list, preListItem, postListItem) {
+  for (let i = 0; i < list.length; i++) {
+    const currentItem = list[i];
+    const prevItem = list[i - 1] ?? preListItem;
+    const nextItem = list[i + 1] ?? postListItem;
+  
+    if (prevItem) {
+      currentItem.prev = {path: prevItem.path, title: prevItem.title}
+    }
+    
+    if (list[i].list?.length) {
+      const firstSubItem  = list[i].list[0];
+      currentItem.next = {path: firstSubItem.path, title: firstSubItem.title}
+      list[i].list = addNextAndPrevPaths(list[i].list, currentItem, list[i + 1]);
+    } else if(nextItem) {
+      currentItem.next = {path: nextItem.path, title: nextItem.title}
+    }
+  }
+  
+  return list;
+}
+
+const data = {
   path: docLink,
   title: "Documentation",
   description: "HTML+ - HTML template language, engine and site builder",
@@ -26,29 +48,21 @@ module.exports = {
       {
         title: "Getting Started",
         path: `${docLink}/getting-started`,
-        prev: {path: docLink, title: 'Documentation'},
-        next: {path: routesLink, title: 'Routes'},
         partial: 'getting-started',
       },
       {
         title: "Routes",
         path: routesLink,
-        prev: {path: `${docLink}/getting-started`, title: 'Getting Started'},
-        next: {path: `${routesLink}/pages`, title: 'Pages'},
         partial: 'routes',
         list: [
           {
             title: "Pages",
             path: `${routesLink}/pages`,
-            prev: {path: routesLink, title: 'Routes'},
-            next: {path: `${routesLink}/route-pages`, title: 'Route Pages'},
             partial: 'pages'
           },
           {
             title: "Route Pages",
             path: `${routesLink}/route-pages`,
-            prev: {path: `${routesLink}/pages`, title: 'Pages'},
-            next: {path: dataLink, title: 'Data'},
             partial: 'route-pages'
           },
         ],
@@ -56,29 +70,21 @@ module.exports = {
       {
         title: "Data",
         path: dataLink,
-        prev: {path: `${routesLink}/route-pages`, title: 'Route Pages'},
-        next: {path: `${dataLink}/static-data`, title: 'Static Data'},
         partial: 'data',
         list: [
           {
             title: "Static Data",
             path: `${dataLink}/static-data`,
-            prev: {path: dataLink, title: 'Data'},
-            next: {path: `${dataLink}/dynamic-data`, title: 'Dynamic Data'},
             partial: 'static-data'
           },
           {
             title: "Dynamic Data",
             path: `${dataLink}/dynamic-data`,
-            prev: {path: `${dataLink}/static-data`, title: 'Static Data'},
-            next: {path: `${dataLink}/local-context-data`, title: 'Local Context Data'},
             partial: 'dynamic-data'
           },
           {
             title: "Local Context Data",
             path: `${dataLink}/local-context-data`,
-            prev: {path: `${dataLink}/dynamic-data`, title: 'Dynamic Data'},
-            next: {path: templatingDataBindingLink, title: 'Template data binding'},
             partial: 'local-context-data'
           }
         ]
@@ -86,64 +92,46 @@ module.exports = {
       {
         title: "Template data binding",
         path: templatingDataBindingLink,
-        prev: {path: dataLink, title: 'Context Data'},
-        next: {path: templatingLink, title: 'Templating'},
         partial: 'template-data-binding',
       },
       {
         title: "Templating",
         path: templatingLink,
-        prev: {path: templatingDataBindingLink, title: 'Template data binding'},
-        next: {path: `${templatingLink}/partials-and-include`, title: 'Partials and Include'},
         partial: 'templating',
         list: [
           {
             title: "Partials and Include",
             path: `${templatingLink}/partials-and-include`,
-            prev: {path: templatingLink, title: 'Templating'},
-            next: {path: `${templatingLink}/inject-html`, title: 'Inject HTML'},
             partial: 'partials-and-include'
           },
           {
             title: "Inject HTML",
             path: `${templatingLink}/inject-html`,
-            prev: {path: `${templatingLink}/partials-and-include`, title: 'Partials and Include'},
-            next: {path: `${templatingLink}/conditional-rendering`, title: 'Conditional Rendering'},
             partial: 'inject-html'
           },
           {
             title: "Conditional Rendering",
             path: `${templatingLink}/conditional-rendering`,
-            prev: {path: `${templatingLink}/inject-html`, title: 'Inject HTML'},
-            next: {path: `${templatingLink}/repeating-markup`, title: 'Repeating Markup'},
             partial: 'conditional-rendering'
           },
           {
             title: "Repeating Markup",
             path: `${templatingLink}/repeating-markup`,
-            prev: {path: `${templatingLink}/conditional-rendering`, title: 'Conditional Rendering'},
-            next: {path: `${templatingLink}/variables`, title: 'Variables'},
             partial: 'repeating-markup'
           },
           {
             title: "Variables",
             path: `${templatingLink}/variables`,
-            prev: {path: `${templatingLink}/repeating-markup`, title: 'Repeating Markup'},
-            next: {path: `${templatingLink}/fragment-and-ignore`, title: 'Fragment & Ignore'},
             partial: 'variables'
           },
           {
             title: "Fragment & Ignore",
             path: `${templatingLink}/fragment-and-ignore`,
-            prev: {path: `${templatingLink}/variables`, title: 'Variables'},
-            next: {path: `${templatingLink}/debugging`, title: 'Debugging'},
             partial: 'fragment-and-ignore'
           },
           {
             title: "Debugging",
             path: `${templatingLink}/debugging`,
-            prev: {path: `${templatingLink}/fragment-and-ignore`, title: 'Fragment & Ignore'},
-            next: {path: advTemplatingLink, title: 'Advanced Templating'},
             partial: 'debugging'
           },
         ]
@@ -151,29 +139,21 @@ module.exports = {
       {
         title: "Advanced Templating",
         path: advTemplatingLink,
-        prev: {path: `${templatingLink}/debugging`, title: 'Debugging'},
-        next: {path: `${advTemplatingLink}/custom-tags`, title: 'Custom tags'},
         partial: 'advanced-templating',
         list: [
           {
             title: "Custom tags",
             path: `${advTemplatingLink}/custom-tags`,
-            prev: {path: advTemplatingLink, title: 'Advanced Templating'},
-            next: {path: `${advTemplatingLink}/custom-attributes`, title: 'Custom attributes'},
             partial: 'custom-tags'
           },
           {
             title: "Custom attributes",
             path: `${advTemplatingLink}/custom-attributes`,
-            prev: {path: `${advTemplatingLink}/custom-tags, title`, title: 'Custom tags'},
-            next: {path: `${advTemplatingLink}/partials-as-components`, title: 'Partials as Component'},
             partial: 'custom-attributes'
           },
           {
             title: "Partials as \"Component\"",
             path: `${advTemplatingLink}/partials-as-components`,
-            prev: {path: `${advTemplatingLink}/custom-attributes`, title: 'Custom attributes'},
-            next: {path: stylingLink, title: 'Styling'},
             partial: 'partials-as-components'
           },
         ]
@@ -181,22 +161,16 @@ module.exports = {
       {
         title: "Styling",
         path: stylingLink,
-        prev: {path: `${advTemplatingLink}/partials-as-components`, title: 'Partials as Component'},
-        next: {path: `${stylingLink}/css-preprocessors`, title: 'CSS Preprocessors'},
         partial: 'styling',
         list: [
           {
             title: "CSS Preprocessors",
             path: `${stylingLink}/css-preprocessors`,
-            prev: {path: stylingLink, title: 'Styling'},
-            next: {path: `${stylingLink}/modern-css`, title: 'Modern CSS'},
             partial: 'css-preprocessors',
           },
           {
             title: "Modern CSS",
             path: `${stylingLink}/modern-css`,
-            prev: {path: `${stylingLink}/css-preprocessors`, title: 'CSS Preprocessors'},
-            next: {path: scriptingLink, title: 'Scripting'},
             partial: 'modern-css',
           }
         ]
@@ -204,36 +178,26 @@ module.exports = {
       {
         title: "Scripting",
         path: scriptingLink,
-        prev: {path: `${stylingLink}/modern-css`, title: 'Modern CSS'},
-        next: {path: transformLink, title: 'Transform Files'},
         partial: 'scripting',
       },
       {
         title: "Transform Files",
         path: transformLink,
-        prev: {path: scriptingLink, title: 'Scripting'},
-        next: {path: buildLink, title: 'Build Project'},
         partial: 'transform-files',
       },
       {
         title: "Build Project",
         path: buildLink,
-        prev: {path: scriptingLink, title: 'Scripting'},
-        next: {path: `${buildLink}/static-pages`, title: 'Build Static Pages'},
         partial: 'build',
         list: [
           {
             title: "Build Static Pages",
             path: `${buildLink}/static-pages`,
-            prev: {path: buildLink, title: 'Build'},
-            next: {path: `${buildLink}/by-data`, title: 'Build By Data'},
             partial: 'static-pages',
           },
           {
             title: "Build By Data",
             path: `${buildLink}/by-data`,
-            prev: {path: scriptingLink, title: 'Scripting'},
-            next: {path: faqLink, title: 'FAQ'},
             partial: 'by-data',
           },
         ]
@@ -241,21 +205,18 @@ module.exports = {
       {
         title: "FAQ",
         path: faqLink,
-        prev: {path: `${buildLink}/by-data`, title: 'By Data'},
-        next: {path: apiReferenceLink, title: 'API Reference'},
         partial: 'faq',
         data: faqs
       },
       {
-        title: 'API Reference',
+        title: 'API References',
         path: apiReferenceLink,
-        prev: {path: faqLink, title: 'FAQ'},
         partial: 'api-reference',
         list: [
           {
             title: "Attribute",
             path: `${apiReferenceLink}/attribute-class`,
-            partial: 'attributes'
+            partial: 'attribute-class'
           },
           {
             title: "composeTagString()",
@@ -283,6 +244,11 @@ module.exports = {
             partial: 'fragment-attribute',
           },
           {
+            title: "HTMLNode",
+            path: `${apiReferenceLink}/html-node-class`,
+            partial: 'html-node-class',
+          },
+          {
             title: "#if",
             path: `${apiReferenceLink}/if-attribute`,
             partial: 'if-attribute',
@@ -291,6 +257,11 @@ module.exports = {
             title: "<ignore/>",
             path: `${apiReferenceLink}/ignore-tag`,
             partial: 'ignore-tag',
+          },
+          {
+            title: "#ignore",
+            path: `${apiReferenceLink}/ignore-attribute`,
+            partial: 'ignore-attribute',
           },
           {
             title: "<include/>",
@@ -318,7 +289,7 @@ module.exports = {
             partial: 'repeat-attribute',
           },
           {
-            title: "transform()",
+            title: "transform",
             path: `${apiReferenceLink}/transform`,
             partial: 'transform',
           },
@@ -331,4 +302,8 @@ module.exports = {
       },
     ]
   }
-}
+};
+
+data.menu.list = addNextAndPrevPaths(data.menu.list, data);
+
+module.exports = data;

@@ -1,0 +1,49 @@
+<include partial="api-table-details" data="{
+	name: 'repeat attribute',
+	details: {
+		name: 'repeat',
+		type: 'attribute',
+		value: 'executed; number, list-like or map-like object.',
+		'related attributes': 'none',
+		'related variables': '$item, $key, $index',
+		description: 'An attribute that takes a number, a list or map-like object to repeat the tag it was placed on.',
+	}
+}"></include>
+<h3 id="related-variables">Related Variables</h3>
+<p>The <strong>#repeat</strong> attribute creates three variables for you as context for the markup you
+   are repeating. These are:</p>
+<ul>
+	<li><strong>$item</strong>: contains the value of the item of the list</li>
+	<li><strong>$key</strong> contains the key or index value of the item in the list or dictionary</li>
+	<li><strong>$index</strong> contains the index of the item in the list</li>
+</ul>
+<h3>The <strong>"as"</strong> keyword</h3>
+<p>By default, all item value is available under the <a href="">$item</a> variable but you can also
+   override it by specifying the <strong>as</strong> value</p>
+<h3>Usage Examples</h3>
+<p>Repeat a specific number of times</p>
+<code-snippet language="html">
+<ul>
+	<li #repeat="3" class="list-item-{$index}">Item {$item}</li>
+</ul>
+</code-snippet>
+<p>Repeat based on some list or map-like objects.</p>
+<code-snippet language="html">
+<div #repeat="[2, 4, 6]">{$index}-{$item}</div>
+<div #repeat="new Set([2, 4, 6])">{$item}</div>
+<div #repeat="new Map([[a,2], [b,4], [c,6]])">{$key}-{$item}</div>
+<div #repeat="{a: 2, b: 4, c: 6}">{$key}-{$item}</div>
+<div #repeat="$data.list">$item.name</div>
+</code-snippet>
+<p>Repeat with a specific name for the item.</p>
+<code-snippet language="html">
+<nav>
+	<a #repeat="navLinks as link" href="{link.path}">{link.label}</a>
+</nav>
+</code-snippet>
+<code-snippet language="html">
+<ul>
+	<li #repeat="3 as n" class="list-item-{$index}">Item {n}</li>
+</ul>
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>
