@@ -30,7 +30,7 @@
       }
     }
 
-    section {
+    .doc-menu-section {
       margin-top: 25px;
 
       ul {
@@ -247,12 +247,12 @@
       padding: 15px;
 
       #menu-check {
-        & ~ section {
+        & ~ .doc-menu-section {
           display: none;
         }
 
         &:checked {
-          & ~ section {
+          & ~ .doc-menu-section {
             display: block;
           }
 

@@ -3,11 +3,12 @@
 
 	if (searchField) {
 		const docMenu: HTMLElement | null = document.querySelector('.doc-menu');
+		const aside: HTMLElement | null = document.querySelector('aside');
 		const docMenuSection: HTMLElement | null = document.querySelector('.doc-menu-section');
 		const searchResultSection: HTMLElement | null = document.createElement('div');
 		searchResultSection.className = 'search-results';
 
-		if (docMenu && docMenuSection) {
+		if (docMenu && docMenuSection && aside) {
 			const links: NodeListOf<HTMLAnchorElement> = docMenu.querySelectorAll('a');
 
 			searchField.style.display = 'block';
@@ -19,14 +20,14 @@
 					const resultLinks = getSearchResultLinks(inputField.value, links);
 
 					if (resultLinks.length) {
-						docMenuSection.insertAdjacentElement('afterend', searchResultSection);
-						docMenuSection.style.display = 'none';
+						docMenuSection.remove();
+						aside.appendChild(searchResultSection);
 						searchResultSection.innerHTML = '';
 						// must clone the node otherwise it will remove it from initial place
 						resultLinks.forEach(el => searchResultSection.appendChild(el.cloneNode(true)))
 					} else {
-						docMenuSection.style.display = 'block';
 						searchResultSection.remove();
+						aside.appendChild(docMenuSection);
 					}
 				}
 			});
