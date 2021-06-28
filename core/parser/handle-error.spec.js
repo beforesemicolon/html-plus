@@ -21,8 +21,8 @@ describe('handleError', () => {
     try {
       handleError({message: 'failed at something'}, htmlNode)
     } catch(e) {
-      expect(e.message).toEqual('Error: [91mfailed at something[39m\n' +
-        'Markup: [32m<h1 id="main-title">my title</h1>[39m')
+      expect(e.message.includes('failed at something')).toBeTruthy()
+      expect(e.message.includes('<h1 id="main-title">my title</h1>')).toBeTruthy()
     }
   });
   
@@ -36,9 +36,9 @@ describe('handleError', () => {
         htmlNode,
         {file: {filePath: '/path/to/file.html'}})
     } catch(e) {
-        expect(e.message).toEqual('Error: [91mnot so good[39m\n' +
-          'File: [33m/path/to/file.html[39m\n' +
-          'Markup: [32m<h1 id="main-title">my title</h1>[39m')
+        expect(e.message.includes('not so good')).toBeTruthy()
+        expect(e.message.includes('/path/to/file.html')).toBeTruthy()
+        expect(e.message.includes('<h1 id="main-title">my title</h1>')).toBeTruthy()
     }
   });
   
@@ -52,11 +52,7 @@ describe('handleError', () => {
         htmlNode,
         {file: {filePath: '/path/to/file.html'}})
     } catch(e) {
-      expect(e.message).toEqual('Error: [91mFailed [39m\n' +
-        'File: [33m/path/to/file.html[39m\n' +
-        'Markup: [32m<h1 id="main-title">[91m[39m[32m[39m\n' +
-        '[32m[91mmy title <= Error: Failed [39m[32m[39m\n' +
-        '[32m[91m[39m[32m</h1>[39m')
+      expect(e.message.includes('my title <= Error: Failed')).toBeTruthy()
     }
   });
 });

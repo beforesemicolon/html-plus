@@ -379,10 +379,8 @@ describe('HTMLNode', () => {
     try {
       node.render()
     } catch(e) {
-      expect(e.message).toEqual('Error: [91mx is not defined [39m\n' +
-        'Markup: [32m<li #repeat="3">[91m[39m[32m[39m\n' +
-        '[32m[91mitem {x + $item} <= Error: x is not defined [39m[32m[39m\n' +
-        '[32m[91m[39m[32m</li>[39m')
+      expect(e.message.includes('x is not defined')).toBeTruthy()
+      expect(e.message.includes('item {x + $item} <= Error: x is not defined')).toBeTruthy()
     }
   });
 });
