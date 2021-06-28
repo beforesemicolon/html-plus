@@ -18,38 +18,45 @@ describe('handleError', () => {
     const htmlNode = new HTMLElement('h1', {id: 'main-title'}, 'id="main-title"', null);
     htmlNode.textContent = 'my title';
   
-    expect(() => handleError({message: 'failed at something'}, htmlNode))
-      .toThrowErrorMatchingSnapshot('Error: failed at something\n' +
-        'Markup: <h1 id="main-title">my title</h1>')
+    try {
+      handleError({message: 'failed at something'}, htmlNode)
+    } catch(e) {
+      expect(e.message).toEqual('Error: [91mfailed at something[39m\n' +
+        'Markup: [32m<h1 id="main-title">my title</h1>[39m')
+    }
   });
   
   it('should throw error with markup and file info', () => {
     const htmlNode = new HTMLElement('h1', {id: 'main-title'}, 'id="main-title"', null);
     htmlNode.textContent = 'my title';
     
-    expect(() => handleError(
-      {message: 'not so good'},
-      htmlNode,
-      {file: {filePath: '/path/to/file.html'}})
-    )
-      .toThrowErrorMatchingSnapshot('Error: not so good\n' +
-        'File: /path/to/file.html\n' +
-        'Markup: <h1 id="main-title">my title</h1>')
+    try {
+      handleError(
+        {message: 'not so good'},
+        htmlNode,
+        {file: {filePath: '/path/to/file.html'}})
+    } catch(e) {
+        expect(e.message).toEqual('Error: [91mnot so good[39m\n' +
+          'File: [33m/path/to/file.html[39m\n' +
+          'Markup: [32m<h1 id="main-title">my title</h1>[39m')
+    }
   });
   
   it('should throw error with markup and file info replacing text', () => {
     const htmlNode = new HTMLElement('h1', {id: 'main-title'}, 'id="main-title"', null);
     htmlNode.textContent = 'my title';
-    
-    expect(() => handleError(
-      {message: 'Failed <=> my title'},
-      htmlNode,
-      {file: {filePath: '/path/to/file.html'}})
-    )
-      .toThrowErrorMatchingSnapshot('Error: Failed \n' +
-        'File: /path/to/file.html\n' +
-        'Markup: <h1 id=\\"main-title\\">\n' +
-        'my title <= Error: Failed \n' +
-        '</h1>')
+  
+    try {
+      handleError(
+        {message: 'Failed <=> my title'},
+        htmlNode,
+        {file: {filePath: '/path/to/file.html'}})
+    } catch(e) {
+      expect(e.message).toEqual('Error: [91mFailed [39m\n' +
+        'File: [33m/path/to/file.html[39m\n' +
+        'Markup: [32m<h1 id="main-title">[91m[39m[32m[39m\n' +
+        '[32m[91mmy title <= Error: Failed [39m[32m[39m\n' +
+        '[32m[91m[39m[32m</h1>[39m')
+    }
   });
 });

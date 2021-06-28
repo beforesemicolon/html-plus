@@ -8,10 +8,8 @@
   ],
   "scripts": {
     "tests": "jest",
-    "tests:watch": "jest --watch",
     "build": "rm -rf dist && tsc && npm pack",
-    "local": "nodemon --watch website -e '*' --exec node website/server-test.js",
-    "start": "ts-node website/server-test.js"
+    "local": "nodemon --watch website -e '*' --exec node website/server-test.js"
   },
   "keywords": [
     "template engine",

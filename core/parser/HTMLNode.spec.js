@@ -375,10 +375,14 @@ describe('HTMLNode', () => {
     const node = new HTMLNode(`
       <div class="list"><ul><li #repeat="3">item {x + $item}</li></div>
     `);
-    
-    expect(() => node.render()).toThrowErrorMatchingSnapshot('Error: x is not defined \n' +
-      'Markup: <li #repeat="3">\n' +
-      'item {x + $item} <= Error: x is not defined \n' +
-      '</li>')
+  
+    try {
+      node.render()
+    } catch(e) {
+      expect(e.message).toEqual('Error: [91mx is not defined [39m\n' +
+        'Markup: [32m<li #repeat="3">[91m[39m[32m[39m\n' +
+        '[32m[91mitem {x + $item} <= Error: x is not defined [39m[32m[39m\n' +
+        '[32m[91m[39m[32m</li>[39m')
+    }
   });
 });
