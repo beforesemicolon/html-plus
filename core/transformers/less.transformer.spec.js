@@ -64,13 +64,13 @@ describe('lessTransformer', () => {
     });
     
     it('at same directory ', () => {
-      return lessTransformer('@import "./style2";', {fileObject: new File(file1)}).then(res => {
+      return lessTransformer('@import "./style2";', {file: new File(file1)}).then(res => {
         expect(res.replace(/\s/g, '')).toEqual(baseStyle);
       })
     });
     
     it('at above directory ', () => {
-      return lessTransformer('@import "../style3";', {fileObject: new File(file1)}).then(res => {
+      return lessTransformer('@import "../style3";', {file: new File(file1)}).then(res => {
         expect(res.replace(/\s/g, '')).toEqual(baseStyle);
       })
     });

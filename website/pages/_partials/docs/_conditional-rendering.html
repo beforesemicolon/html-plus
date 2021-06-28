@@ -1,0 +1,41 @@
+<p>Conditional rendering is all about relying on some information or logic to decide whether
+   a part of the template or a specific attribute should be shipped to the browser or not.</p>
+<h3>The #if attribute</h3>
+<p>The <a href="/documentation/api-reference/if-attribute">#if attribute</a> allows you to specify a condition that decides if the tag
+   should be rendered or not.</p>
+<code-snippet language="html">
+<variable name="x" value="10"></variable>
+<variable name="y" value="5"></variable>
+
+<div #if="x > y">x greater than y</div>
+<div #if="x < y">x less than y</div>
+<div #if="x === y">x equals to y</div>
+</code-snippet>
+<h3>The #attr attribute</h3>
+<p>There are some attributes you may want to be include only under certain conditions and that is what the
+	<a href="/documentation/api-reference/attr-attribute">#attr attribute</a> is for.</p>
+<p>You use comma to separate the attribute name, value and the condition to include it where the value
+   is optional for booleans attributes like "hidden", "disabled", "checked", etc.</p>
+<code-snippet language="html">
+<variable name="saved" value="true"></variable>
+
+<div class="save-indicator" #attr="class, readonly, saved">
+	<button type="button" #attr="disabled, saved">save</button>
+</div>
+<!-- becomes:
+<div class="save-indicator readonly">
+	<button type="button" disabled>save</button>
+</div>
+-->
+</code-snippet>
+<p>You may also specify multiple set of conditions separated by semicolon.</p>
+<code-snippet language="html">
+<variable name="saved" value="true"></variable>
+
+<button type="button"
+        #attr="disabled, saved; class, readonly, saved">save</button>
+<!-- becomes:
+	<button type="button" class="readonly" disabled>save</button>
+-->
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

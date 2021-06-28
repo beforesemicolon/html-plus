@@ -1,0 +1,88 @@
+<include partial="api-table-details" data="{
+	name: 'engine',
+	details: {
+		name: 'engine',
+		type: 'function',
+		arguments: 'express app, pages directory, options',
+		description: 'A function that will setup the express engine and setup the routing of your application.',
+	}
+}"></include>
+<h3>Arguments</h3>
+<include partial="api-description-list" data="{
+	descriptions: [
+		{
+			concept: 'express app',
+			type: 'type: object, required',
+			description: 'An <a href=\'https://expressjs.com/en/4x/api.html#app\'>express app</a>'
+		},
+		{
+			concept: 'pages directory',
+			type: 'type: string, required',
+			description: 'A valid absolute path to the directory where all HTML files will be placed.'
+		},
+		{
+			concept: 'options',
+			type: 'type: object, optional',
+			description: 'Object with different options to be consumed by the engine.'
+		},
+	]
+}"></include>
+<h3>Options</h3>
+<include partial="api-description-list" data="{
+	descriptions: [
+		{
+			concept: 'staticData',
+			type: 'type: object',
+			description: 'An object with whatever data you want to be available on all templates.'
+		},
+		{
+			concept: 'customTags',
+			type: 'type: array',
+			description: 'An array of function or class based custom tags.'
+		},
+		{
+			concept: 'customAttributes',
+			type: 'type: array',
+			description: 'An array of <a href=\'/documentation/api-reference/attribute-class\'>Attributes</a> based custom attributes.'
+		},
+		{
+			concept: 'env',
+			type: 'type: string',
+			description: 'A string of value \'development\' or \'production\' that will signal how engine should handle the pages.'
+		},
+		{
+			concept: 'onPageRequest',
+			type: 'type: function',
+			description: 'A callback function that will be called on every page request with a <a href=\'https://expressjs.com/en/4x/api.html#req\'>express request</a> that must return an object representing the <a href=\'/documentation/data/local-context-data\'>context data</a> to be passed to the template to be rendered on that page request.'
+		},
+	]
+}"></include>
+<h3>Return</h3>
+<p>The engine returns undefined.</p>
+<h3>Usage Examples</h3>
+<code-snippet language="js">
+	const {composeTagString, HTMLNode} = require("@beforesemicolon/html-plus");
+
+	const node1 = new HTMLNode('<h3>some title</h3>');
+	const node2 = new HTMLNode('<h3 style="display: block;">some title</h3>');
+
+	composeTagString(node, 'different content');
+	// returns "<h3>different content</h3>"
+
+	composeTagString(node, node2.innerHTML, ['style']);
+	// returns "<h3>some title</h3>"
+
+	composeTagString({tagName: 'h1'}, node1.innerHTML);
+	// returns "<h1>some title</h1>"
+</code-snippet>
+<p>This is what the <strong>script</strong> tag implementation looks like.</p>
+<code-snippet>
+	const {composeTagString} = require("@beforesemicolon/html-plus");
+
+	function Script(node) {
+	return () => composeTagString(node, node.innerHTML);
+	}
+
+	module.exports.Script = Script;
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

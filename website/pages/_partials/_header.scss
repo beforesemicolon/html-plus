@@ -1,0 +1,63 @@
+@import "../_sass/colors";
+
+.site-header {
+  background: $light;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 25px;
+  padding-bottom: 15px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1;
+
+  h1 {
+    margin: 0;
+
+    a:any-link {
+      text-decoration: none;
+      color: $cta;
+      font-weight: 200;
+      font-size: 3rem;
+      display: block;
+    }
+
+    strong {
+      display: block;
+      font-size: 0.5em;
+      font-weight: 300;
+      margin-top: 10px;
+    }
+  }
+
+  nav {
+    a:any-link {
+      color: $dark;
+      padding: 10px;
+      margin: 0 10px;
+      text-decoration: none;
+
+      &.version-link {
+        color: $cta;
+        font-weight: 300;
+      }
+    }
+  }
+
+  @media screen and (max-width: 625px) {
+    nav {
+      a:any-link {
+        display: none;
+
+        &.link-button {
+          display: none
+        }
+
+        &.version-link {
+          display: inline-block;
+        }
+      }
+    }
+  }
+}

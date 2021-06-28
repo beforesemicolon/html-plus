@@ -56,13 +56,13 @@ describe('stylusTransformer', () => {
     });
     
     it('at same directory ', () => {
-      return stylusTransformer('@import "./style2";', {fileObject: new File(file1)}).then(res => {
+      return stylusTransformer('@import "./style2";', {file: new File(file1)}).then(res => {
         expect(res.replace(/\s/g, '')).toEqual(baseStyle);
       })
     });
     
     it('at above directory ', () => {
-      return stylusTransformer('@import "../style3";', {fileObject: new File(file1)}).then(res => {
+      return stylusTransformer('@import "../style3";', {file: new File(file1)}).then(res => {
         expect(res.replace(/\s/g, '')).toEqual(baseStyle);
       })
     });

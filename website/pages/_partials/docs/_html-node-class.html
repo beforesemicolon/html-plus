@@ -1,0 +1,129 @@
+<include partial="api-table-details" data="{
+	name: 'HTMLNode',
+	details: {
+		name: 'HTMLNode',
+		type: 'class',
+		arguments: 'HTML string, options',
+		properties: 'tagName, innerHTML, rawAttributes, attributes, context, type',
+		methods: 'setAttribute, removeAttribute, setContext, removeContext, clone, duplicate, childNodes, renderChildren, render, toString',
+		description: 'A class representing HTML node tree.',
+	}
+}"></include>
+<h3>Constructor</h3>
+<p>The constructor takes a required absolute path to the file and an optional source directory.</p>
+<h3>Properties</h3>
+<include partial="api-description-list" data="{
+	descriptions: [
+		{
+			concept: 'type',
+			type: 'type: string, readonly',
+			description: 'Always returns \'node\'.'
+		},
+		{
+			concept: 'tagName',
+			type: 'type: string | null, readonly',
+			description: 'The name of the tag.'
+		},
+		{
+			concept: 'innerHTML',
+			type: 'type: string, readonly',
+			description: 'The inner content of the tag.'
+		},
+		{
+			concept: 'rawAttributes',
+			type: 'type: string, readonly',
+			description: 'Attribute as they appear on the tag.'
+		},
+		{
+			concept: 'attributes',
+			type: 'type: object',
+			description: 'Key-value pair object literal of the attributes.'
+		},
+		{
+			concept: 'context',
+			type: 'type: object, readonly',
+			description: 'Key-value pair object literal of the context data.'
+		},
+	]
+}"></include>
+<h3>Methods</h3>
+<include partial="api-description-list" data="{
+	descriptions: [
+		{
+			concept: 'setAttribute',
+			type: 'type: function',
+			description: 'A function that takes a key and a value string where the value can contain curly brace that can be bind and saved to be accessed on the attributes object.'
+		},
+		{
+			concept: 'removeAttribute',
+			type: 'type: function',
+			description: 'A function that takes a attribute name and removes it.'
+		},
+		{
+			concept: 'setContext',
+			type: 'type: function',
+			description: 'A function that takes a key string and a value and updates the node current context.'
+		},
+		{
+			concept: 'removeContext',
+			type: 'type: function',
+			description: 'A function that takes a attribute name string and removes from the current context.'
+		},
+		{
+			concept: 'clone',
+			type: 'type: function',
+			description: 'A function that will return a copy of the node and has no reference to the parent node. If the clone has reference to the parent node context data, rendering will result in error.'
+		},
+		{
+			concept: 'duplicate',
+			type: 'type: function',
+			description: 'A function that copy the node in place and returns a copy of the node. This means that the parent child node list will be updated with a new node. This function can also take a object representing the context data for the new copy.'
+		},
+		{
+			concept: 'childNodes',
+			type: 'type: function',
+			description: 'A function that takes an optional data context data object and returns a list of child nodes -- HTMLNode, <a href=\'/documentation/api-reference/text-class\'>Text</a> and <a href=\'/documentation/api-reference/comment-class\'>Comment</a>.'
+		},
+		{
+			concept: 'renderChildren',
+			type: 'type: function',
+			description: 'A function that takes an optional data context data object and returns a string result of rendering all internal nodes.'
+		},
+		{
+			concept: 'render',
+			type: 'type: function',
+			description: 'A function returns a string result of rendering the node.'
+		},
+		{
+			concept: 'toString',
+			type: 'type: function',
+			description: 'Alias to the render function.'
+		},
+	]
+}"></include>
+<h3>Options</h3>
+<include partial="api-table-details" data="{
+	name: 'HTML options',
+	heading: 'Options',
+	details: {
+		data: 'A Javascript object representing the data you want to pass to the markup. Can be referenced to as $data in the markup.',
+		context: 'A Javascript object literal representing the context data the markup can refer to by the keys.',
+		customTags: 'An array of valid function or class based tag.',
+		customAttributes: 'An array of valid <a href=\'/documentation/api-reference/attribute-class\'>Attribute</a> based custom attribute.',
+		rootNode: 'An <a href=\'/documentation/api-reference/html-node-class\'>HTMLNode</a> instance normally used by partial file to grab content.',
+		onTraverse: 'A function that is called on render for every HTMLNode with the node itself and the <a href=\'/documentation/api-reference/file-class\'>File</a> instance.',
+		partialFiles: 'An array of <a href=\'/documentation/api-reference/partial-file-class\'>PartialFile</a> instance to be used by the markup especially if it contains a include tag.',
+		env: 'The environment, \'development\' or \'production\'.',
+		file: 'A <a href=\'/documentation/api-reference/file-class\'>File</a> instance.',
+	}
+}"></include>
+<h3>Usage Examples</h3>
+<code-snippet language="js">
+const path = require("path");
+const {HTMLNode} = require("@beforesemicolon/html-plus");
+
+const title = new HTMLNode('<h2>{title}</h2>', {
+	context: {title: 'My title'}
+});
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

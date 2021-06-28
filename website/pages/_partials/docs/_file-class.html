@@ -1,0 +1,86 @@
+<include partial="api-table-details" data="{
+	name: 'File',
+	details: {
+		name: 'file',
+		type: 'class',
+		arguments: 'file absolute path, source directory',
+		description: 'A class representing a file.',
+	}
+}"></include>
+<h3>Constructor</h3>
+<p>The constructor takes a required absolute path to the file and an optional source directory.</p>
+<h3>Properties</h3>
+<include partial="api-description-list" data="{
+	descriptions: [
+		{
+			concept: 'ext',
+			type: 'type: string, readonly',
+			description: 'The extension of the file.'
+		},
+		{
+			concept: 'file',
+			type: 'type: string, readonly',
+			description: 'The name of the file including the extension.'
+		},
+		{
+			concept: 'name',
+			type: 'type: string, readonly',
+			description: 'Name of the file without extension.'
+		},
+		{
+			concept: 'filePath',
+			type: 'type: string, readonly',
+			description: 'The file path relative to the source directory path.'
+		},
+		{
+			concept: 'fileAbsolutePath',
+			type: 'type: string, readonly',
+			description: 'File full absolute path.'
+		},
+		{
+			concept: 'fileDirectoryPath',
+			type: 'type: string, readonly',
+			description: 'File parent directory absolute path.'
+		},
+		{
+			concept: 'srcDirectoryPath',
+			type: 'type: string, readonly',
+			description: 'The directory containing the file, defaults to the parent directory but this can be any ancestor directory. For example, if you put all page files inside the pages directory, this pages directory is the source directory no matter how deep you nest the files and all file relative paths will be to it.'
+		},
+		{
+			concept: 'content',
+			type: 'type: string | <a href=\'https://nodejs.org/api/buffer.html\'>Buffer</a> ',
+			description: 'A property you can read and write the content of the file. It takes a string or a <a href=\'https://nodejs.org/api/buffer.html\'>Buffer</a> as value.'
+		},
+	]
+}"></include>
+<h3>Methods</h3>
+<include partial="api-description-list" data="{
+	descriptions: [
+		{
+			concept: 'load',
+			type: 'type: function',
+			description: 'A function that when called will load the file synchronously. It will read the file every time this method is called and update the internal cached content.'
+		},
+		{
+			concept: 'toString',
+			type: 'type: function',
+			description: 'A function that returns the string representation of the file. Will load the file if the file was never loaded before.'
+		},
+		{
+			concept: 'toBuffer',
+			type: 'type: function',
+			description: 'A function that returns the <a href=\'https://nodejs.org/api/buffer.html\'>Buffer</a> representation of the file. Always returns a string version of the file.'
+		},
+	]
+}"></include>
+<h3>Usage Examples</h3>
+<code-snippet language="js">
+const path = require("path");
+const {File} = require("@beforesemicolon/html-plus");
+
+const project = new File(path.resolve(__dirname, 'project.html'));
+
+console.log(`${project.file} content is ${project.toString()}`);
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

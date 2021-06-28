@@ -1,0 +1,64 @@
+<p>With <strong>HTML+</strong> you can write smaller and more powerful HTML using it as template language
+   and with the power of the <a href="/documentation/api-reference/engine">engine</a>, it can manage all pages and resources connected to the
+   pages like CSS, SASS, LESS, Stylus and Typescript so you can write the most modern code you can.</p>
+<p>When you are <a href="/documentation/build"><em>ready to deploy</em></a>, it comes with a static site builder to build your project for production
+   or you can simply continue to use it in a live server for a dynamic website with all batteries included.</p>
+<h3>Requirements</h3>
+<ul>
+	<li><a href="https://nodejs.org/en/">Node</a> 10 or later</li>
+	<li>Any OS that NodeJs can run</li>
+	<li><a href="https://expressjs.com/">Express</a> 4 or later</li>
+</ul>
+<h3>Create Your Project</h3>
+<p>You can create your node project as you would normal do or executing the following commands:</p>
+<code-snippet>
+#create directory named "my-app"
+mkdir my-app
+
+#navigate inside the created directory
+cd my-app
+
+#initialize npm and follow the prompt
+npm init
+</code-snippet>
+<h3>Installation</h3>
+<p>Inside your newly created project you can proceed to install <strong>HTML+</strong> and express:</p>
+<code-snippet>
+npm install express
+npm install @beforesemicolon/html-plus
+</code-snippet>
+<h3>Server Setup</h3>
+<p>Create your server file and a pages directory(can be named anything you want).</p>
+<code-snippet>
+mkdir pages
+touch server.js
+</code-snippet>
+<p>Your project file structure should look like so:</p>
+<code-snippet>
+my-app
+  - pages
+  - server.js
+  - package.json
+  - package-lock.json
+</code-snippet>
+<p>Inside your <em>server.js</em> file the simplest setup you can have is importing
+	<a href="/documentation/api-reference/engine">HTML+ engine</a>, create your express app to pass it to
+   the engine along with the path to the directory where you will put the html page files.</p>
+<code-snippet language="js">
+// server.js
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const {engine} = require('@beforesemicolon/html-plus');
+
+const app = express();
+
+engine(app, path.resolve(__dirname, './pages'));
+
+const server = http.createServer(app);
+
+server.listen(3000)
+</code-snippet>
+<p><strong>HTML+ engine</strong> will setup your <a href="/documentation/routes">Routes</a> for your pages
+ and all handlers for CSS(including preprocessors), Javascript and Typescript files.</p>
+<include partial="documentation-menu" data="{currentPage}"></include>

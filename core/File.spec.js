@@ -6,7 +6,7 @@ const {promisify} = require('util');
 
 const exec = promisify(cp.exec);
 
-describe('FileObject', () => {
+describe('File', () => {
   const absPath = path.resolve(__dirname, 'file.ext');
   
   it('should create file object with parent directory as src directory', () => {

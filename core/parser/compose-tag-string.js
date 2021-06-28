@@ -1,9 +1,14 @@
 const selfClosingTags = require('./selfClosingTags.json');
-const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
+const attr = require("../default-attributes");
 
-function composeTagString(node = {}, content = '', excludedAttributes = []) {
+function composeTagString(node, content = '', excludedAttributes = []) {
+  if (!node || typeof node !== 'object') {
+      throw new Error('composeTagString first argument must be HTMLNode or HTMLNode-like object')
+  }
+  
+  const customAttrs = new Set([...attr.defaultAttributesName, ...Object.keys(node._options?.customAttributes ?? {})]);
   let attributesList = [];
-  const attributes = node.attributes;
+  const attributes = node.attributes ?? {};
   const tagName = (node.tagName || 'un-named').toLowerCase();
   
   if (!/^[a-zA-Z][a-zA-Z0-9-]*$/.test(tagName)) {
@@ -13,13 +18,16 @@ function composeTagString(node = {}, content = '', excludedAttributes = []) {
   for (let key in attributes) {
     if (attributes.hasOwnProperty(key) && !excludedAttributes.includes(key)) {
       if (attributes[key]) {
-        attributesList.push(`${turnCamelOrPascalToKebabCasing(key)}="${attributes[key]}"`);
+        const val = attributes[key];
+        key = customAttrs.has(key) ? `#${key}` : key;
+        attributesList.push(`${key}="${val}"`);
       } else {
-        attributesList.push(turnCamelOrPascalToKebabCasing(key));
+        key = customAttrs.has(key) ? `#${key}` : key;
+        attributesList.push(key);
       }
     }
   }
-  
+
   let markup = `<${tagName}${attributesList.length ? ' ' + attributesList.join(' ') : ''}`;
   
   if (selfClosingTags.includes(tagName)) {

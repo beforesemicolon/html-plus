@@ -1,41 +1,63 @@
 const {transform} = require('./../transform');
 
 describe('If Attribute', () => {
-  it('should only process if attribute is preceded by #', async () => {
-    await expect(transform('<b if="false"></b>')).resolves.toEqual('<b></b>')
-    await expect(transform('<b #if="false"></b>')).resolves.toEqual('')
+  it('should only process if attribute is preceded by #', () => {
+    expect(transform('<b if="false"></b>')).toEqual('<b></b>')
+    expect(transform('<b #if="false"></b>')).toEqual('')
   });
   
-  it('should render node if condition is TRUTHY', async () => {
-    await expect(transform('<b #if="true"></b>')).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="5"></b>')).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="4 > 0"></b>')).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="checked"></b>', {
+  it('should render node if condition is TRUTHY', () => {
+    expect(transform('<b #if="true"></b>')).toEqual('<b></b>');
+    expect(transform('<b #if="5"></b>')).toEqual('<b></b>');
+    expect(transform('<b #if="4 > 0"></b>')).toEqual('<b></b>');
+    expect(transform('<b #if="$data.checked"></b>', {
       data: {checked: true}
-    })).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="!checked"></b>', {
+    })).toEqual('<b></b>');
+    expect(transform('<b #if="!$data.checked"></b>', {
       data: {checked: false}
-    })).resolves.toEqual('<b></b>');
-    await expect(transform('<b #if="checked === false"></b>', {
+    })).toEqual('<b></b>');
+    expect(transform('<b #if="$data.checked === false"></b>', {
       data: {checked: false}
-    })).resolves.toEqual('<b></b>');
+    })).toEqual('<b></b>');
   });
   
-  it('should NOT render node if condition is FALSY', async () => {
-    await expect(transform('<b #if="false"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="0"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="null"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="undefined"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if=""></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="4 < 0"></b>')).resolves.toEqual('');
-    await expect(transform('<b #if="checked"></b>', {
+  it('should NOT render node if condition is FALSY', () => {
+    expect(transform('<b #if="false"></b>')).toEqual('');
+    expect(transform('<b #if="0"></b>')).toEqual('');
+    expect(transform('<b #if="null"></b>')).toEqual('');
+    expect(transform('<b #if="undefined"></b>')).toEqual('');
+    expect(transform('<b #if=""></b>')).toEqual('');
+    expect(transform('<b #if="4 < 0"></b>')).toEqual('');
+    expect(transform('<b #if="$data.checked"></b>', {
       data: {checked: false}
-    })).resolves.toEqual('');
-    await expect(transform('<b #if="!checked"></b>', {
+    })).toEqual('');
+    expect(transform('<b #if="!$data.checked"></b>', {
       data: {checked: true}
-    })).resolves.toEqual('');
-    await expect(transform('<b #if="checked === false"></b>', {
+    })).toEqual('');
+    expect(transform('<b #if="$data.checked === false"></b>', {
       data: {checked: true}
-    })).resolves.toEqual('');
+    })).toEqual('');
+  });
+  
+  describe('should work with other attributes', () => {
+    it('repeat', () => {
+      expect(transform('<b #if="false" #repeat="3">{$item}</b>')).toEqual('');
+      expect(transform('<b #if="true" #repeat="3">{$item}</b>')).toEqual('<b>1</b><b>2</b><b>3</b>');
+    });
+    
+    it('attr', () => {
+      expect(transform('<b #if="false" #attr="id, imp, true">item</b>')).toEqual('');
+      expect(transform('<b #if="true" #attr="id, imp, true">item</b>')).toEqual('<b id="imp">item</b>');
+    });
+    
+    it('fragment', () => {
+      expect(transform('<b #if="false" #fragment>item</b>')).toEqual('');
+      expect(transform('<b #if="true" #fragment>item</b>')).toEqual('item');
+    });
+    
+    it('ignore', () => {
+      expect(transform('<b #if="false" #ignore>{item}</b>')).toEqual('');
+      expect(transform('<b #if="true" #ignore>{item}</b>')).toEqual('<b>{item}</b>');
+    });
   });
 });

@@ -1,0 +1,59 @@
+@import "../_sass/colors";
+
+#documentation-menu {
+  padding: 15px 0;
+  flex-direction: row-reverse;
+  list-style-type: none;
+  border-top: 2px solid $secondary;
+  margin-top: 50px;
+
+  li {
+    margin: 0;
+    padding: 0;
+    position: relative;
+
+    &::marker {
+      content: '';
+    }
+
+    &::before {
+      --bg: #{$brand};
+      content: "";
+      display: inline-block;
+      position: absolute;
+      left: 5px;
+      top: 9px;
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(45deg, var(--bg) 50%, var(--bg) 0, transparent 0);
+      transform: rotate(45deg);
+    }
+
+    &.prev {
+      float: left;
+      padding-left: 15px;
+    }
+
+    &.next {
+      float: right;
+      padding-right: 15px;
+
+      &::before {
+        left: calc(100% - 10px);
+        transform: rotate(225deg);
+      }
+    }
+
+    a {
+      font-weight: 400;
+      text-decoration: none;
+      color: $brand;
+    }
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+}

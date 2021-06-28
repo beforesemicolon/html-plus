@@ -1,0 +1,9 @@
+<code-snippet language="html">
+<h2>{title}</h2>
+<ul #if="$data.list">
+	<li #repeat="$data.list">item {$item}</li>
+</ul>
+<p #attr="id, desc, $data.visible">
+	{description}
+</p>
+</code-snippet>

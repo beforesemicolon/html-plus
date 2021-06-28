@@ -1,16 +1,12 @@
-const symbolMap = {
-  '>=': 'gte',
-  '<=': 'lte',
-  '>': 'gt',
-  '<': 'lt',
-}
+const attributePattern = /\"([^"]*)\"/g;
 
 function replaceSpecialCharactersInHTML(html) {
   return html
-    .replace(
-      /(?:^|\s)(>=|<=|<|>)(?:\s|$)/g,
-      (fullMatch, grabbed) => {
-        return fullMatch.replace(grabbed, symbolMap[grabbed])
+    .replace(attributePattern,
+      (match) => {
+        return match
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
       });
 }
 

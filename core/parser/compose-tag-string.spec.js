@@ -2,7 +2,7 @@ const {composeTagString} = require('./compose-tag-string');
 
 describe('composeTagString', () => {
   it('should compose an empty and not attribute un-named tag', () => {
-    expect(composeTagString()).toEqual('<un-named></un-named>');
+    expect(() => composeTagString()).toThrowError('composeTagString first argument must be HTMLNode or HTMLNode-like object');
   });
   
   it('should compose an empty and no attribute custom tag', () => {

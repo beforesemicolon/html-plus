@@ -9,11 +9,17 @@ const {File} = require('../File');
 const defaultOptions = {
   staticData: {},
   customTags: [],
+  customAttributes: [],
   env: 'development',
-  onPageRequest() {}
+  onPageRequest() {
+  }
 }
 
 const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
+  if (!app) {
+    throw new Error('engine first argument must be provided and be a valid express app.')
+  }
+  
   opt = {...defaultOptions, ...opt}
   
   if (typeof opt.staticData !== 'object') {
@@ -35,25 +41,27 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
   
   getDirectoryFilesDetail(pagesDirectoryPath, 'html')
     .then(files => {
-      const {partials, pagesRoutes} = extractPartialAndPageRoutes(files, pagesDirectoryPath)
+      const {partials, pagesRoutes} = extractPartialAndPageRoutes(files, pagesDirectoryPath);
       
-      app.engine('html', (filePath, {settings, _locals, cache, ...data}, callback) => {
+      app.engine('html', (filePath, {settings, _locals, cache, ...context}, callback) => {
         const fileName = path.basename(filePath);
         
         if (fileName.startsWith('_')) {
           callback(new Error(`Cannot render partial(${fileName}) file as page. Partial files can only be included.`));
         }
         
-        fs.readFile(filePath, async (err, content) => {
+        fs.readFile(filePath, (err, content) => {
           if (err) return callback(err);
-          const fileObject = new File(filePath, settings.views);
-          fileObject.content = content.toString();
+          const file = new File(filePath, settings.views);
+          file.content = content;
           try {
-            const result = await transform(fileObject.content, {
-              data: {...opt.staticData, ...data},
-              fileObject,
+            const result = transform(file.content, {
+              data: opt.staticData,
+              context,
+              file,
               customTags: opt.customTags,
-              partialFileObjects: partials,
+              customAttributes: opt.customAttributes,
+              partialFiles: partials,
               onTraverse: (node, file) => {
                 let attrName = '';
                 
@@ -62,12 +70,19 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
                 } else if (node.tagName === 'script') {
                   attrName = 'src';
                 }
-  
+                
                 const srcPath = node.attributes[attrName];
-  
-                if (srcPath) {
+                let isURL = false;
+                
+                try {
+                  new URL(srcPath);
+                  isURL = true;
+                } catch (e) {
+                }
+                
+                if (srcPath && !isURL) {
                   const resourceFullPath = path.resolve(file.fileDirectoryPath, srcPath);
-    
+                  
                   if (resourceFullPath.startsWith(pagesDirectoryPath)) {
                     node.setAttribute(attrName, resourceFullPath.replace(pagesDirectoryPath, ''))
                   }
@@ -77,21 +92,25 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
             
             callback(null, result);
           } catch (e) {
-            callback(new Error(e.message));
+            console.log(e.message);
+            const cleanMsg = e.message
+              .replace(/\[\d+m/g, '')
+              .replace(/(>|<)/g, m => m === '<' ? '&lt;' : '&gt;');
+            callback(null, `<pre>${cleanMsg}</pre>`);
           }
         })
       });
       
       app.set('views', pagesDirectoryPath);
       app.set('view engine', 'html');
-  
+      
       app.use(pageAndResourcesMiddleware(
         pagesRoutes,
         pagesDirectoryPath,
         opt
       ))
       
-      console.log('HTML+ templates ready');
+      console.log('HTML+ engine is ready');
     })
 };
 

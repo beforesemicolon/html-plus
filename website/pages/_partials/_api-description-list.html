@@ -1,0 +1,6 @@
+<dl class="api-description-list">
+	<fragment #repeat="descriptions">
+		<dt>{$item.concept}</dt>
+		<dd><span>{$item.type}</span>: <inject html="$item.description"></inject></dd>
+	</fragment>
+</dl>

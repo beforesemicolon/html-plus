@@ -1,0 +1,110 @@
+@import "./normalizer";
+@import "./colors";
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+}
+
+body {
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(0deg, $secondary, $light, $light);
+  line-height: 100%;
+  color: $dark;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  outline-color: $brand;
+}
+
+$headings: "h1, h2, h3, h4, h5, h6, p";
+
+#{$headings} {
+  margin-top: 0;
+  line-height: 120%;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+a:any-link {
+  color: $cta;
+}
+
+ul, ol {
+  margin: 0;
+
+  li {
+    padding-left: 10px;
+    line-height: 150%;
+
+    &::marker {
+      content: "-";
+      color: $brand;
+    }
+  }
+}
+
+p {
+  line-height: 150%;
+}
+
+strong {
+  font-weight: 600;
+}
+
+abbr {
+  color: $dark;
+  font-weight: 500;
+}
+
+.link-button,
+.link-button:any-link {
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-transform: capitalize;
+  text-decoration: none;
+  letter-spacing: 1px;
+  background: $secondary;
+  color: $dark;
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+
+  &.cta {
+    background: $cta;
+    color: $light;
+  }
+
+  &.primary {
+    background: $black;
+    color: $light;
+  }
+
+  &.secondary {
+    background: $secondary;
+    color: $dark;
+    font-weight: 600;
+  }
+}
+
+.wrapper {
+  padding-left: calc((100vw - min(960px, calc(100vw - 50px))) / 2);
+  padding-right: calc((100vw - min(960px, calc(100vw - 50px))) / 2);
+
+  @media screen and (max-width: 375px) {
+    padding-left: calc((100vw - min(960px, calc(100vw - 30px))) / 2);
+    padding-right: calc((100vw - min(960px, calc(100vw - 30px))) / 2);
+  }
+}
+
+@mixin wrapper($max-width) {
+  padding-left: calc((100vw - min(#{$max-width}, calc(100vw - 50px))) / 2);
+  padding-right: calc((100vw - min(#{$max-width}, calc(100vw - 50px))) / 2);
+}
+

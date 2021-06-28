@@ -1,0 +1,21 @@
+<p><strong>HTML+</strong> uses curly braces to mark the data you want to bind to the template.</p>
+<code-snippet language="html">
+<button type="{type}">{label}</button>
+</code-snippet>
+<p>This syntax work for attributes as well. It is a simple way to mark the variable which can also contain logic.</p>
+<code-snippet language="html">
+<button type="{type}">
+   {type === 'button' ? 'Send' : 'Submit'}
+</button>
+</code-snippet>
+<p>You <strong>don't need to use curly braces</strong> for any <strong>HTML+</strong> default attributes
+   and don't need it also for some attributes specific to a <strong>HTML+</strong> default attributes</p>
+<p>Because the curly braces has meaning for <strong>HTML+</strong> you should use the <a href="/documentation/api-reference/ignore-tag">ignore</a> tag or attribute
+   to communicate you want it to be ignored.</p>
+<code-snippet language="html">
+<button type="button">Save <ignore>{Button}</ignore></button>
+
+<!-- You can also use the ignore attribute -->
+<button type="button" #ignore>Save {Button}</button>
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

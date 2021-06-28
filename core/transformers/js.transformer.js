@@ -4,11 +4,10 @@ const {File} = require("../File");
 
 const defaultOptions = {
   env: 'development',
-  fileObject: null,
+  file: null,
   target: 'es2016',
   envVariables: {},
   loader: 'js',
-  tsConfig: {},
   tsConfigPath: '',
   sourcemap: false,
   sourceFile: '',
@@ -21,8 +20,8 @@ const getConfig = (opt, configPath) => {
   if (
     opt.loader === 'ts'
     || opt.loader === 'tsx'
-    || opt.fileObject?.ext === '.ts'
-    || opt.fileObject?.ext === '.tsx'
+    || opt.file?.ext === '.ts'
+    || opt.file?.ext === '.tsx'
   ) {
     try {
       config = require(configPath);
@@ -34,7 +33,17 @@ const getConfig = (opt, configPath) => {
 }
 
 async function jsTransformer(content, opt = defaultOptions) {
+  if (content && typeof content === 'object') {
+    opt = content;
+    content = null;
+  
+    if (!opt.file) {
+      throw new Error('If no string content is provided, the "file" option must be provided.')
+    }
+  }
+  
   opt = {...defaultOptions, ...opt};
+
   const isProduction = opt.env === 'production';
   const workingDirectory = opt.workingDirectoryPath || process.cwd();
   const configPath = opt.tsConfigPath || path.resolve(__dirname, workingDirectory, 'tsconfig.json');
@@ -63,7 +72,7 @@ async function jsTransformer(content, opt = defaultOptions) {
       })
   }
   
-  if (opt.fileObject instanceof File) {
+  if (opt.file instanceof File) {
     options.platform = opt.platform || 'node';
     
     if (opt.platform === 'browser') {
@@ -72,9 +81,9 @@ async function jsTransformer(content, opt = defaultOptions) {
     
     return esbuild.build({
         ...options,
-        tsconfig: getConfig(opt, configPath) || '',
+        tsconfig: configPath,
         absWorkingDir: workingDirectory,
-        entryPoints: [opt.fileObject.fileAbsolutePath],
+        entryPoints: [opt.file.fileAbsolutePath],
         bundle: true,
         write: false,
       })

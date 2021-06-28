@@ -1,0 +1,91 @@
+<p>Custom attributes must all be a class that extends the <a href="/documentation/api-reference/attribute-class">Attribute class</a>. This class must
+   also contain a render method which is called the value of the attribute and the <a href="/documentation/api-reference/html-node-class">HTMLNode</a> instance.</p>
+<p>A optional method of you custom attribute is the <strong>process</strong> method which is called with the value
+   of the attribute which you can tweak into a different string to be bind or executed before the rendering.</p>
+<p>The below <em>WrapWith</em> custom attribute will receive a comma separated name of tags and wrap
+   the tag it is placed on with those.</p>
+<code-snippet language="js">
+const {Attribute} = request('@beforesemicolon/html-plus');
+
+class WrapWith extends Attribute {
+	process(value) {
+		this.tags = value.split(',');
+
+		return value;
+	}
+
+	render(value, node) {
+		return this.tags.reduce((content, tag) => {
+			return `<${tag}>${content}<${tag}>`;
+		}, node.render());
+	}
+}
+</code-snippet>
+<p>Attributes are <em>processed</em>, <em>bind</em> and <em>executed</em> in that order before <em>rendering</em>.
+   These steps are ignored if you don't provide the <em>process</em> method or set the <em>execute</em> or <em>bind</em>
+   booleans to TRUE.</p>
+<h3>Register Attribute</h3>
+<p>With the class, we register it with the engine setup.</p>
+<code-snippet language="js">
+const {engine} = require('@beforesemicolon/html-plus');
+const {WrapWith} = require('./WrapWith.js');
+
+const app = express();
+
+engine(app, path.resolve(__dirname, './pages'), {
+	customAttributes: [WrapWith]
+});
+</code-snippet>
+<h3>Use Attribute</h3>
+<p>We can now use it it the template as such.</p>
+<code-snippet language="html">
+<p #wrap-with="div">wrapped</p>
+<!-- becomes: <div><p>wrapped</p></div> -->
+<p #wrap-with="section,div">wrapped</p>
+<!-- becomes: <section><div><p>wrapped</p></div></section>-->
+</code-snippet>
+<p>Attributes dont necessary need to render anything. Your attribute can simply change something about the
+node provide like setting attribute or update the node context.</p>
+<h3>Custom Tag Custom Attributes</h3>
+<p>Your custom tags can also contain specific attributes. These attributes won't be marked with hash symbol(#).</p>
+<p>You may define them as a static property on a class or function.</p>
+<code-snippet language="js">
+const {Attribute} = request('@beforesemicolon/html-plus');
+
+class SearchField {
+	render() {
+		return `
+			<label class="search-field" aria-label="search field">
+				<input type="search" name="search" placeholder="Search...">
+			</label>
+		`;
+	}
+
+	static get customAttributes() {
+		return {
+			value: new Attribute('value', '', false, true)
+		};
+	}
+}
+</code-snippet>
+<p>These custom attributes can be simple objects as well. Not necessary a Attribute instance unless you want
+   to calculate something more complex.</p>
+<code-snippet language="js">
+class SearchField {
+	render() {
+		return `
+			<label class="search-field" aria-label="search field">
+				<input type="search" name="search" placeholder="Search...">
+			</label>
+		`;
+	}
+
+	static get customAttributes() {
+		return {
+			value: {execute: true}
+		}
+	}
+}
+</code-snippet>
+<p>Please refer to the <a href="">HTMLNode</a> object documentation for a full list of methods and properties.</p>
+<include partial="documentation-menu" data="{currentPage}"></include>

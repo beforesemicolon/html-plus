@@ -1,0 +1,12 @@
+<code-snippet language="css">
+@import "normalizer.css";
+@custom-selector :--heading h1, h2, h3, h4, h5, h6;
+
+:--heading {
+	--color: #900;
+
+	&:hover {
+		color: var(--color);
+	}
+}
+</code-snippet>

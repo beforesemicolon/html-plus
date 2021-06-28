@@ -7,16 +7,29 @@ const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-t
 const defaultOptions = {
   env: 'development',
   data: {},
+  context: {},
   customTags: [],
   customAttributes: [],
-  fileObject: null,
+  file: null,
   rootNode: null,
-  onTraverse() {},
-  partialFileObjects: [],
+  onTraverse() {
+  },
+  partialFiles: [],
 };
 
-async function transform(content, options = defaultOptions) {
-  if (!content || typeof content !== 'string') return '';
+function transform(content, options = defaultOptions) {
+  if (content && typeof content === 'object') {
+    options = content;
+    
+    if (!options.file) {
+      throw new Error('If no string content is provided, the "file" option must be provided.')
+    }
+    
+    options.file.load();
+    
+    content = options.file.content;
+  }
+  
   content = content.replace(/\s+/, ' ');
   
   options = {...defaultOptions, ...options};
@@ -25,13 +38,13 @@ async function transform(content, options = defaultOptions) {
     const tagName = turnCamelOrPascalToKebabCasing(tag.name);
     acc[tagName] = tag;
     return acc;
-  }, {})
+  }, {});
   
   const customAttributesMap = options.customAttributes.reduce((acc, attribute) => {
     const attr = turnCamelOrPascalToKebabCasing(attribute.name);
     acc[attr] = attribute.toString().startsWith('class') ? new attribute() : attribute();
     return acc;
-  }, {})
+  }, {});
   
   const node = new HTMLNode(content, {
     ...options,
@@ -39,7 +52,7 @@ async function transform(content, options = defaultOptions) {
     customAttributes: {...customAttributesMap, ...defaultAttributesMap}
   })
   
-  const html = (await node.render()).trim();
+  const html = (node.render()).trim();
   
   if (options.env === 'production') {
     return minify(html, {

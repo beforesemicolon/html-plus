@@ -3,7 +3,7 @@ const {PartialFile} = require("../PartialFile");
 
 class Include {
   constructor(node, options) {
-    const {fileObject, partialFileObjects} = options;
+    const {file, partialFiles} = options;
   
     this.node = node;
     this.partial = null;
@@ -16,41 +16,33 @@ class Include {
     }
     
     if (partialName || partialPath) {
-      if (partialFileObjects.length ) {
+      if (partialFiles.length ) {
         if (partialPath) {
-          partialPath = path.resolve(fileObject.fileDirectoryPath, partialPath);
+          partialPath = path.resolve(file.fileDirectoryPath, partialPath);
         } else {
           partialName = '_' + partialName.replace(/^_+/, '');
         }
 
-        this.partial = partialFileObjects.find(obj => {
+        this.partial = partialFiles.find(obj => {
           return obj.name === partialName || obj.fileAbsolutePath === partialPath;
         });
       }
 
       if (!this.partial && partialPath) {
-        const partialAbsolutePath = path.resolve(fileObject.fileDirectoryPath, partialPath);
+        const partialAbsolutePath = path.resolve(file.fileDirectoryPath, partialPath);
 
-        this.partial = new PartialFile(partialAbsolutePath, fileObject.srcDirectoryPath, tagInfo);
-      }
-    }
-  
-    for (let key in node.attributes['data']) {
-      if (node.attributes['data'].hasOwnProperty(key)) {
-        node.setContext(key, node.attributes['data'][key])
+        this.partial = new PartialFile(partialAbsolutePath, file.srcDirectoryPath, tagInfo);
       }
     }
   }
   
   static customAttributes = {
-    data: {execute: true},
-    partial: null,
-    'partial-path': null
+    data: {execute: true}
   }
   
-  async render() {
+  render() {
     return this.partial
-      ? await this.partial.render(this.data, this.node.childNodes)
+      ? this.partial.render(this.data)
       : '';
   }
 }

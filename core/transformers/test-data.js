@@ -51,17 +51,18 @@ const cssResult = `
   :root {
     --mainColor: rgba(18,52,86,0.47059);
   }
-  
   body {
     color: rgba(18,52,86,0.47059);
     color: var(--mainColor);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
     word-wrap: break-word;
   }
-  
   input {
     -webkit-appearance: none;
             appearance: none;
+  }
+  ::-webkit-input-placeholder {
+    color: gray;
   }
   :-ms-input-placeholder {
     color: gray;
@@ -69,9 +70,11 @@ const cssResult = `
   ::placeholder {
     color: gray;
   }
-  
   .image {
     background-image: url(image@1x.png);
+  }
+  @-webkit-keyframes test {
+    100% {opacity: 1}
   }
   @keyframes test {
     100% {opacity: 1}
@@ -81,34 +84,27 @@ const cssResult = `
       background-image: url(image@2x.png);
     }
   }
-  
   h1,h2,h3,h4,h5,h6 {
     background-image: url(img/heading.png)
   }
-  
   @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
     h1,h2,h3,h4,h5,h6 {
       background-image:  url(img/heading@2x.png)
     }
   }
-  
   h1,h2,h3,h4,h5,h6 {
     background-image: -webkit-image-set(url(img/heading.png) 1x, url(img/heading@2x.png) 2x);
     background-image: image-set(url(img/heading.png) 1x, url(img/heading@2x.png) 2x)
   }
-  
   @media (max-width: 50rem) {
-  
   h1,h2,h3,h4,h5,h6 {
       margin-top: 0;
       margin-bottom: 0
   }
     }
-  
   a {
     color: rgba(0, 0, 255, 0.9)
   }
-  
   a:hover {
     color: #639;
   }

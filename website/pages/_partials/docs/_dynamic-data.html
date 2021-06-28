@@ -1,0 +1,48 @@
+<p>There are two ways you can pass data dynamically to the templates on every page request:</p>
+<ul>
+	<li>onPageRequest engine option</li>
+	<li>On custom express route page request</li>
+</ul>
+<h3 id="on-page-request">On Page Request</h3>
+<p>One of the <a href="/documentation/api-reference/engine">engine</a> options is the <strong>onPageRequest</strong> which must be a function
+   that is called on every page request with the <a href="http://expressjs.com/en/api.html#req">express request object</a>
+   and must return an object to be used as the data in the template.</p>
+<code-snippet language="js">
+const {engine} = require('@beforesemicolon/html-plus');
+
+const app = express();
+
+engine(app, path.resolve(__dirname, './pages'), {
+	onPageRequest: (req) => {
+		return {
+			path: req.path,
+			params: req.params
+		}
+	}
+});
+</code-snippet>
+<p>This data can be accessed inside the template as you named them in the object.</p>
+<code-snippet language="html">
+<p>Page path is {path} with params {params}</p>
+</code-snippet>
+<h3 id="on-express-route-request">On Express Route Request</h3>
+<p>You can also setup dynamic custom routes to handle page requests which will give you the opportunity
+   to call the <a href="https://expressjs.com/en/4x/api.html#res.render">express response render method</a> to render a particular template.</p>
+<p>This render method also takes a second argument which is the object data to be passed to the
+   template.</p>
+<code-snippet language="js">
+app.get('/projects/:projectName', (req, res) => {
+	res.render('projects/project', {
+		projectName: req.params.projectName.replace('-', ' '),
+		title: 'Projects'
+	})
+});
+</code-snippet>
+<code-snippet language="html">
+<h2>{title}</h2>
+<h3>Welcome to "{projectName}" project</h3>
+</code-snippet>
+<p>Both options to inject data into templates are great ways to collect data from any data storage source
+   and handle it right inside the templates so it is composed right inside the templates.</p>
+<p>Also, both data are considered to be context data. A data specific to the template being rendered.</p>
+<include partial="documentation-menu" data="{currentPage}"></include>

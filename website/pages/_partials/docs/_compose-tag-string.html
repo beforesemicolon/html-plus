@@ -1,0 +1,59 @@
+<include partial="api-table-details" data="{
+	name: 'composeTagString',
+	details: {
+		name: 'composeTagString',
+		type: 'function',
+		arguments: 'node, content, excludedAttributes',
+		description: 'A function to compose an HTML tag with it\'s attributes and content.',
+	}
+}"></include>
+<h3>Arguments</h3>
+<include partial="api-description-list" data="{
+	descriptions: [
+		{
+			concept: 'node',
+			type: 'type: HTMLNode-like, required',
+			description: 'a HTMLNode instance or HTMLNode-like object to compose as tag string.'
+		},
+		{
+			concept: 'content',
+			type: 'type: string, optional',
+			description: 'The HTML string representation to be used as the HTML or text content.'
+		},
+		{
+			concept: 'excludedAttributes',
+			type: 'type: string[], optional',
+			description: 'A list of attribute names to exclude from the HTML tag string.'
+		},
+	]
+}"></include>
+<h3>Return</h3>
+<p>This function will return an HTML string representation that can be used to render the node, for example.</p>
+<p>The content is never parsed. Whatever the content you pass to it will be used as is.</p>
+<h3>Usage Examples</h3>
+<code-snippet language="js">
+const {composeTagString, HTMLNode} = require("@beforesemicolon/html-plus");
+
+const node1 = new HTMLNode('<h3>some title</h3>');
+const node2 = new HTMLNode('<h3 style="display: block;">some title</h3>');
+
+composeTagString(node, 'different content');
+// returns "<h3>different content</h3>"
+
+composeTagString(node, node2.innerHTML, ['style']);
+// returns "<h3>some title</h3>"
+
+composeTagString({tagName: 'h1'}, node1.innerHTML);
+// returns "<h1>some title</h1>"
+</code-snippet>
+<p>This is what the <strong>script</strong> tag implementation looks like.</p>
+<code-snippet>
+const {composeTagString} = require("@beforesemicolon/html-plus");
+
+function Script(node) {
+    return () => composeTagString(node, node.innerHTML);
+}
+
+module.exports.Script = Script;
+</code-snippet>
+<include partial="documentation-menu" data="{currentPage}"></include>

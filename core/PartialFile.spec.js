@@ -42,7 +42,7 @@ describe('PartialFile', () => {
       const partial = new PartialFile(filePath);
   
      return expect(partial.render({title: 'My partial'}))
-       .resolves.toEqual('<h2>My partial</h2>')
+       .toEqual('<h2>My partial</h2>')
     });
   });
   

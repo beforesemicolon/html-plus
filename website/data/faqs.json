@@ -1,0 +1,26 @@
+[
+  {
+    "question": "Is it Production Ready?",
+    "answer": "Yes! <a href=\"https://beforesemicolon.com/\">Before Semicolon</a> and this current website uses it with amazing results as far as loading time and consistency."
+  },
+  {
+    "question": "Does the tag code shipped to the browser?",
+    "answer": "No! Everything is <strong>Server Side Rendered</strong>. You can always pair HTML+ with client side render libraries like React. Some work is being done to allow client side rendering in the future."
+  },
+  {
+    "question": "How to make it refresh when I make changes",
+    "answer": "This is a feature in the works but you can always use modules like <a href=\"https://www.npmjs.com/package/nodemon\">Nodemon</a> to reload your server on changes."
+  },
+  {
+    "question": "How fast is it?",
+    "answer": "The HTML parser itself is super fast parsing big size html in couple milliseconds. The load time of page will vary by template and whether in production or not."
+  },
+  {
+    "question": "Can I use it with Koa?",
+    "answer": "Not yet. Koa support is currently in the plans."
+  },
+  {
+    "question": "How to fetch data?",
+    "answer": "You can setup express endpoints or Rest APIs or even use a framework for that to handle your data requests. HTML+ only handles the templating side of things."
+  }
+]

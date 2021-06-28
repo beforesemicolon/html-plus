@@ -1,0 +1,40 @@
+<p>The <a href="/documentation/api-reference/transform">Transform API</a> is how all files are processed internally and this API is exposed to you so you
+can build things on top of it for more control.</p>
+<code-snippet language="js">
+const {transform} = require('@beforesemicolon/html-plus');
+</code-snippet>
+<p>This object expose a few methods which are language specific.</p>
+
+<code-snippet language="js">
+const {transform} = require('@beforesemicolon/html-plus');
+
+// synchronous method
+transform.html('<h2>Some markup</h2>');
+
+// asynchronous methods
+await transform.sass('$margin: 0; p {margin: $margin;}');
+await transform.less('@margin: 0; p {margin: @margin;}');
+await transform.stylus(`
+$margin = 0
+p
+  margin: $margin
+`);
+await transform.js('const fn = x => x + 10;');
+await transform.css('p {margin: 0;}');
+</code-snippet>
+<h3>Options</h3>
+<p>Options vary for each but so please refer to the <a href="/documentation/api-reference/transform">Transform API reference</a> for more details
+   on supporting options for each.</p>
+<p>One option they all have in common is the <a href="/documentation/api-reference/file-class">file</a> option which is a way <strong>HTML+</strong>
+   is trying to make it easy to work with files in general.</p>
+<code-snippet language="js">
+const {transform, File} = require('@beforesemicolon/html-plus');
+const path = require('path');
+
+const file = new File(path.resolve(__dirname, 'app.sass'));
+
+await transform.sass({file});
+</code-snippet>
+<p>The <a href="/documentation/api-reference/file-class">File</a> class is a powerful way to load files and create them and it is used internally for everything
+as it does the heavy lifting. Refer to its API reference for more details.</p>
+<include partial="documentation-menu" data="{currentPage}"></include>

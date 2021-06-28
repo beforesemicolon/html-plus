@@ -95,9 +95,9 @@ describe('jsTransformer', () => {
     it('js code', () => {
       expect.assertions(1);
 
-      const fileObject = new File(path.join(src, 'app.js'));
+      const file = new File(path.join(src, 'app.js'));
 
-      return jsTransformer(null, {fileObject})
+      return jsTransformer({file})
         .then(res => {
           expect(res.replace(/\s+/g, ''))
             .toEqual(data.jsFileResult.replace(/\s+/g, ''));
@@ -107,9 +107,9 @@ describe('jsTransformer', () => {
     it('ts code', () => {
       expect.assertions(1);
 
-      const fileObject = new File(path.join(src, 'app.ts'));
+      const file = new File(path.join(src, 'app.ts'));
 
-      return jsTransformer(null, {fileObject})
+      return jsTransformer({file})
         .then(res => {
           expect(res.replace(/\s+/g, ''))
             .toEqual(data.tsFileResult.replace(/\s+/g, ''));
@@ -119,9 +119,9 @@ describe('jsTransformer', () => {
     it('react(jsx) code', () => {
       expect.assertions(1);
 
-      const fileObject = new File(path.join(src, 'app.jsx'));
+      const file = new File(path.join(src, 'app.jsx'));
 
-      return jsTransformer(null, {fileObject})
+      return jsTransformer({file})
         .then(res => {
           expect(res.replace(/\s+/g, ''))
             .toEqual(data.reactResult.replace(/\s+/g, ''));

@@ -2,7 +2,8 @@ const path = require('path');
 const postcss = require('postcss');
 const url = require('postcss-url');
 const postcssPresetEnv = require('postcss-preset-env');
-const purgecss = require('@fullhuman/postcss-purgecss')
+const purgeCSS = require('@fullhuman/postcss-purgecss');
+const atImport = require("postcss-import");
 const cssnano = require('cssnano');
 
 const resolveUrl = assetsPath => (urlInfo) => {
@@ -10,54 +11,69 @@ const resolveUrl = assetsPath => (urlInfo) => {
 };
 
 const defaultOptions = {
-  prefixes: [],
+  plugins: [],
   destPath: undefined,
-  assetsPath: './assets',
+  assetsPath: '',
   env: 'development',
   map: false,
-  fileObject: null
+  file: null,
 };
 
 async function cssTransformer(content, opt = defaultOptions) {
+  if (content && typeof content === 'object') {
+    opt = content;
+    content = null;
+  
+    if (!opt.file) {
+      throw new Error('If no string content is provided, the "file" option must be provided.')
+    }
+  }
+  
   opt = {...defaultOptions, ...opt};
   content = content ?? '';
   
-  const prefixes = [
+  const plugins = [
+    atImport(),
     postcssPresetEnv({
       stage: 0
     }),
-    ...opt.prefixes
+    ...opt.plugins
   ];
   
   const options = {
     to: opt.destPath,
+    from: opt?.file?.fileAbsolutePath,
   }
   
   let post = null;
   
   if (opt.env === 'production') {
     post = postcss([
-      ...prefixes,
-      purgecss({
+      ...plugins,
+      purgeCSS({
         content: [
-          `${opt.fileObject.srcDirectoryPath}/**/*.html`
+          `${opt.file.srcDirectoryPath}/**/*.html`
         ],
         css: [
-          opt.fileObject.fileAbsolutePath
+          opt.file.fileAbsolutePath
         ]
       }),
       cssnano
     ]);
-    post.use(url({
-      url: resolveUrl(opt.assetsPath)
-    }));
+    
+    if (opt.assetsPath) {
+      post.use(url({
+        url: resolveUrl(opt.assetsPath)
+      }));
+    }
+    
     options.map = true;
   } else {
-    post = postcss(prefixes);
+    post = postcss(plugins);
   }
   
   return post
-    .process(content, {from: opt?.fileObject?.fileAbsolutePath, ...options})
+    .process(content, options)
     .then(res => {
       return res.css;
     })

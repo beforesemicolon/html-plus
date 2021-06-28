@@ -5,12 +5,19 @@ const render = promisify(nodeSass.render);
 
 const defaultOptions = {
   env: 'development',
-  fileObject: null,
-  outputStyle: 'nested',
-  includePaths: []
+  file: null,
 }
 
 async function sassTransformer(content, opt = defaultOptions) {
+  if (content && typeof content === 'object') {
+    opt = content;
+    content = null;
+    
+    if (!opt.file) {
+      throw new Error('If no string content is provided, the "file" option must be provided.')
+    }
+  }
+  
   opt = {...defaultOptions, ...opt};
   content = content ?? '';
   
@@ -19,11 +26,11 @@ async function sassTransformer(content, opt = defaultOptions) {
   }
   
   return render({
+    ...opt,
     data: content,
-    file: opt.fileObject?.fileAbsolutePath,
-    indentedSyntax: opt?.fileObject?.ext === '.sass',
-    // ...(opt.env === 'development' && {sourceMap: true}),
-    ...opt
+    file: opt.file?.fileAbsolutePath,
+    indentedSyntax: opt?.file?.ext === '.sass',
+    ...(opt.env === 'production' && {sourceMap: true}),
   }).then(res => res.css.toString())
 }
 
