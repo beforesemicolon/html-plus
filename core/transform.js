@@ -12,7 +12,7 @@ const defaultOptions = {
   customAttributes: [],
   file: null,
   rootNode: null,
-  onTraverse() {
+  onBeforeRender() {
   },
   partialFiles: [],
 };

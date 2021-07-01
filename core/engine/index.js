@@ -62,7 +62,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
               customTags: opt.customTags,
               customAttributes: opt.customAttributes,
               partialFiles: partials,
-              onTraverse: (node, file) => {
+              onBeforeRender: (node, file) => {
                 let attrName = '';
                 
                 if (node.tagName === 'link') {
@@ -82,7 +82,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
                 
                 if (srcPath && !isURL) {
                   const resourceFullPath = path.resolve(file.fileDirectoryPath, srcPath);
-                  
+
                   if (resourceFullPath.startsWith(pagesDirectoryPath)) {
                     node.setAttribute(attrName, resourceFullPath.replace(pagesDirectoryPath, ''))
                   }

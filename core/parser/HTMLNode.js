@@ -18,7 +18,7 @@ const defaultOptions = {
   customTags: {},
   customAttributes: {},
   file: null,
-  onTraverse() {
+  onBeforeRender() {
   },
   partialFiles: [],
 };
@@ -32,7 +32,7 @@ class HTMLNode {
     options = {...defaultOptions, ...options}
     this.#node = typeof htmlString === 'string'
       ? parse(replaceSpecialCharactersInHTML(htmlString), {
-        comment: true
+        comment: options.env === 'development'
       })
       : htmlString;
     this.#node.context = {...this.#node.context, ...options.context};
@@ -53,14 +53,11 @@ class HTMLNode {
           this.#tag.customAttributes,
           {$data: this.#options.data, ...this.context}
         );
+        
         this.#tag = createCustomTag(this.#tag, this.#node, this, this.#options);
       } catch(e) {
         handleError(e, this.#node, this.#options);
       }
-    }
-    
-    if (typeof options.onTraverse === 'function') {
-      options.onTraverse(this, options.file);
     }
   }
   
@@ -93,7 +90,7 @@ class HTMLNode {
       ? composeTagString(this, this.#node.innerHTML)
       : `<fragment>${this.#node.outerHTML}</fragment>`;
     const clonedNode = (parse(outerHTML, {
-      comment: true
+      comment: this.#options.env === 'development'
     })).childNodes[0];
     
     clonedNode.context = {...this.#node.context};
@@ -107,7 +104,7 @@ class HTMLNode {
       ? composeTagString(this, this.#node.innerHTML)
       : `<fragment>${this.#node.outerHTML}</fragment>`;
     const clonedNode = parse(outerHTML, {
-      comment: true
+      comment: this.#options.env === 'development'
     }).childNodes[0];
     
     clonedNode.context = {...this.#node.context, ...context};
@@ -187,8 +184,9 @@ class HTMLNode {
   }
   
   #render() {
+    let result = '';
     if (this.#node.rawAttrs.length && /\s?#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
-      const result = renderByAttribute(this, this.#options);
+      result = renderByAttribute(this, this.#options);
     
       if (typeof result === 'string') {
         return result
@@ -196,6 +194,8 @@ class HTMLNode {
     }
   
     if (this.#tag) {
+      this.#onBeforeRender();
+      
       return this.#tag.render();
     }
   
@@ -209,10 +209,22 @@ class HTMLNode {
       handleError(e, this.#node, this.#options);
     }
   
+    this.#onBeforeRender();
+  
     return (this.tagName
         ? composeTagString(this, this.renderChildren(), Object.keys(this.#options.customAttributes))
         : this.renderChildren()
     ).trim();
+  }
+  
+  #onBeforeRender() {
+    if (typeof this.#options.onBeforeRender === 'function') {
+      try {
+        this.#options.onBeforeRender(this, this.#options.file);
+      } catch(e) {
+        console.error('Error in before rendering callback', e);
+      }
+    }
   }
   
   render() {
