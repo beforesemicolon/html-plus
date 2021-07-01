@@ -5,6 +5,7 @@ const postcssPresetEnv = require('postcss-preset-env');
 const purgeCSS = require('@fullhuman/postcss-purgecss');
 const atImport = require("postcss-import");
 const cssnano = require('cssnano');
+const {readFileContent} = require("../utils/readFileContent");
 
 const resolveUrl = assetsPath => (urlInfo) => {
   return `${assetsPath}/${path.basename(urlInfo.url)}`
@@ -17,6 +18,7 @@ const defaultOptions = {
   env: 'development',
   map: false,
   file: null,
+  pageFile: null,
 };
 
 async function cssTransformer(content, opt = defaultOptions) {
@@ -30,7 +32,7 @@ async function cssTransformer(content, opt = defaultOptions) {
   }
   
   opt = {...defaultOptions, ...opt};
-  content = content ?? '';
+  content = content ?? readFileContent(opt.file.fileAbsolutePath);
   
   const plugins = [
     atImport(),
@@ -42,7 +44,7 @@ async function cssTransformer(content, opt = defaultOptions) {
   
   const options = {
     to: opt.destPath,
-    from: opt?.file?.fileAbsolutePath,
+    from: opt.file?.fileAbsolutePath,
   }
   
   let post = null;
@@ -51,11 +53,9 @@ async function cssTransformer(content, opt = defaultOptions) {
     post = postcss([
       ...plugins,
       purgeCSS({
-        content: [
-          `${opt.file.srcDirectoryPath}/**/*.html`
-        ],
+        ...(opt.pageFile && {content: [opt.pageFile.fileAbsolutePath]}),
         css: [
-          opt.file.fileAbsolutePath
+          opt.file?.fileAbsolutePath
         ]
       }),
       cssnano
@@ -67,7 +67,7 @@ async function cssTransformer(content, opt = defaultOptions) {
       }));
     }
     
-    options.map = true;
+    // options.map = true;
   } else {
     post = postcss(plugins);
   }
