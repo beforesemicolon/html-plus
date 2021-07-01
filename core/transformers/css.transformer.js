@@ -5,6 +5,7 @@ const postcssPresetEnv = require('postcss-preset-env');
 const purgeCSS = require('@fullhuman/postcss-purgecss');
 const atImport = require("postcss-import");
 const cssnano = require('cssnano');
+const comments = require('postcss-discard-comments');
 const {readFileContent} = require("../utils/readFileContent");
 
 const resolveUrl = assetsPath => (urlInfo) => {
@@ -39,6 +40,7 @@ async function cssTransformer(content, opt = defaultOptions) {
     postcssPresetEnv({
       stage: 0
     }),
+    comments({removeAll: true}),
     ...opt.plugins
   ];
   
@@ -53,9 +55,9 @@ async function cssTransformer(content, opt = defaultOptions) {
     post = postcss([
       ...plugins,
       purgeCSS({
-        ...(opt.pageFile && {content: [opt.pageFile.fileAbsolutePath]}),
+        content: [opt.pageFile.fileAbsolutePath],
         css: [
-          opt.file?.fileAbsolutePath
+          opt.file.fileAbsolutePath
         ]
       }),
       cssnano

@@ -1,6 +1,6 @@
 const {File} = require('./../File');
 const fs = require('fs');
-const {mkdir, unlink, rmdir, copyFile, writeFile} = require('fs/promises');
+const {mkdir, rmdir, copyFile, writeFile} = require('fs/promises');
 const path = require('path');
 const chalk = require("chalk");
 const {uniqueAlphaNumericId} = require("../utils/unique-alpha-numeric-id");
@@ -12,6 +12,7 @@ const {transform: transformer} = require("../transformers/index");
 const defaultOptions = {
   srcDir: '',
   destDir: '',
+  platform: 'file',
   templateContextDataList: [],
   template: '',
   staticData: null,
@@ -74,7 +75,7 @@ async function build(options = defaultOptions) {
           writeFile(pagePath, pg.content);
 
           pg.resources.forEach(resource => {
-            processPageResource(resource, options.destDir, pg.file)
+            processPageResource(resource, options.destDir, new File(pagePath, options.destDir))
           })
         })
       } else {
@@ -171,8 +172,9 @@ function collectAndUpdateNodeSourceLink(node, nodeFile) {
     }
     
     const srcDestPath = getFileSourceHashedDestPath(srcPath);
-    
-    node.setAttribute(srcAttrName, srcDestPath);
+  
+    const relativePath = path.relative(nodeFile.fileDirectoryPath, nodeFile.srcDirectoryPath);
+    node.setAttribute(srcAttrName, `${relativePath}/${srcDestPath}`);
     
     return {srcPath, srcDestPath};
   }
@@ -183,37 +185,40 @@ function collectAndUpdateNodeSourceLink(node, nodeFile) {
 async function processPageResource({srcPath, srcDestPath}, destPath, pageFile) {
   const env = 'production';
   const ext = path.extname(srcPath);
-  let content = '';
-  const absoluteDestPath = path.join(destPath, srcDestPath)
+  const absoluteDestPath = path.join(destPath, srcDestPath);
+  let content = null;
   
   switch (ext) {
     case '.sass':
     case '.scss':
-      content = await transformer.sass({file: new File(srcPath)});
-      content = await transformer.css(content, {pageFile, destPath, env, file: new File(absoluteDestPath)})
+      content = await transformer.sass({file: new File(srcPath, pageFile.srcDirectoryPath)});
+      content = await transformer.css(content, {pageFile, destPath, env, file: new File(absoluteDestPath, pageFile.srcDirectoryPath)})
       break;
     case '.less':
       content = await transformer.less({file: new File(srcPath)});
-      content = await transformer.css(content, {pageFile, destPath, env, file: new File(absoluteDestPath)})
+      content = await transformer.css(content, {pageFile, destPath, env, file: new File(absoluteDestPath, pageFile.srcDirectoryPath)})
       break;
     case '.styl':
       content = await transformer.stylus({file: new File(srcPath)});
-      content = await transformer.css(content, {pageFile, destPath, env, file: new File(absoluteDestPath)})
+      content = await transformer.css(content, {pageFile, destPath, env, file: new File(absoluteDestPath, pageFile.srcDirectoryPath)})
       break;
     case '.css':
-      content = await transformer.css({pageFile, destPath, env, file: new File(srcPath)})
+      content = await transformer.css({pageFile, destPath, env, file: new File(srcPath, pageFile.srcDirectoryPath)})
       break;
     case '.js':
     case '.mjs':
     case '.ts':
     case '.jsx':
     case '.tsx':
-      content = await transformer.js({env, file: new File(srcPath)})
+      content = await transformer.js({env, file: new File(srcPath, pageFile.srcDirectoryPath)})
       break;
     default:
+      await copyFile(srcPath, absoluteDestPath)
   }
   
-  await writeFile(absoluteDestPath, content);
+  if (typeof content === 'string') {
+    await writeFile(absoluteDestPath, content);
+  }
 }
 
 function getFileSourceHashedDestPath(src) {
