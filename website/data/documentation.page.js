@@ -7,7 +7,6 @@ const advTemplatingLink = '/documentation/advanced-templating';
 const stylingLink = '/documentation/styling';
 const scriptingLink = '/documentation/scripting';
 const buildLink = '/documentation/build';
-const transformLink = '/documentation/transform-files';
 const faqLink = '/documentation/faq';
 const apiReferenceLink = '/documentation/api-reference';
 const vocabularyLink = '/documentation/vocabulary';
@@ -181,11 +180,6 @@ const data = {
         partial: 'scripting',
       },
       {
-        title: "Transform Files",
-        path: transformLink,
-        partial: 'transform-files',
-      },
-      {
         title: "Build Project",
         path: buildLink,
         partial: 'build',
@@ -302,11 +296,6 @@ const data = {
             title: "Text",
             path: `${apiReferenceLink}/text-class`,
             partial: 'text-class',
-          },
-          {
-            title: "transform",
-            path: `${apiReferenceLink}/transform`,
-            partial: 'transform',
           },
           {
             title: "<variable/>",
