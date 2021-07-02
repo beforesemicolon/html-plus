@@ -1,7 +1,6 @@
 const {HTMLNode} = require("./parser/HTMLNode");
 const {defaultAttributesMap} = require("./default-attributes");
 const {defaultTagsMap} = require("./default-tags");
-const {minify} = require('html-minifier');
 const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
 
 const defaultOptions = {
@@ -52,22 +51,7 @@ function transform(content, options = defaultOptions) {
     customAttributes: {...customAttributesMap, ...defaultAttributesMap}
   })
   
-  const html = (node.render()).trim();
-  
-  if (options.env === 'production') {
-    return minify(html, {
-      collapseBooleanAttributes: true,
-      collapseInlineTagWhitespace: true,
-      collapseWhitespace: true,
-      customAttrAssign: true,
-      decodeEntities: true,
-      minifyCSS: true,
-      removeComments: true,
-      removeRedundantAttributes: true
-    })
-  }
-  
-  return html;
+  return (node.render()).trim();
 }
 
 module.exports.transform = transform;

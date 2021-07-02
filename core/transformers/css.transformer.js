@@ -55,7 +55,9 @@ async function cssTransformer(content, opt = defaultOptions) {
     post = postcss([
       ...plugins,
       purgeCSS({
-        content: [opt.pageFile.fileAbsolutePath],
+        content: [
+          `${opt.file.srcDirectoryPath}/**/*.html`
+        ],
         css: [
           opt.file.fileAbsolutePath
         ]

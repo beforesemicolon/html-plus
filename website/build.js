@@ -45,8 +45,8 @@ build({
     CodeSnippet,
   ],
   template: documentTemplate,
-  // templateContextDataList: Array.from(paths, (dt) => ({path: dt})),
-  templateContextDataList: [{path: '/documentation/getting-started'}],
+  templateContextDataList: Array.from(paths, (dt) => ([`${path.basename(dt)}.html`, {path: dt}])),
+  // templateContextDataList: [{path: '/documentation/getting-started'}],
 })
   .then(res => {
     console.log('-- done', res);

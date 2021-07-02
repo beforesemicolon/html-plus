@@ -20,6 +20,7 @@ const defaultOptions = {
   customTags: [],
   customAttributes: []
 };
+let sourcePaths = {};
 
 async function build(options = defaultOptions) {
   options = {...defaultOptions, ...options, env: 'production'};
@@ -31,16 +32,17 @@ async function build(options = defaultOptions) {
   if (!fs.existsSync(options.srcDir)) {
     throw new Error('Source directory not found: ' + options.srcDir)
   }
-  
+  console.time('\nDone');
   return getDirectoryFilesDetail(options.srcDir, 'html')
     .then(async files => {
       options.partialFiles = extractPartials(files, options.srcDir);
       let pages;
-  
+      sourcePaths = {};
+      
       if (fs.existsSync(options.destDir)) {
         await rmdir(options.destDir, {recursive: true});
       }
-  
+      
       await mkdir(options.destDir);
       await mkdir(path.join(options.destDir, 'stylesheets'));
       await mkdir(path.join(options.destDir, 'scripts'));
@@ -49,39 +51,29 @@ async function build(options = defaultOptions) {
       if (options.template) {
         if (options.templateContextDataList.length) {
           console.log(`Building template ${chalk.green(options.template)} for ${chalk.greenBright(options.templateContextDataList.length)} data entries...`);
-          pages = options.templateContextDataList.map(contextData => processPage(options.template, {
-            ...options,
-            contextData,
-          }))
+          return await Promise.all(options.templateContextDataList.map(async ([fileName, contextData]) => {
+            return savePageAndResources(await processPage(options.template, fileName, {
+              ...options,
+              contextData,
+            }), options);
+          }));
         } else {
-          processPage(options.template, {
+          return savePageAndResources(await processPage(options.template, path.basename(options.template), {
             ...options,
             get contextData() {
               return typeof options.contextDataProvider === 'function'
                 ? options.contextDataProvider(options.template)
                 : {};
             },
-          });
+          }), options);
         }
-  
-        pages.forEach(pg => {
-          const pagePath = path.join(options.destDir, pg.file.filePath)
-
-          mkdir(path.join(
-            options.destDir,
-            pg.file.fileDirectoryPath.replace(options.srcDir, '')
-          ), {recursive: true});
-
-          writeFile(pagePath, pg.content);
-
-          pg.resources.forEach(resource => {
-            processPageResource(resource, options.destDir, new File(pagePath, options.destDir))
-          })
-        })
       } else {
         // check if source directory exists
         // read all html files inside the source directory
       }
+    })
+    .then(() => {
+      console.timeEnd('\nDone');
     })
     .catch(async e => {
       await rmdir(options.destDir, {recursive: true});
@@ -89,9 +81,10 @@ async function build(options = defaultOptions) {
     })
 }
 
-function processPage(pagePath, opt) {
+async function processPage(pagePath, fileName, opt) {
   const resources = [];
   const file = new File(pagePath, opt.srcDir);
+  const fileExportName = pagePath.replace(path.basename(pagePath), fileName);
   
   const content = transform(file.toString(), {
     file,
@@ -113,8 +106,8 @@ function processPage(pagePath, opt) {
   return {
     content,
     resources,
-    file
-  }
+    file: new File(fileExportName, opt.srcDir)
+  };
 }
 
 function collectAndUpdateNodeSourceLink(node, nodeFile) {
@@ -171,8 +164,15 @@ function collectAndUpdateNodeSourceLink(node, nodeFile) {
       srcPath = path.resolve(nodeFile.fileDirectoryPath, srcPath);
     }
     
-    const srcDestPath = getFileSourceHashedDestPath(srcPath);
-  
+    let srcDestPath = '';
+    
+    if (sourcePaths[srcPath]) {
+      srcDestPath = sourcePaths[srcPath];
+    } else {
+      srcDestPath = getFileSourceHashedDestPath(srcPath);
+      sourcePaths[srcPath] = srcDestPath;
+    }
+    
     const relativePath = path.relative(nodeFile.fileDirectoryPath, nodeFile.srcDirectoryPath);
     node.setAttribute(srcAttrName, `${relativePath}/${srcDestPath}`);
     
@@ -182,42 +182,76 @@ function collectAndUpdateNodeSourceLink(node, nodeFile) {
   return null;
 }
 
+async function savePageAndResources(pg, options) {
+  const pagePath = path.join(options.destDir, pg.file.filePath)
+  
+  await mkdir(path.join(
+    options.destDir,
+    pg.file.fileDirectoryPath.replace(options.srcDir, '')
+  ), {recursive: true});
+  
+  await writeFile(pagePath, pg.content.replace(/\n|\s{2,}/g, ''));
+  
+  await Promise.all(
+    pg.resources.map(resource => processPageResource(resource, options.destDir, new File(pagePath, options.destDir)))
+  );
+}
+
 async function processPageResource({srcPath, srcDestPath}, destPath, pageFile) {
   const env = 'production';
   const ext = path.extname(srcPath);
   const absoluteDestPath = path.join(destPath, srcDestPath);
   let content = null;
   
-  switch (ext) {
-    case '.sass':
-    case '.scss':
-      content = await transformer.sass({file: new File(srcPath, pageFile.srcDirectoryPath)});
-      content = await transformer.css(content, {pageFile, destPath, env, file: new File(absoluteDestPath, pageFile.srcDirectoryPath)})
-      break;
-    case '.less':
-      content = await transformer.less({file: new File(srcPath)});
-      content = await transformer.css(content, {pageFile, destPath, env, file: new File(absoluteDestPath, pageFile.srcDirectoryPath)})
-      break;
-    case '.styl':
-      content = await transformer.stylus({file: new File(srcPath)});
-      content = await transformer.css(content, {pageFile, destPath, env, file: new File(absoluteDestPath, pageFile.srcDirectoryPath)})
-      break;
-    case '.css':
-      content = await transformer.css({pageFile, destPath, env, file: new File(srcPath, pageFile.srcDirectoryPath)})
-      break;
-    case '.js':
-    case '.mjs':
-    case '.ts':
-    case '.jsx':
-    case '.tsx':
-      content = await transformer.js({env, file: new File(srcPath, pageFile.srcDirectoryPath)})
-      break;
-    default:
-      await copyFile(srcPath, absoluteDestPath)
-  }
-  
-  if (typeof content === 'string') {
-    await writeFile(absoluteDestPath, content);
+  if (!fs.existsSync(absoluteDestPath)) {
+    
+    switch (ext) {
+      case '.sass':
+      case '.scss':
+        content = await transformer.sass({file: new File(srcPath, pageFile.srcDirectoryPath)});
+        content = await transformer.css(content, {
+          pageFile,
+          destPath,
+          env,
+          file: new File(absoluteDestPath, pageFile.srcDirectoryPath)
+        })
+        break;
+      case '.less':
+        content = await transformer.less({file: new File(srcPath)});
+        content = await transformer.css(content, {
+          pageFile,
+          destPath,
+          env,
+          file: new File(absoluteDestPath, pageFile.srcDirectoryPath)
+        })
+        break;
+      case '.styl':
+        content = await transformer.stylus({file: new File(srcPath)});
+        content = await transformer.css(content, {
+          pageFile,
+          destPath,
+          env,
+          file: new File(absoluteDestPath, pageFile.srcDirectoryPath)
+        })
+        break;
+      case '.css':
+        content = await transformer.css({pageFile, destPath, env, file: new File(srcPath, pageFile.srcDirectoryPath)})
+        break;
+      case '.js':
+      case '.mjs':
+      case '.ts':
+      case '.jsx':
+      case '.tsx':
+        content = await transformer.js({env, file: new File(srcPath, pageFile.srcDirectoryPath)})
+        break;
+      default:
+        await copyFile(srcPath, absoluteDestPath)
+    }
+    
+    if (typeof content === 'string') {
+      await writeFile(absoluteDestPath, content);
+    }
+    
   }
 }
 
@@ -225,7 +259,7 @@ function getFileSourceHashedDestPath(src) {
   let fileDestPath = '';
   const hash = uniqueAlphaNumericId(16);
   const ext = path.extname(src);
-
+  
   switch (ext) {
     case '.sass':
     case '.scss':
