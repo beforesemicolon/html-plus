@@ -45,7 +45,7 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
       resourcePath = path.join(pagesDirectoryPath, req.path);
   
       try {
-        const file = new File(resourcePath);
+        const file = new File(resourcePath, pagesDirectoryPath);
         
         switch (ext) {
           case '.scss':

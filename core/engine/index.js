@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const express = require("express");
 const {pageAndResourcesMiddleware} = require("./page-and-resources-middleware");
 const {extractPartialAndPageRoutes} = require("./extract-partial-and-page-routes");
 const {transform} = require('../transform');
@@ -108,7 +109,8 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
         pagesRoutes,
         pagesDirectoryPath,
         opt
-      ))
+      ));
+      app.use(express.static(pagesDirectoryPath))
       
       console.log('HTML+ engine is ready');
     })
