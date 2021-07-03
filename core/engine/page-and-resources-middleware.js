@@ -70,7 +70,8 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
           case '.ts':
           case '.tsx':
           case '.mjs':
-            content = await transformResource.js({file, env});
+            const result = await transformResource.js({file, env});
+            content = result.content;
             res.setHeader('Content-Type', 'application/javascript');
             break;
         }

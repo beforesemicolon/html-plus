@@ -8,7 +8,13 @@ const cssnano = require('cssnano');
 const comments = require('postcss-discard-comments');
 const {readFileContent} = require("../utils/readFileContent");
 
-const resolveUrl = assetsPath => (urlInfo) => {
+const resolveUrl = (assetsPath, linkedResources, file) => (urlInfo) => {
+  if (file) {
+    linkedResources.push(path.resolve(file.fileDirectoryPath, urlInfo.url)
+      .replace(file.srcDirectoryPath, '')
+      .replace(process.cwd(), ''));
+  }
+  
   return `${assetsPath}/${path.basename(urlInfo.url)}`
 };
 
@@ -23,7 +29,11 @@ const defaultOptions = {
 };
 
 async function cssTransformer(content, opt = defaultOptions) {
-  if (content && typeof content === 'object') {
+  if (content === undefined || content === null) {
+      return '';
+  }
+  
+  if (typeof content === 'object') {
     opt = content;
     content = null;
   
@@ -50,6 +60,7 @@ async function cssTransformer(content, opt = defaultOptions) {
   }
   
   let post = null;
+  const linkedResources = [];
   
   if (opt.env === 'production') {
     post = postcss([
@@ -67,11 +78,11 @@ async function cssTransformer(content, opt = defaultOptions) {
     
     if (opt.assetsPath) {
       post.use(url({
-        url: resolveUrl(opt.assetsPath)
+        url: resolveUrl(opt.assetsPath, linkedResources, opt.file)
       }));
     }
     
-    // options.map = true;
+    options.map = true;
   } else {
     post = postcss(plugins);
   }
@@ -79,7 +90,9 @@ async function cssTransformer(content, opt = defaultOptions) {
   return post
     .process(content, options)
     .then(res => {
-      return res.css;
+      return opt.env === 'production' || opt.file
+        ? {content: res.css, linkedResources}
+        : res.css;
     })
 }
 

@@ -1,5 +1,6 @@
 const esbuild = require('esbuild');
 const path = require('path');
+const {readFileContent} = require("../utils/readFileContent");
 const {File} = require("../File");
 
 const defaultOptions = {
@@ -7,12 +8,53 @@ const defaultOptions = {
   file: null,
   target: 'es2016',
   envVariables: {},
+  loaders: {},
   loader: 'js',
   tsConfigPath: '',
   sourcemap: false,
   sourceFile: '',
   workingDirectoryPath: ''
 }
+
+const loaderPlugin = (file) => ({
+  name: 'files',
+  setup(build) {
+    build.onLoad({ filter: /\.[a-zA-Z0-9]{2,}$/ }, async (args) => {
+      const ext = path.extname(args.path);
+      
+      switch (ext) {
+        case '.html':
+        case '.xml':
+        case '.svg':
+          return {
+            contents: readFileContent(args.path),
+            loader: 'text',
+          }
+        case '.js':
+        case '.mjs':
+        case '.cjs':
+          return {loader: 'js'}
+        case '.ts':
+        case '.tsx':
+        case '.jsx':
+        case '.json':
+        case '.css':
+          return {loader: ext.substring(1)}
+        case '.txt':
+          return {loader: 'text'}
+        case '.data':
+          return {loader: 'binary'}
+        default:
+          return {
+            contents: args.path
+              .replace(file.srcDirectoryPath, '')
+              .replace(process.cwd(), ''),
+            loader: 'file',
+          }
+      }
+    })
+  },
+})
 
 const getConfig = (opt, configPath) => {
   let config = null;
@@ -84,16 +126,29 @@ async function jsTransformer(content, opt = defaultOptions) {
         tsconfig: configPath,
         absWorkingDir: workingDirectory,
         entryPoints: [opt.file.fileAbsolutePath],
+        allowOverwrite: true,
         bundle: true,
+        outdir: opt.file.srcDirectoryPath,
         write: false,
+        plugins: [loaderPlugin(opt.file)]
       })
       .then(res => {
         res.warnings.forEach(console.warn);
-        return res.outputFiles[0].text;
+        
+        if (res.errors.length) {
+            throw res.errors;
+        }
+        
+        return res.outputFiles.reduce((acc, file) => {
+          if (/\.(?:c|m)?(?:t|j)sx?$/.test(file.path)) {
+            acc.content = file.text;
+          } else {
+            acc.linkedResources.push(file)
+          }
+          
+          return acc;
+        }, {content: '', linkedResources: []})
       })
-      .catch(e => {
-        throw new Error(e.message)
-      });
   }
   
   return '';

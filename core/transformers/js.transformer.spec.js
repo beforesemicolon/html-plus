@@ -99,7 +99,7 @@ describe('jsTransformer', () => {
 
       return jsTransformer({file})
         .then(res => {
-          expect(res.replace(/\s+/g, ''))
+          expect(res.content.replace(/\s+/g, ''))
             .toEqual(data.jsFileResult.replace(/\s+/g, ''));
         })
     });
@@ -111,7 +111,7 @@ describe('jsTransformer', () => {
 
       return jsTransformer({file})
         .then(res => {
-          expect(res.replace(/\s+/g, ''))
+          expect(res.content.replace(/\s+/g, ''))
             .toEqual(data.tsFileResult.replace(/\s+/g, ''));
         });
     });
@@ -123,7 +123,7 @@ describe('jsTransformer', () => {
 
       return jsTransformer({file})
         .then(res => {
-          expect(res.replace(/\s+/g, ''))
+          expect(res.content.replace(/\s+/g, ''))
             .toEqual(data.reactResult.replace(/\s+/g, ''));
         });
     });

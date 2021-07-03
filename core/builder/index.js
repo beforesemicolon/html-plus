@@ -35,42 +35,43 @@ async function build(options = defaultOptions) {
   console.time('\nDone');
   return getDirectoryFilesDetail(options.srcDir, 'html')
     .then(async files => {
-      options.partialFiles = extractPartials(files, options.srcDir);
-      let pages;
-      sourcePaths = {};
-      
-      if (fs.existsSync(options.destDir)) {
-        await rmdir(options.destDir, {recursive: true});
-      }
-      
-      await mkdir(options.destDir);
-      await mkdir(path.join(options.destDir, 'stylesheets'));
-      await mkdir(path.join(options.destDir, 'scripts'));
-      await mkdir(path.join(options.destDir, 'assets'));
-      
-      if (options.template) {
-        if (options.templateContextDataList.length) {
-          console.log(`Building template ${chalk.green(options.template)} for ${chalk.greenBright(options.templateContextDataList.length)} data entries...`);
-          return await Promise.all(options.templateContextDataList.map(async ([fileName, contextData]) => {
-            return savePageAndResources(await processPage(options.template, fileName, {
-              ...options,
-              contextData,
-            }), options);
-          }));
-        } else {
-          return savePageAndResources(await processPage(options.template, path.basename(options.template), {
-            ...options,
-            get contextData() {
-              return typeof options.contextDataProvider === 'function'
-                ? options.contextDataProvider(options.template)
-                : {};
-            },
-          }), options);
-        }
-      } else {
-        // check if source directory exists
-        // read all html files inside the source directory
-      }
+      console.log('-- files', files);
+      // options.partialFiles = extractPartials(files, options.srcDir);
+      // let pages;
+      // sourcePaths = {};
+      //
+      // if (fs.existsSync(options.destDir)) {
+      //   await rmdir(options.destDir, {recursive: true});
+      // }
+      //
+      // await mkdir(options.destDir);
+      // await mkdir(path.join(options.destDir, 'stylesheets'));
+      // await mkdir(path.join(options.destDir, 'scripts'));
+      // await mkdir(path.join(options.destDir, 'assets'));
+      //
+      // if (options.template) {
+      //   if (options.templateContextDataList.length) {
+      //     console.log(`Building template ${chalk.green(options.template)} for ${chalk.greenBright(options.templateContextDataList.length)} data entries...`);
+      //     return await Promise.all(options.templateContextDataList.map(async ([fileName, contextData]) => {
+      //       return savePageAndResources(await processPage(options.template, fileName, {
+      //         ...options,
+      //         contextData,
+      //       }), options);
+      //     }));
+      //   } else {
+      //     return savePageAndResources(await processPage(options.template, path.basename(options.template), {
+      //       ...options,
+      //       get contextData() {
+      //         return typeof options.contextDataProvider === 'function'
+      //           ? options.contextDataProvider(options.template)
+      //           : {};
+      //       },
+      //     }), options);
+      //   }
+      // } else {
+      //   // check if source directory exists
+      //   // read all html files inside the source directory
+      // }
     })
     .then(() => {
       console.timeEnd('\nDone');
