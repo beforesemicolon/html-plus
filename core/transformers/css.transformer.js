@@ -6,22 +6,46 @@ const purgeCSS = require('@fullhuman/postcss-purgecss');
 const atImport = require("postcss-import");
 const cssnano = require('cssnano');
 const comments = require('postcss-discard-comments');
+const {uniqueAlphaNumericId} = require("../utils/unique-alpha-numeric-id");
 const {readFileContent} = require("../utils/readFileContent");
 
-const resolveUrl = (assetsPath, linkedResources, file) => (urlInfo) => {
-  if (file) {
-    linkedResources.push(path.resolve(file.fileDirectoryPath, urlInfo.url)
-      .replace(file.srcDirectoryPath, '')
-      .replace(process.cwd(), ''));
+const resolveUrl = (assetsPath, linkedResources, assetsHashedMap, file) => (urlInfo) => {
+  let absPath = urlInfo.absolutePath;
+  if (!assetsHashedMap[absPath]) {
+    const relativePath = urlInfo.relativePath.match(/(?=\w).+/)[0];
+    let found = false;
+    
+    for (let key in assetsHashedMap) {
+      if (key.endsWith(relativePath)) {
+        absPath = key;
+        found = true;
+        break;
+      }
+    }
+    
+    if (!found) {
+      assetsHashedMap[urlInfo.absolutePath] = {
+        path: urlInfo.absolutePath,
+        hash: uniqueAlphaNumericId(8)
+      }
+    }
   }
   
-  return `${assetsPath}/${path.basename(urlInfo.url)}`
+  linkedResources.push(absPath);
+  
+  const ext = path.extname(urlInfo.url);
+  const hashedFileName = path
+    .basename(urlInfo.url)
+    .replace(/\.[a-zA-Z0-9]{2,}$/, `-${assetsHashedMap[absPath].hash}${ext}`)
+  
+  return `${assetsPath}/${hashedFileName}`;
 };
 
 const defaultOptions = {
   plugins: [],
   destPath: undefined,
   assetsPath: '',
+  assetsHashedMap: {},
   env: 'development',
   map: false,
   file: null,
@@ -78,7 +102,7 @@ async function cssTransformer(content, opt = defaultOptions) {
     
     if (opt.assetsPath) {
       post.use(url({
-        url: resolveUrl(opt.assetsPath, linkedResources, opt.file)
+        url: resolveUrl(opt.assetsPath, linkedResources, opt.assetsHashedMap, opt.file)
       }));
     }
     
