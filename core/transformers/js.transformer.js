@@ -16,7 +16,7 @@ const defaultOptions = {
   workingDirectoryPath: ''
 }
 
-const loaderPlugin = (file) => ({
+const loaderPlugin = (file, linkedResources) => ({
   name: 'files',
   setup(build) {
     build.onLoad({ filter: /\.[a-zA-Z0-9]{2,}$/ }, async (args) => {
@@ -45,6 +45,7 @@ const loaderPlugin = (file) => ({
         case '.data':
           return {loader: 'binary'}
         default:
+          linkedResources.push(args.path);
           return {
             contents: args.path
               .replace(file.srcDirectoryPath, '')
@@ -121,6 +122,8 @@ async function jsTransformer(content, opt = defaultOptions) {
       options.format = 'iife'
     }
     
+    const linkedResources = []
+    
     return esbuild.build({
         ...options,
         tsconfig: configPath,
@@ -130,7 +133,7 @@ async function jsTransformer(content, opt = defaultOptions) {
         bundle: true,
         outdir: opt.file.srcDirectoryPath,
         write: false,
-        plugins: [loaderPlugin(opt.file)]
+        plugins: [loaderPlugin(opt.file, linkedResources)]
       })
       .then(res => {
         res.warnings.forEach(console.warn);
@@ -139,15 +142,9 @@ async function jsTransformer(content, opt = defaultOptions) {
             throw res.errors;
         }
         
-        return res.outputFiles.reduce((acc, file) => {
-          if (/\.(?:c|m)?(?:t|j)sx?$/.test(file.path)) {
-            acc.content = file.text;
-          } else {
-            acc.linkedResources.push(file)
-          }
-          
-          return acc;
-        }, {content: '', linkedResources: []})
+        const out = res.outputFiles.find((file) => /\.(?:c|m)?(?:t|j)sx?$/.test(file.path));
+        
+        return {content: out.text, linkedResources}
       })
   }
   

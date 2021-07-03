@@ -9,7 +9,7 @@ const comments = require('postcss-discard-comments');
 const {uniqueAlphaNumericId} = require("../utils/unique-alpha-numeric-id");
 const {readFileContent} = require("../utils/readFileContent");
 
-const resolveUrl = (assetsPath, linkedResources, assetsHashedMap, file) => (urlInfo) => {
+const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) => {
   let absPath = urlInfo.absolutePath;
   if (!assetsHashedMap[absPath]) {
     const relativePath = urlInfo.relativePath.match(/(?=\w).+/)[0];
