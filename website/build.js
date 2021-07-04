@@ -1,11 +1,11 @@
 const {build} = require('./../core/builder');
 const path = require('path');
+const homePage = require('./data/home.page');
 const documentationPage = require('./data/documentation.page');
+const learnPage = require('./data/learn.page');
 const site = require('./data/site.json');
 const packageJSON = require('./../package.json');
 const {CodeSnippet} = require("./tags/code-snippet");
-
-const documentTemplate = path.resolve(__dirname, './pages/documentation/index.html');
 
 const collectPaths = list => {
   const paths = new Set();
@@ -27,10 +27,12 @@ const paths = collectPaths(documentationPage.menu.list);
 
 build({
   srcDir: path.resolve(__dirname, './pages'),
-  destDir: path.resolve(__dirname, './public'),
+  destDir: path.resolve(__dirname, '../docs'),
   staticData: {
     pages: {
-      documentation: documentationPage
+      documentation: documentationPage,
+      home: homePage,
+      learn: learnPage,
     },
     site: {
       ...site,
@@ -44,13 +46,16 @@ build({
   customTags: [
     CodeSnippet,
   ],
-  template: documentTemplate,
-  templateContextDataList: Array.from(paths, (dt) => ([`${path.basename(dt)}.html`, {path: dt}])),
-  // templateContextDataList: [{path: '/documentation/getting-started'}],
+  contextDataProvider: (page) => {
+    return {path: page.path}
+  },
+  templates: [
+    {
+      path: path.resolve(__dirname, './pages/documentation/index.html'),
+      dataList: Array.from(paths, dt => ([dt, {path: dt}]))
+    }
+  ]
 })
-  .then(res => {
-    console.log('-- done', res);
-  })
   .catch(e => {
-    console.log('-- failed', e);
+    console.log('build failed', e);
   })
