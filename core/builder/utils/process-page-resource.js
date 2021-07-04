@@ -50,6 +50,7 @@ async function processPageResource({srcPath, srcDestPath, pageFile}, destPath, r
       if (!resources[source].copied) {
         const srcDestPath = path.join(destPath, getFileSourceHashedDestPath(source, resources[source].hash));
         resources[source].copied = true;
+        console.log(source.replace(process.cwd(), ''));
         
         try {
           await copyFile(source, srcDestPath).catch();
