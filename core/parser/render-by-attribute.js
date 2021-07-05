@@ -15,7 +15,7 @@ function renderByAttribute(node, options) {
         value = processCustomAttributeValue(handler, undoSpecialCharactersInHTML(node.attributes[attr]), data);
       }
   
-      node.removeAttribute(attr)
+      node.removeAttribute(attr);
       
       const result = handler.render(value, node);
 

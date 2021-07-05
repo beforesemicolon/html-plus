@@ -1,13 +1,19 @@
 const path = require('path');
 const {required} = require("./utils/required");
 const {readFileContent} = require("./utils/readFileContent");
-const {defineGetter} = require("./utils/define-getter");
 
 class File {
   resources = [];
   resourceBase = '';
   #content = '';
   #loaded = false;
+  #srcDirectoryPath = '';
+  #ext = '';
+  #file = '';
+  #name = '';
+  #filePath = '';
+  #fileAbsolutePath = '';
+  #fileDirectoryPath = '';
   
   constructor(itemPath = required('itemPath'), src = '') {
     const file = path.basename(itemPath);
@@ -16,13 +22,41 @@ class File {
     src = src || (itemPath.replace(file, ''));
     itemPath = path.resolve(src, itemPath);
     
-    defineGetter(this, 'srcDirectoryPath', src);
-    defineGetter(this, 'ext', ext);
-    defineGetter(this, 'file', file);
-    defineGetter(this, 'name', file.replace(ext, ''));
-    defineGetter(this, 'filePath', itemPath.replace(src, ''));
-    defineGetter(this, 'fileAbsolutePath', itemPath);
-    defineGetter(this, 'fileDirectoryPath', itemPath.replace(file, ''));
+    this.#srcDirectoryPath = src;
+    this.#ext = ext;
+    this.#file = file;
+    this.#name = file.replace(ext, '');
+    this.#filePath = itemPath.replace(src, '');
+    this.#fileAbsolutePath = itemPath;
+    this.#fileDirectoryPath = itemPath.replace(file, '');
+  }
+  
+  get srcDirectoryPath() {
+    return this.#srcDirectoryPath;
+  }
+  
+  get ext() {
+    return this.#ext;
+  }
+  
+  get file() {
+    return this.#file;
+  }
+  
+  get name() {
+    return this.#name;
+  }
+  
+  get filePath() {
+    return this.#filePath;
+  }
+  
+  get fileAbsolutePath() {
+    return this.#fileAbsolutePath;
+  }
+  
+  get fileDirectoryPath() {
+    return this.#fileDirectoryPath;
   }
   
   get content() {

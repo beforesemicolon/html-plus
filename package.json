@@ -1,14 +1,16 @@
 {
   "name": "@beforesemicolon/html-plus",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "HTML Template Engine/Language",
   "main": "dist/index.js",
   "files": [
     "dist"
   ],
+  "homepage": "https://html-plus.beforesemicolon.com/",
   "scripts": {
     "tests": "jest",
     "build": "rm -rf dist && tsc",
+    "build:docs": "node website/build.js",
     "local": "nodemon --watch website -e '*' --exec node website/server-test.js"
   },
   "keywords": [
@@ -35,9 +37,11 @@
     "esbuild": "^0.11.1",
     "html-minifier": "^4.0.0",
     "less": "^4.1.1",
+    "node": "^14.17.1",
     "node-html-parser": "^2.1.0",
     "node-sass": "^4.14.1",
     "postcss": "^8.2.9",
+    "postcss-discard-comments": "^5.0.1",
     "postcss-import": "^14.0.2",
     "postcss-preset-env": "^6.7.0",
     "postcss-url": "^10.1.3",

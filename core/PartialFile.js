@@ -26,7 +26,7 @@ class PartialFile extends File {
   
   render(contextData = {}) {
     const parsedHTML = parse(replaceSpecialCharactersInHTML(this.content), {
-      comment: true
+      comment: this.options.env === 'development'
     });
     parsedHTML.context = contextData;
     const partialNode = new HTMLNode(parsedHTML, this.options);

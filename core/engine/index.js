@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const express = require("express");
 const {pageAndResourcesMiddleware} = require("./page-and-resources-middleware");
 const {extractPartialAndPageRoutes} = require("./extract-partial-and-page-routes");
 const {transform} = require('../transform');
@@ -62,7 +63,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
               customTags: opt.customTags,
               customAttributes: opt.customAttributes,
               partialFiles: partials,
-              onTraverse: (node, file) => {
+              onBeforeRender: (node, file) => {
                 let attrName = '';
                 
                 if (node.tagName === 'link') {
@@ -82,7 +83,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
                 
                 if (srcPath && !isURL) {
                   const resourceFullPath = path.resolve(file.fileDirectoryPath, srcPath);
-                  
+
                   if (resourceFullPath.startsWith(pagesDirectoryPath)) {
                     node.setAttribute(attrName, resourceFullPath.replace(pagesDirectoryPath, ''))
                   }
@@ -108,7 +109,8 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
         pagesRoutes,
         pagesDirectoryPath,
         opt
-      ))
+      ));
+      app.use(express.static(pagesDirectoryPath))
       
       console.log('HTML+ engine is ready');
     })

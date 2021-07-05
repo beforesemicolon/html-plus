@@ -8,6 +8,7 @@ body {
     padding-bottom: 10px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     a:any-link {
       color: $light;
@@ -22,6 +23,11 @@ body {
       strong {
         font-weight: 600;
       }
+    }
+
+
+    iframe {
+      transform: scale(.8);
     }
 
     @media screen and (max-width: 425px) {

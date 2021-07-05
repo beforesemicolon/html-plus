@@ -38,3 +38,4 @@ jobs:
       # Runs a single command using the runners shell
       - name: Test code
         run: npm run tests
+
