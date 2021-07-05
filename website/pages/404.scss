@@ -1,0 +1,11 @@
+@import "./_sass/common";
+@import "./_partials/layout";
+
+.not-found {
+  text-align: center;
+  padding: 50px 30%;
+
+  h2 {
+    font-size: 3rem;
+  }
+}
