@@ -22,7 +22,6 @@ async function getDirectoryFilesDetail(src, types = []) {
   const traverseDirectory = (dirPath) => {
     return readDir(path.resolve(__dirname, dirPath), 'utf8')
       .then(async (items) => {
-        
         for (const item of items) {
           const itemPath = dirPath + '/' + item;
           
@@ -39,17 +38,11 @@ async function getDirectoryFilesDetail(src, types = []) {
                 ext: path.extname(item)
               });
             }
-          } catch (e) {
-            console.error(e);
-            console.error('failed to get stat ', itemPath);
-          }
+          } catch (e) {}
         }
         
         return filePaths
       })
-      .catch(e => {
-        console.error('failed to read dir ', dirPath);
-      });
   };
   
   return traverseDirectory(src);

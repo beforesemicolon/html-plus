@@ -90,7 +90,7 @@ async function cssTransformer(content, opt = defaultOptions) {
       ...plugins,
       purgeCSS({
         content: [
-          `${opt.destPath}/**/*.html`
+          `${opt.destPath || opt.file.srcDirectoryPath}/**/*.html`
         ],
         css: [
           opt.file.fileAbsolutePath
@@ -101,7 +101,7 @@ async function cssTransformer(content, opt = defaultOptions) {
     
     if (opt.assetsPath) {
       post.use(url({
-        url: resolveUrl(opt.assetsPath, linkedResources, opt.assetsHashedMap, opt.file)
+        url: resolveUrl(opt.assetsPath, linkedResources, opt.assetsHashedMap || {}, opt.file)
       }));
     }
     
