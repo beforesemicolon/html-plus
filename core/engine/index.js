@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const express = require("express");
+const {PartialFile} = require("../PartialFile");
 const {pageAndResourcesMiddleware} = require("./page-and-resources-middleware");
-const {extractPartialAndPageRoutes} = require("./extract-partial-and-page-routes");
 const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
 const {File} = require('../File');
@@ -40,17 +40,39 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
     console.warn('HTML+ swapped "ENV" to development because the value provided is not a supported one.')
   }
   
-  getDirectoryFilesDetail(pagesDirectoryPath, 'html')
-    .then(files => {
-      const {partials, pagesRoutes} = extractPartialAndPageRoutes(files, pagesDirectoryPath);
+  const partials = [];
+  const pagesRoutes = {};
+  
+  return getDirectoryFilesDetail(pagesDirectoryPath, filePath => {
+    if (filePath.endsWith('.html')) {
+      const fileName = path.basename(filePath);
       
+      if (fileName.startsWith('_')) {
+        partials.push(new PartialFile(filePath, pagesDirectoryPath));
+      } else {
+        filePath = filePath.replace(pagesDirectoryPath, '');
+        const template = `${filePath.replace('.html', '')}`.slice(1);
+  
+        if (filePath.endsWith('index.html')) {
+          pagesRoutes[filePath.replace('index.html', '')] = template;
+        } else {
+          pagesRoutes[filePath.replace('.html', '')] = template;
+        }
+  
+        pagesRoutes[filePath.replace(/\/$/, '')] = template;
+      }
+    }
+    
+    return false;
+  })
+    .then(() => {
       app.engine('html', (filePath, {settings, _locals, cache, ...context}, callback) => {
         const fileName = path.basename(filePath);
-        
+
         if (fileName.startsWith('_')) {
           callback(new Error(`Cannot render partial(${fileName}) file as page. Partial files can only be included.`));
         }
-        
+
         fs.readFile(filePath, (err, content) => {
           if (err) return callback(err);
           const file = new File(filePath, settings.views);
@@ -65,22 +87,22 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
               partialFiles: partials,
               onBeforeRender: (node, file) => {
                 let attrName = '';
-                
+
                 if (node.tagName === 'link') {
                   attrName = 'href';
                 } else if (node.tagName === 'script') {
                   attrName = 'src';
                 }
-                
+
                 const srcPath = node.attributes[attrName];
                 let isURL = false;
-                
+
                 try {
                   new URL(srcPath);
                   isURL = true;
                 } catch (e) {
                 }
-                
+
                 if (srcPath && !isURL) {
                   const resourceFullPath = path.resolve(file.fileDirectoryPath, srcPath);
 
@@ -90,7 +112,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
                 }
               }
             })
-            
+
             callback(null, result);
           } catch (e) {
             console.log(e.message);
@@ -101,17 +123,17 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
           }
         })
       });
-      
+
       app.set('views', pagesDirectoryPath);
       app.set('view engine', 'html');
-      
+
       app.use(pageAndResourcesMiddleware(
         pagesRoutes,
         pagesDirectoryPath,
         opt
       ));
       app.use(express.static(pagesDirectoryPath))
-      
+
       console.log('HTML+ engine is ready');
     })
 };

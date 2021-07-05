@@ -10,6 +10,8 @@ const sourcesExtensions = new Set([
   '.less',
   '.styl',
   '.js',
+  '.mjs',
+  '.cjs',
   '.ts',
   '.tsx',
   '.jsx',
@@ -50,19 +52,22 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
         switch (ext) {
           case '.scss':
           case '.sass':
-            content = await transformResource.sass({file, env});
+            content = await transformResource.sass({file});
+            content = (await transformResource.css(content, {file})).content;
             res.setHeader('Content-Type', 'text/css');
             break;
           case '.less':
-            content = await transformResource.less({file, env});
+            content = await transformResource.less({file});
+            content = (await transformResource.css(content, {file})).content;
             res.setHeader('Content-Type', 'text/css');
             break;
           case '.styl':
-            content = await transformResource.stylus({file, env});
+            content = await transformResource.stylus({file});
+            content = (await transformResource.css(content, {file})).content;
             res.setHeader('Content-Type', 'text/css');
             break;
           case '.css':
-            content = await transformResource.css({file, env});
+            content = (await transformResource.css(content, {file})).content;
             res.setHeader('Content-Type', 'text/css');
             break;
           case '.js':
@@ -70,7 +75,8 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
           case '.ts':
           case '.tsx':
           case '.mjs':
-            const result = await transformResource.js({file, env});
+          case '.cjs':
+            const result = await transformResource.js({file});
             content = result.content;
             res.setHeader('Content-Type', 'application/javascript');
             break;
@@ -81,7 +87,7 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
         console.error(`Failed to load page resource "${req.path}"`, e);
         return res.sendStatus(404);
       }
-    } else {
+    } else if(!ext || ext === '.html') {
       const template = pagesRoutes[req.path] ?? pagesRoutes[`${req.path}/`] ?? pagesRoutes['/404'];
       
       if (template) {
