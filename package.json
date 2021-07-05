@@ -6,6 +6,7 @@
   "files": [
     "dist"
   ],
+  "homepage": "https://html-plus.beforesemicolon.com/",
   "scripts": {
     "tests": "jest",
     "build": "rm -rf dist && tsc",

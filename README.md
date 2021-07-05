@@ -6,6 +6,31 @@ HTML Template Language
 ![Build](https://github.com/beforesemicolon/html-plus//actions/workflows/main.yml/badge.svg)
 ![license](https://img.shields.io/github/license/beforesemicolon/html-plus)
 
+## Simply HTML and much more
+```html
+<variable name="page" value="$data.pages.home"></variable>
+
+<include partial="layout" data="page">
+	<link rel="stylesheet" href="./home.scss" inject-id="style">
+	<link rel="stylesheet" href="./../../node_modules/highlight.js/styles/github-dark-dimmed.css" inject-id="style">
+    
+    <include partial="header"></include>
+    
+	<section role="banner" class="wrapper">
+		<h2>{$data.site.description}</h2>
+		<p>{page.banner.description}</p>
+		<div class="doc-links">
+			<a #repeat="page.banner.links"
+			   #attr="class, cta, $item.path === '/learn'"
+			   href="{$item.path}" class="link-button">{$item.label}</a>
+		</div>
+		<p>License: <strong>{$data.site.license}</strong></p>
+	</section>
+    
+	<link rel="stylesheet" href="./home.ts" inject-id="script">
+
+</include>
+```
 
 ## Install
 Install the engine inside your project directory.
@@ -61,18 +86,16 @@ The way you organize your page structure will be used to create your website rou
 ## Template Tags & Attributes
 HTML+ comes with couple of built-in tags that are meant to aid you with your pages. These are:
 
-* **[include]()**: lets you include reusable partial html parts
-* **[inject]()**: lets you inject html into partial files. Works like html slot
-* **[variable]()**: lets you create scope data inside your template
-* **[fragment]()**: lets you exclude the wrapping tag from rendering as a place to add logic
+* **[include](https://html-plus.beforesemicolon.com/documentation/api-reference/include-tag)**: lets you include reusable partial html parts
+* **[inject](https://html-plus.beforesemicolon.com/documentation/api-reference/inject-tag)**: lets you inject html into partial files. Works like html slot
+* **[variable](https://html-plus.beforesemicolon.com/documentation/api-reference/variable-tag)**: lets you create scope data inside your template
+* **[fragment](https://html-plus.beforesemicolon.com/documentation/api-reference/fragment-tag)**: lets you exclude the wrapping tag from rendering as a place to add logic
 
 There are also some built-in attributes that let you control your tags even further. These are:
 
-* **[if]()**: lets you conditionally render a tag
-* **[repeat]()**: allows you to specify how the tag repeats bases on data you provide
-* **[fragment]()**: has the same purpose as the tag version of it
-* **[inject]()**: lets you flags the html you need to inject. works like the slot attribute
-* **[compiler]()**: lets you specify the compiler for style and script tags like typescript and SASS.
+* **[if](https://html-plus.beforesemicolon.com/documentation/api-reference/if-attribute)**: lets you conditionally render a tag
+* **[repeat](https://html-plus.beforesemicolon.com/documentation/api-reference/repeat-attribute)**: allows you to specify how the tag repeats bases on data you provide
+* **[fragment](https://html-plus.beforesemicolon.com/documentation/api-reference/fragment-attribute)**: has the same purpose as the tag version of it
 
 These list have the potential to grow but you can also [create your own tags and attributes]()
 that fits your project. You can come up with your own rules and behavior for the template and this
@@ -101,13 +124,3 @@ You can reference the `post.json` file inside your template like so.
 
 For special attributes you don't need the curly braces to bind data, but everywhere else you need to wrap
 your data reference inside curly braces. [Check full DOC to learn more]().
-
-
-## Contributing to this Project
-Anyone can help this project grow by using and reporting issues to be addressed.
-
-You can also fork the project and jump into code addressing reported issues, improving code and tests altogether. By doing so, you must follow the following rules:
-* Fixing an issue in code must be followed by test updates or new tests that test your solution;
-* Improving code quality is always welcomed and when necessary, comment accordingly;
-* Any breaking change or new feature must be first reported as an issue with "new feature" or "proposal" tags and can be added to the milestone and project plan to be addressed;
-* Replacing current packages used or creating custom code to address things is super encouraged and preferred where it makes sense.
