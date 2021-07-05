@@ -218,6 +218,11 @@ const data = {
             partial: 'attr-attribute',
           },
           {
+            title: "build()",
+            path: `${apiReferenceLink}/build-function`,
+            partial: 'build-function'
+          },
+          {
             title: "Comment",
             path: `${apiReferenceLink}/comment-class`,
             partial: 'comment-class',
@@ -229,8 +234,8 @@ const data = {
           },
           {
             title: "engine()",
-            path: `${apiReferenceLink}/engine`,
-            partial: 'engine'
+            path: `${apiReferenceLink}/engine-function`,
+            partial: 'engine-function'
           },
           {
             title: "File",
