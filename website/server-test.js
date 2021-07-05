@@ -11,11 +11,12 @@ const packageJSON = require('./../package.json');
 const {collectPaths} = require("./data/collect-paths");
 
 const app = express();
-
+const env = process.env.NODE_ENV || 'development';
 const paths = collectPaths(documentationPage.menu.list);
 
 (async () => {
   await engine(app, path.resolve(__dirname, './pages'), {
+    env,
     staticData: {
       pages: {
         documentation: documentationPage,

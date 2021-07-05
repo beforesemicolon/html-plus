@@ -6,6 +6,7 @@ const {pageAndResourcesMiddleware} = require("./page-and-resources-middleware");
 const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
 const {File} = require('../File');
+const validUrl = require('valid-url');
 
 const defaultOptions = {
   staticData: {},
@@ -85,7 +86,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
               customTags: opt.customTags,
               customAttributes: opt.customAttributes,
               partialFiles: partials,
-              onBeforeRender: (node, file) => {
+              onBeforeRender: (node, nodeFile) => {
                 let attrName = '';
 
                 if (node.tagName === 'link') {
@@ -95,16 +96,9 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
                 }
 
                 const srcPath = node.attributes[attrName];
-                let isURL = false;
 
-                try {
-                  new URL(srcPath);
-                  isURL = true;
-                } catch (e) {
-                }
-
-                if (srcPath && !isURL) {
-                  const resourceFullPath = path.resolve(file.fileDirectoryPath, srcPath);
+                if (srcPath && !validUrl.isUri(srcPath)) {
+                  const resourceFullPath = path.resolve(nodeFile.fileDirectoryPath, srcPath);
 
                   if (resourceFullPath.startsWith(pagesDirectoryPath)) {
                     node.setAttribute(attrName, resourceFullPath.replace(pagesDirectoryPath, ''))
@@ -115,7 +109,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
 
             callback(null, result);
           } catch (e) {
-            console.log(e.message);
+            console.error(e.message);
             const cleanMsg = e.message
               .replace(/\[\d+m/g, '')
               .replace(/(>|<)/g, m => m === '<' ? '&lt;' : '&gt;');
