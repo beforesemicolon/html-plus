@@ -39,6 +39,3 @@ jobs:
       - name: Test code
         run: npm run tests
 
-      # Deploy site
-      - name: Deploy docs
-        run: npm run deploy
