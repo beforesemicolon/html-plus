@@ -47,12 +47,12 @@ build({
     CodeSnippet,
   ],
   contextDataProvider: (page) => {
-    return {path: page.path}
+    return {path: page.path, base: 'https://beforesemicolon.github.io/html-plus/'}
   },
   templates: [
     {
       path: path.resolve(__dirname, './pages/documentation/index.html'),
-      dataList: Array.from(paths, dt => ([dt, {path: dt}]))
+      dataList: Array.from(paths, dt => ([dt, {path: dt, base: 'https://beforesemicolon.github.io/html-plus/'}]))
     }
   ]
 })
