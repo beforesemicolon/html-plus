@@ -48,8 +48,7 @@ const defaultOptions = {
   assetsHashedMap: {},
   env: 'development',
   map: false,
-  file: null,
-  pageFile: null,
+  file: null
 };
 
 async function cssTransformer(content, opt = defaultOptions) {
@@ -91,7 +90,7 @@ async function cssTransformer(content, opt = defaultOptions) {
       ...plugins,
       purgeCSS({
         content: [
-          `${opt.file.srcDirectoryPath}/**/*.html`
+          `${opt.destPath}/**/*.html`
         ],
         css: [
           opt.file.fileAbsolutePath

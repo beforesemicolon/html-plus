@@ -46,7 +46,7 @@ async function build(options = defaultOptions) {
   console.time(chalk.cyan('\ntotal duration'));
   console.log(chalk.blue('\nReading source directory'));
   console.time(chalk.blue('reading duration'));
-  return getDirectoryFilesDetail(options.srcDir, collectFilePaths(options.destDir, {partials, pages, resources}))
+  return getDirectoryFilesDetail(options.srcDir, collectFilePaths(options.srcDir, {partials, pages, resources}))
     .then(async () => {
       console.timeEnd(chalk.blue('reading duration'));
       // clear previous destination directory
@@ -77,7 +77,7 @@ async function build(options = defaultOptions) {
           const contextData = typeof options.contextDataProvider === 'function'
             ? options.contextDataProvider({file: page, path: pageRoutePath})
             : {}
-    
+          
           await handleProcessedPageResult(
             processPage(page, path.basename(page), resources, {...options, contextData, partials}),
             pageResources,
@@ -98,19 +98,19 @@ async function build(options = defaultOptions) {
             const logMsg = chalk.green(`${filePath} `).padEnd(75, '-');
             console.time(logMsg);
             let fileName = path.basename(filePath);
-  
+
             if (!fileName.endsWith('.html')) {
               fileName += '.html';
               filePath += '.html';
             }
-  
+
             await handleProcessedPageResult(
-              processPage(template.path, fileName, resources, {...options, contextData, partials}),
+              processPage(template.path, fileName, resources, {...options, contextData, partials}, filePath),
               pageResources,
               options,
               filePath
             );
-  
+
             console.timeEnd(logMsg);
           }
         }
@@ -126,7 +126,7 @@ async function build(options = defaultOptions) {
         })
       )
       console.timeEnd(chalk.greenBright('processing duration'));
-  
+
       console.timeEnd(chalk.cyan('\ntotal duration'));
     })
     .catch(async e => {
@@ -158,7 +158,7 @@ async function handleProcessedPageResult({content, linkedSources, file}, pageRes
   }
   
   await mkdir(pageDir, {recursive: true});
-  await writeFile(pageDestPath, content.replace(/\n|\s{2,}/g, ''));
+  await writeFile(pageDestPath, content);
 }
 
 module.exports.build = build;

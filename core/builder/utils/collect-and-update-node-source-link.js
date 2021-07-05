@@ -2,7 +2,7 @@ const {getFileSourceHashedDestPath} = require("./get-file-source-hashed-dest-pat
 const {uniqueAlphaNumericId} = require("../../utils/unique-alpha-numeric-id");
 const path = require('path');
 
-function collectAndUpdateNodeSourceLink(node, pageFile, resources) {
+function collectAndUpdateNodeSourceLink(node, pageFile, resources, fileDirPath) {
   let srcPath = '';
   let srcAttrName = '';
   
@@ -49,7 +49,6 @@ function collectAndUpdateNodeSourceLink(node, pageFile, resources) {
   }
   
   if (srcPath && typeof srcPath === 'string' && !isURL) {
-    
     if (/node_modules\//.test(srcPath)) {
       srcPath = srcPath.replace(/^.+(?=node_modules)/, `${process.cwd()}/`);
     } else {
@@ -64,8 +63,9 @@ function collectAndUpdateNodeSourceLink(node, pageFile, resources) {
     }
     
     const srcDestPath = getFileSourceHashedDestPath(srcPath, resources[srcPath].hash);
-    const relativePath = path.relative(pageFile.fileDirectoryPath, pageFile.srcDirectoryPath) || '.';
-    node.setAttribute(srcAttrName, `${relativePath}/${srcDestPath}`);
+    const relativePath = path.relative(fileDirPath, pageFile.srcDirectoryPath);
+
+    node.setAttribute(srcAttrName, `${relativePath || '.'}/${srcDestPath}`);
     
     return {srcPath, srcDestPath, pageFile};
   }
