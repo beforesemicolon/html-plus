@@ -51,8 +51,7 @@ engine(app, path.resolve(__dirname, './pages'), {
   onPageRequest: (req) => {
     const fullPath = req.path.replace(/(\/|\.html)$/, '');
     return {
-      path: fullPath,
-      base: './'
+      path: fullPath
     }
   }
 });
@@ -65,8 +64,7 @@ app.get('/documentation/:group/:doc?', (req, res, next) => {
     
     if (paths.has(fullPath)) {
       return res.render('documentation', {
-        path: fullPath,
-        base: './'
+        path: fullPath
       });
     } else {
       return res.redirect('/404')
