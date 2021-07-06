@@ -3,7 +3,9 @@
 
 .not-found {
   text-align: center;
-  padding: 50px 30%;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  @include wrapper(350px);
 
   h2 {
     font-size: 3rem;
