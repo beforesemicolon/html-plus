@@ -15,9 +15,7 @@ const {engine} = require('@beforesemicolon/html-plus');
 const app = express();
 
 (async () => {
-	// setup all custom dynamic routes here
-	// to override the site routes
-	// when you await on the engine
+	// setup all middlewares and any route overrides before the engine
 	await engine(app, path.resolve(__dirname, './pages'), {
 		staticData: {
 			site: {
@@ -31,7 +29,8 @@ const app = express();
 })();
 </code-snippet>
 <p>If you await on the engine and have some <a href="/documentation/routes/route-pages">dynamic routes</a>
-you may need to set them up before otherwise any matching static route will override.</p>
+you may need to set them up before otherwise any matching static route will override them. Prefer the engine
+call as the last thing before you call the <strong>listen</strong> method for the server.</p>
 <p>If you are not awaiting the engine, you can just set the routes after. The effect is the same but not
 awaiting on the engine may throw an error if you get to the page before the engine is done processing your
 pages directory.</p>
@@ -89,10 +88,6 @@ pages directory.</p>
 <p>The engine returns undefined.</p>
 <h3>Usage Examples</h3>
 <code-snippet language="js">
-const {engine} = require('@beforesemicolon/html-plus');
-
-const app = express();
-
 engine(app, path.resolve(__dirname, './pages'), {
 	staticData: {
 		site: {
@@ -103,10 +98,6 @@ engine(app, path.resolve(__dirname, './pages'), {
 });
 </code-snippet>
 <code-snippet language="js">
-const {engine} = require('@beforesemicolon/html-plus');
-
-const app = express();
-
 engine(app, path.resolve(__dirname, './pages'), {
 	onPageRequest: (req) => {
 		return {
