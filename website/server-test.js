@@ -15,6 +15,24 @@ const env = process.env.NODE_ENV || 'development';
 const paths = collectPaths(documentationPage.menu.list);
 
 (async () => {
+  app.get('/documentation/:group/:doc?', (req, res, next) => {
+    const ext = path.extname(req.path);
+    
+    if (!ext || ext === '.html') {
+      const fullPath = req.path.replace(/(\/|\.html)$/, '');
+      
+      if (paths.has(fullPath)) {
+        return res.render('documentation', {
+          path: fullPath
+        });
+      } else {
+        return res.redirect('/404')
+      }
+    }
+    
+    next();
+  })
+  
   await engine(app, path.resolve(__dirname, './pages'), {
     env,
     staticData: {
@@ -42,24 +60,6 @@ const paths = collectPaths(documentationPage.menu.list);
       }
     }
   });
-  
-  app.get('/documentation/:group/:doc?', (req, res, next) => {
-    const ext = path.extname(req.path);
-    
-    if (!ext || ext === '.html') {
-      const fullPath = req.path.replace(/(\/|\.html)$/, '');
-      
-      if (paths.has(fullPath)) {
-        return res.render('documentation', {
-          path: fullPath
-        });
-      } else {
-        return res.redirect('/404')
-      }
-    }
-    
-    next();
-  })
   
   const server = http.createServer(app);
   

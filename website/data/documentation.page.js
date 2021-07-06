@@ -6,6 +6,7 @@ const templatingLink = '/documentation/templating';
 const advTemplatingLink = '/documentation/advanced-templating';
 const stylingLink = '/documentation/styling';
 const scriptingLink = '/documentation/scripting';
+const assetsLink = '/documentation/static-assets';
 const buildLink = '/documentation/build';
 const faqLink = '/documentation/faq';
 const apiReferenceLink = '/documentation/api-reference';
@@ -178,6 +179,11 @@ const data = {
         title: "Scripting",
         path: scriptingLink,
         partial: 'scripting',
+      },
+      {
+        title: "Static Assets",
+        path: assetsLink,
+        partial: 'static-assets',
       },
       {
         title: "Build Project",

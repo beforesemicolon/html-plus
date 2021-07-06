@@ -44,12 +44,15 @@ section[role="banner"] {
       font-size: #{"min(max(2rem, 6vw), 2.5rem)"};
       margin: 0 5vw 25px;
 
-      a {
-        padding: 6px 10px;
-      }
-
       & + p {
         display: none;
+      }
+    }
+
+    .doc-links {
+      a {
+        padding: 10px;
+        font-size: 0.9rem;
       }
     }
   }
@@ -104,6 +107,7 @@ section[role="banner"] {
         font-weight: 600;
         text-decoration: none;
         text-transform: capitalize;
+        margin-top: 10px;
       }
     }
   }
@@ -112,6 +116,7 @@ section[role="banner"] {
     .feature-list {
       .feature-card {
         width: 100%;
+        padding: 20px 15px;
       }
     }
   }

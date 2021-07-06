@@ -11,11 +11,11 @@ const app = express();
 engine(app, path.resolve(__dirname, './pages'));
 
 app.get('/documentation/:doc?', (req, res) => {
-	res.render('documentation', {some: "data"})
+	res.render('documentation', {doc: req.params.doc})
 });
 </code-snippet>
 <p>When you call the <em>render</em> method in the express response object, you don't need the initial
-   forward-slash or to indicate the file extension. Every name of file you specify is know to be under the
+   forward-slash or to indicate the file extension. Every name of file you specify is known to be under the
    pages directory path you provided.</p>
 <p>This is also a nice way to pass specific data per route as you will learn more about
    when you explore <a href="/documentation/data">how data works with templates.</a></p>
@@ -23,7 +23,10 @@ app.get('/documentation/:doc?', (req, res) => {
 <p>You can refer to deeply nested templates using the forward-slash to indicate nested template file.</p>
 <code-snippet language="js">
 app.get('/projects/:projectName', (req, res) => {
-	res.render(`projects/project`)
+	res.render(
+		`projects/project`,
+		{projectName: req.params.projectName}
+	)
 });
 </code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>

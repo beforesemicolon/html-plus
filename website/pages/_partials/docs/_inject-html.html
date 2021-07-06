@@ -29,18 +29,20 @@
 <p>The above project template will look like this:</p>
 <code-snippet language="html">
 <!-- project.html  -->
-<h1>Projects</h1>
-<p class="description">Welcome to the projects page</p>
-<nav>
-	<a href="/project-1">Project 1</a>
-	<a href="/project-2">Project 2</a>
-	<a href="/project-3">Project 3</a>
-</nav>
+<header>
+	<h1>Projects</h1>
+	<p class="description">Welcome to the projects page</p>
+	<nav>
+		<a href="/project-1">Project 1</a>
+		<a href="/project-2">Project 2</a>
+		<a href="/project-3">Project 3</a>
+	</nav>
+</header>
 </code-snippet>
-<p>As you can see, any markup you put inside <strong>inject tag</strong> is content to be injected inside
-   the partial if it has a inject tag.</p>
+<p>As you can see, any markup you put inside <strong>include tag</strong> is content to be injected inside
+   the partial if it has an inject tag.</p>
 <h3>Inject specific markup</h3>
-<p>You can also be more specific of what type of content must be inject if you specify an id on the inject tag.</p>
+<p>You can also be more specific of what type of content must be injected if you specify an id on the inject tag.</p>
 <p>Take the following layout template</p>
 <code-snippet language="html">
 <!-- _layout.html  -->
@@ -68,8 +70,8 @@
 	<script src="app.ts" inject-id="script"></script>
 </include>
 </code-snippet>
-<p>In the include tag content above ywe specified all style links to be inject at style inject id, and the script
-to be injected at script inject id. The remainder, unmarked will be injected at a inject tag with no id.</p>
+<p>In the include tag content above, we specified all style links to be inject at style inject id, and the script
+to be injected at script inject id. The remainder unmarked tags will be injected at a inject tag with no id.</p>
 <p>Note that you can inject multiple tags into the same inject id placeholder.</p>
 <p>The above <em>index.html</em> template will resolve to be:</p>
 <code-snippet language="html">
