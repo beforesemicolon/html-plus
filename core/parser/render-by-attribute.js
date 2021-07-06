@@ -3,7 +3,9 @@ const {processCustomAttributeValue} = require("./utils/process-custom-attribute-
 const {defaultAttributesName} = require("../default-attributes");
 
 function renderByAttribute(node, options) {
-  const customAttrs = new Set([...defaultAttributesName, ...Object.keys(options.customAttributes)]);
+  const customAttrs = Array.from(
+    new Set([...defaultAttributesName, ...Object.keys(options.customAttributes)])
+  );
   
   for (let attr of customAttrs) {
     if (node.attributes.hasOwnProperty(attr) && options.customAttributes[attr]) {
