@@ -33,12 +33,7 @@ const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) =
   
   linkedResources.push(absPath);
   
-  const ext = path.extname(urlInfo.url);
-  const hashedFileName = path
-    .basename(urlInfo.url)
-    .replace(/\.[a-zA-Z0-9]{2,}$/, `-${assetsHashedMap[absPath].hash}${ext}`)
-  
-  return `${assetsPath}/${hashedFileName}`;
+  return `${assetsPath}/${path.basename(urlInfo.url)}`;
 };
 
 const defaultOptions = {

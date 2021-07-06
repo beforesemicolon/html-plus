@@ -41,11 +41,11 @@ describe('getFileSourceHashedDestPath', () => {
     const e = './favicon.ico';
     const f = './sample.gif';
   
-    expect(getFileSourceHashedDestPath(a, hash)).toEqual('assets/logo-83ej32e5.png')
-    expect(getFileSourceHashedDestPath(b, hash)).toEqual('assets/bg-83ej32e5.jpeg')
-    expect(getFileSourceHashedDestPath(c, hash)).toEqual('assets/manifest-83ej32e5.json')
-    expect(getFileSourceHashedDestPath(d, hash)).toEqual('assets/sample-83ej32e5.txt')
-    expect(getFileSourceHashedDestPath(e, hash)).toEqual('assets/favicon-83ej32e5.ico')
-    expect(getFileSourceHashedDestPath(f, hash)).toEqual('assets/sample-83ej32e5.gif')
+    expect(getFileSourceHashedDestPath(a, hash)).toEqual('assets/logo.png')
+    expect(getFileSourceHashedDestPath(b, hash)).toEqual('assets/bg.jpeg')
+    expect(getFileSourceHashedDestPath(c, hash)).toEqual('assets/manifest.json')
+    expect(getFileSourceHashedDestPath(d, hash)).toEqual('assets/sample.txt')
+    expect(getFileSourceHashedDestPath(e, hash)).toEqual('assets/favicon.ico')
+    expect(getFileSourceHashedDestPath(f, hash)).toEqual('assets/sample.gif')
   });
 });
