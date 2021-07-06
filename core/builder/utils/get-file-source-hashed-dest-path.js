@@ -29,7 +29,7 @@ function getFileSourceHashedDestPath(src, hash) {
       fileDestPath = path.join('scripts', path.basename(src).replace('.mjs', `-${hash}.mjs`))
       break;
     default:
-      fileDestPath = path.join('assets', path.basename(src).replace(/\.[a-zA-Z0-9]{2,}$/, `-${hash}${ext}`))
+      fileDestPath = path.join('assets', path.basename(src))
   }
   
   return fileDestPath;
