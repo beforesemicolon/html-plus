@@ -82,12 +82,19 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
         return res.sendStatus(404);
       }
     } else if(!ext || ext === '.html') {
-      const template = pagesRoutes[req.path] ?? pagesRoutes[`${req.path}/`] ?? pagesRoutes['/404'];
+      const template = pagesRoutes[req.path] ?? pagesRoutes[`${req.path}/`];
       
       if (template) {
-        return res.render(template, onPageRequest(req) ?? {})
+        return res.render(template, onPageRequest(req) || {})
       } else if(!ext || ext === '.html') {
-        return res.send('<h1>404 - Page Not Found</h1>')
+        
+        if (req.path.startsWith('/404')) {
+            return pagesRoutes['/404']
+              ? res.render(pagesRoutes['/404'])
+              : res.send('<h1>404 - Page Not Found</h1>')
+        }
+        
+        return res.redirect('/404')
       }
     }
     

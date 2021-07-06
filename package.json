@@ -1,6 +1,6 @@
 {
   "name": "@beforesemicolon/html-plus",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "HTML Template Engine/Language",
   "main": "dist/index.js",
   "files": [
