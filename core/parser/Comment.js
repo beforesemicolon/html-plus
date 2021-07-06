@@ -1,6 +1,10 @@
 const {Text} = require('./Text');
 
 class Comment extends Text {
+  constructor(value) {
+    super(value);
+  }
+  
   get type() {
     return 'comment';
   }

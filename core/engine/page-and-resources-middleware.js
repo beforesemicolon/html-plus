@@ -1,5 +1,4 @@
 const path = require("path");
-const {readFileContent} = require("../utils/readFileContent");
 const {transform: transformResource} = require('../transformers');
 const {File} = require('../File');
 

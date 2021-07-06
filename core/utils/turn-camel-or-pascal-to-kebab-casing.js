@@ -1,5 +1,5 @@
 const turnCamelOrPascalToKebabCasing = name => {
-  return name.match(/(^|[A-Z])[^A-Z]+/g).map(p => p.toLowerCase()).join('-')
+  return name.match(/(?:[a-zA-Z]|[A-Z]+)[a-z]*/g).map(p => p.toLowerCase()).join('-')
 }
 
 module.exports.turnCamelOrPascalToKebabCasing = turnCamelOrPascalToKebabCasing;

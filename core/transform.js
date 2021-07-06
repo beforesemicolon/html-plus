@@ -41,7 +41,7 @@ function transform(content, options = defaultOptions) {
   
   const customAttributesMap = options.customAttributes.reduce((acc, attribute) => {
     const attr = turnCamelOrPascalToKebabCasing(attribute.name);
-    acc[attr] = attribute.toString().startsWith('class') ? new attribute() : attribute();
+    acc[attr] = attribute;
     return acc;
   }, {});
   

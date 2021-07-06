@@ -40,7 +40,7 @@ describe('cssTransformer', () => {
     });
   
     it('should setup for production minified, purged with image resolved', () => {
-      // expect.assertions(3);
+      expect.assertions(4);
     
       return cssTransformer(data.css, {
         env: 'production',
@@ -62,6 +62,12 @@ describe('cssTransformer', () => {
         expect(res.content).toEqual('* {box-sizing: border-box;}');
       })
     });
+  
+    it('should take options as first arg', () => {
+      return cssTransformer({file}).then(res => {
+        expect(res.content.replace(/\s/g, '')).toEqual(data.cssResult.replace(/\s/g, ''));
+      })
+    });
   });
   
   it('should return empty string if no content provided', () => {
@@ -70,5 +76,9 @@ describe('cssTransformer', () => {
     return cssTransformer().then(res => {
       expect(res).toEqual('');
     })
+  });
+  
+  it('should throw error if no file provided', () => {
+    return expect(cssTransformer({})).rejects.toThrowError('If no string content is provided, the "file" option must be provided.')
   });
 });
