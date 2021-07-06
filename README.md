@@ -52,17 +52,19 @@ const {engine} = require('@beforesemicolon/html-plus');
 
 const app = express();
 
-// initialize the engine by passing the express app
-// and the absolute path to the HTML pages directory
-// everything else is taken care of for you
-// from routing to processing linked files on your pages
-engine(app, path.resolve(__dirname, './pages'));
-
-const server = http.createServer(app);
-
-server.listen(3000, () => {
-  console.log('listening on port 3000');
-})
+(async () => {
+  // initialize the engine by passing the express app
+  // and the absolute path to the HTML pages directory
+  // everything else is taken care of for you
+  // from routing to processing linked files on your pages
+  await engine(app, path.resolve(__dirname, './pages'));
+  
+  const server = http.createServer(app);
+  
+  server.listen(3000, () => {
+    console.log('listening on port 3000');
+  })
+})()
 ```
 
 With the above setup you can organize your html files in a structure that you would like
