@@ -40,7 +40,7 @@ module.exports = {
       },
       {
         title: "Write Future CSS",
-        description: "<a href=\"/documenation#engine\">HTML+ engine</a> allows you to write modern CSS that works in any browser.",
+        description: "<a href=\"/documentation/api-reference/engine-function\">HTML+ engine</a> allows you to write modern CSS that works in any browser.",
         path: "/documentation/styling/modern-css",
         partial: "future-css"
       },
@@ -64,7 +64,7 @@ module.exports = {
       },
       {
         title: "A site builder",
-        description: "<a href=\"/documenation#site-builder\">HTML+ builder</a> takes care of exporting production ready site files to be hosted anywhere.",
+        description: "<a href=\"/documentation/build\">HTML+ builder</a> takes care of exporting production ready site files to be hosted anywhere.",
         path: "/documentation/build",
         partial: ""
       },
