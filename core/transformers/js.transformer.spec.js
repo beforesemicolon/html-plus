@@ -129,4 +129,8 @@ describe('jsTransformer', () => {
     });
   });
   
+  it('should throw error if no file provided', () => {
+    return expect(jsTransformer({})).rejects.toThrowError('If no string content is provided, the "file" option must be provided.')
+  });
+  
 })

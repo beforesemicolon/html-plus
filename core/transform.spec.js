@@ -1,3 +1,4 @@
+const {Attribute} = require("./Attribute");
 const {transform} = require('./transform');
 
 describe('transform', () => {
@@ -18,8 +19,7 @@ describe('transform', () => {
   `;
   
   it('should transform html file', async () => {
-    const result = await transform(html);
-    return expect(result.replace(/\s+/g, '')).toEqual(`
+    return expect(transform(html).replace(/\s+/g, '')).toEqual(`
     <html lang="en">
     <head>
     <meta charset="UTF-8"/>
@@ -32,5 +32,52 @@ describe('transform', () => {
     </body>
     </html>
     `.replace(/\s+/g, ''));
+  });
+  
+  describe('should take options as first arg', () => {
+    it('should throw error if no file specified', async () => {
+      expect(() => transform({}))
+        .toThrowError('If no string content is provided, the "file" option must be provided.')
+    });
+  
+    it('should throw error if no file specified', async () => {
+      const opt = {
+        file: {
+          load() {},
+          content: ''
+        }
+      }
+      const spy = jest.spyOn(opt.file, 'load').mockReturnValue('');
+      const res = transform(opt);
+      
+      expect(spy).toHaveBeenCalled();
+      expect(res).toEqual('');
+  
+      spy.mockRestore();
+    });
+  
+    it('should transform with custom tags and attributes', async () => {
+      class Tag {
+        render() {
+          return '<p>tag</p>'
+        }
+      }
+      class Cls extends Attribute {
+        render(val, node) {
+          node.setAttribute('class', val)
+          return node;
+        }
+      }
+      
+      expect(transform({
+        file: {
+          load() {},
+          content: '<tag></tag><p #cls="paragraph">attr</p>'
+        },
+        customTags: [Tag],
+        customAttributes: [Cls],
+      }))
+        .toEqual('<p>tag</p><p class="paragraph">attr</p>')
+    });
   });
 });
