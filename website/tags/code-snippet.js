@@ -5,7 +5,6 @@ class CodeSnippet {
     padding: 15px;
     display: block;
     overflow: auto;
-    font-size: 0.9rem;
     font-weight: 200;
     border-radius: 5px;
     text-align: left;

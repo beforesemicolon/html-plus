@@ -7,5 +7,8 @@
 <p>You can add a <a href="https://www.typescriptlang.org/docs/handbook/tsconfig-json.html">tsconfig.json</a> file at the root of your project and setup your editor in order
    to control things and to see errors in the console.</p>
 <p>This feature allows you to write future Javascript for the browser and no setup is needed for your projects.</p>
-<p>For even more control over how these files get processed, consider using the <a href="/documentation/api-reference/transform">transform API</a>.</p>
+<h3>node-modules script files</h3>
+<p>The engine will handle even javascript files imported from some third party module and process them.</p>
+<p>When you build your project, these files are also imported, processed and shipped with your site as part of it.</p>
+<p>Only make sure that these files are built to run in the browser.</p>
 <include partial="documentation-menu" data="{currentPage}"></include>

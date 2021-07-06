@@ -10,9 +10,10 @@
 	<h3>{page.title}</h3>
 	<p>{page.description}</p>
 </main>
-<!-- cant access "page" outside the tag it was declared at -->
+<!-- cant access "page" outside
+the tag it was declared at -->
 </code-snippet>
-<p>Variables declare at the beginning of the template is available everywhere inside the template, even
+<p>Variables declared at the beginning of the template is available everywhere inside the template, even
    inside the partials you include in your template.</p>
 <code-snippet language="html">
 <variable name="page"
@@ -20,7 +21,8 @@
 <main>
 	<h3>{page.title}</h3>
 	<p>{page.description}</p>
-	<!-- page can be referenced inside the "products" partial template -->
+	<!-- page can be referenced
+	inside the "products" partial template -->
 	<include partial="products"></include>
 </main>
 </code-snippet>

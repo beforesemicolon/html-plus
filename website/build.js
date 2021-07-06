@@ -5,23 +5,8 @@ const documentationPage = require('./data/documentation.page');
 const learnPage = require('./data/learn.page');
 const site = require('./data/site.json');
 const packageJSON = require('./../package.json');
+const {collectPaths} = require("./data/collect-paths");
 const {CodeSnippet} = require("./tags/code-snippet");
-
-const collectPaths = list => {
-  const paths = new Set();
-  
-  for (let item of list) {
-    if (item.hasOwnProperty('path')) {
-      paths.add(item.path);
-      
-      if (item.list && item.list.length) {
-        Array.from(collectPaths(item.list), (p) => paths.add(p))
-      }
-    }
-  }
-  
-  return paths;
-}
 
 const paths = collectPaths(documentationPage.menu.list);
 

@@ -1,8 +1,17 @@
 const {getDirectoryFilesDetail} = require('./getDirectoryFilesDetail');
 const path = require('path');
+const {mkdir, rmdir} = require('fs/promises');
 
 describe('getDirectoryFilesDetail', () => {
   const dir = path.resolve(__dirname);
+  
+  beforeEach(async () => {
+    await mkdir(path.join(__dirname, 'subDir'))
+  })
+  
+  afterEach(async () => {
+    await rmdir(path.join(__dirname, 'subDir'))
+  })
   
   describe('should read all the test files in this directory', () => {
     it('with extension', () => {

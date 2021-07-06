@@ -3,6 +3,7 @@ node_modules
 .npmignore
 .DS_STORE
 coverage
+docs
 test
 .gitignore
 website

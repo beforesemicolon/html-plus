@@ -9,40 +9,40 @@
 		searchResultSection.className = 'search-results';
 
 		if (docMenu && docMenuSection && aside) {
-			const links: NodeListOf<HTMLAnchorElement> = docMenu.querySelectorAll('a');
+			const links: HTMLAnchorElement[] = Array.from(docMenu.querySelectorAll('a'));
 
 			searchField.style.display = 'block';
 
+			let timer: NodeJS.Timeout;
+
 			searchField.addEventListener('input', (e: Event) => {
-				const inputField = (e.currentTarget as Element)?.querySelector('input');
+				clearTimeout(timer);
+				timer = setTimeout(() => {
+					const field = e.target as HTMLInputElement;
 
-				if (inputField) {
-					const resultLinks = getSearchResultLinks(inputField.value, links);
+					if (field) {
+						let pattern: RegExp;
+						let resultLinks: HTMLAnchorElement[] = [];
 
-					if (resultLinks.length) {
-						docMenuSection.remove();
-						aside.appendChild(searchResultSection);
-						searchResultSection.innerHTML = '';
-						// must clone the node otherwise it will remove it from initial place
-						resultLinks.forEach(el => searchResultSection.appendChild(el.cloneNode(true)))
-					} else {
-						searchResultSection.remove();
-						aside.appendChild(docMenuSection);
+						if (field.value.length >= 3) {
+							pattern = new RegExp(field.value, 'gi');
+							resultLinks = links.filter(link => (link.textContent ?? '').search(pattern) >= 0);
+						}
+
+						if (resultLinks.length) {
+							docMenuSection.remove();
+							aside.appendChild(searchResultSection);
+							searchResultSection.innerHTML = '';
+							// must clone the node otherwise it will remove it from initial place
+							resultLinks.forEach(el => searchResultSection.appendChild(el.cloneNode(true)))
+						} else {
+							searchResultSection.remove();
+							aside.appendChild(docMenuSection);
+						}
 					}
-				}
+				}, 300);
+
 			});
 		}
 	}
-}
-
-function getSearchResultLinks(searchTerm: string, links: NodeListOf<HTMLAnchorElement>): HTMLAnchorElement[] {
-	if (searchTerm.length >= 3) {
-		const pattern = new RegExp(searchTerm, 'ig');
-
-		return Array.from(links).filter(link => {
-			return pattern.test(link.textContent ?? '') ;
-		})
-	}
-
-	return [];
 }

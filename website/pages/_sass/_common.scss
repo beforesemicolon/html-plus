@@ -64,6 +64,14 @@ abbr {
   font-weight: 500;
 }
 
+pre {
+  font-size: 0.9rem;
+
+  @media screen and (max-width: 425px) {
+    font-size: 0.8rem;
+  }
+}
+
 .link-button,
 .link-button:any-link {
   padding: 6px 12px;

@@ -14,6 +14,7 @@ describe('HTMLNode', () => {
     
     expect(node.tagName).toEqual('h1');
     expect(node.attributes).toEqual({id: "main-title"});
+    expect(node.type).toEqual('node');
     expect(node.context).toEqual({});
     expect(node.childNodes).toBeInstanceOf(Function);
     expect(node.renderChildren).toBeInstanceOf(Function);

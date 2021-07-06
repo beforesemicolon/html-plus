@@ -1,6 +1,7 @@
 const {getFileSourceHashedDestPath} = require("./get-file-source-hashed-dest-path");
 const {uniqueAlphaNumericId} = require("../../utils/unique-alpha-numeric-id");
 const path = require('path');
+const validUrl = require("valid-url");
 
 function collectAndUpdateNodeSourceLink(node, pageFile, resources, fileDirPath) {
   let srcPath = '';
@@ -40,15 +41,7 @@ function collectAndUpdateNodeSourceLink(node, pageFile, resources, fileDirPath) 
     default:
   }
   
-  let isURL = false;
-  
-  try {
-    new URL(srcPath);
-    isURL = true;
-  } catch (e) {
-  }
-  
-  if (srcPath && typeof srcPath === 'string' && !isURL) {
+  if (srcPath && typeof srcPath === 'string' && !validUrl.isUri(srcPath)) {
     if (/node_modules\//.test(srcPath)) {
       srcPath = srcPath.replace(/^.+(?=node_modules)/, `${process.cwd()}/`);
     } else {
