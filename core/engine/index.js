@@ -53,14 +53,18 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
       } else {
         filePath = filePath.replace(pagesDirectoryPath, '');
         const template = `${filePath.replace('.html', '')}`.slice(1);
+        let tempPath = '';
   
         if (filePath.endsWith('index.html')) {
-          pagesRoutes[filePath.replace('index.html', '')] = template;
+          tempPath = filePath.replace('/index.html', '');
+          pagesRoutes[tempPath || '/'] = template;
+          pagesRoutes[`${tempPath}/`] = template;
+          pagesRoutes[`${tempPath}/index.html`] = template;
         } else {
-          pagesRoutes[filePath.replace('.html', '')] = template;
+          tempPath = filePath.replace('.html', '');
+          pagesRoutes[tempPath] = template;
+          pagesRoutes[`${tempPath}/`] = template;
         }
-  
-        pagesRoutes[filePath.replace(/\/$/, '')] = template;
       }
     }
     

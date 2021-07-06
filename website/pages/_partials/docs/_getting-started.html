@@ -53,11 +53,13 @@ const {engine} = require('@beforesemicolon/html-plus');
 
 const app = express();
 
-engine(app, path.resolve(__dirname, './pages'));
+(async () => {
+	await engine(app, path.resolve(__dirname, './pages'));
 
-const server = http.createServer(app);
+	const server = http.createServer(app);
 
-server.listen(3000)
+	server.listen(3000);
+})()
 </code-snippet>
 <p><strong>HTML+ engine</strong> will setup your <a href="/documentation/routes">Routes</a> for your pages
  and all handlers for CSS(including preprocessors), Javascript and Typescript files.</p>
