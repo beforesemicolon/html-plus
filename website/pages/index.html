@@ -41,13 +41,17 @@ const {engine} = require('@beforesemicolon/html-plus');
 
 const app = express();
 
-engine(app, path.resolve(__dirname, './pages'));
+(async () => {
+	// wait for engine to finish setting upt the routes
+	// and all files
+	await engine(app, path.resolve(__dirname, './pages'));
 
-const server = http.createServer(app);
+	const server = http.createServer(app);
 
-server.listen(3000, () => {
-	console.log('server live on port 3000')
-})
+	server.listen(3000, () => {
+		console.log('server live on port 3000')
+	})
+})()
 </code-snippet>
 		<a href="/documentation/getting-started" class="link-button cta">{page.quick_start.link.title}</a>
 	</section>
