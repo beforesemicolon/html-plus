@@ -2,11 +2,39 @@
 	name: 'engine',
 	details: {
 		name: 'engine',
-		type: 'function',
+		type: 'async function',
 		arguments: 'express app, pages directory, options',
 		description: 'A function that will setup the express engine and setup the routing of your application.',
 	}
 }"></include>
+<h3>Asynchronous function</h3>
+<p>The <strong>engine</strong> function is ASYNCHRONOUS which means that you can await on it before you start the server.</p>
+<code-snippet language="js">
+const {engine} = require('@beforesemicolon/html-plus');
+
+const app = express();
+
+(async () => {
+	// setup all custom dynamic routes here
+	// to override the site routes
+	// when you await on the engine
+	await engine(app, path.resolve(__dirname, './pages'), {
+		staticData: {
+			site: {
+				version: "2.4.1",
+				license: "MIT"
+			}
+		}
+	});
+
+	app.listen(3000);
+})();
+</code-snippet>
+<p>If you await on the engine and have some <a href="/documentation/routes/route-pages">dynamic routes</a>
+you may need to set them up before otherwise any matching static route will override.</p>
+<p>If you are not awaiting the engine, you can just set the routes after. The effect is the same but not
+awaiting on the engine may throw an error if you get to the page before the engine is done processing your
+pages directory.</p>
 <h3>Arguments</h3>
 <include partial="api-description-list" data="{
 	descriptions: [

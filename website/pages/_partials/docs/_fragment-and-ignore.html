@@ -15,7 +15,7 @@
 </div>
 </code-snippet>
 <h3>Improve render time</h3>
-<p>Another very special tag and attribute is <a href="/documentation/api-reference/ignore-tag">ignore</a>. They pretty much signal to the
+<p>Another very special tag and attribute is <a href="/documentation/api-reference/ignore-tag">ignore</a>. It signals to the
    compiler that the markup content does not need to be compiled and should be shown as is.</p>
 <code-snippet language="html">
 <ignore #if="user.isAdmin">
@@ -49,5 +49,5 @@ want to escape the HTML all together, you can provide the <strong>escape</strong
 <div #ignore="$data.htmlCode"></div>
 </code-snippet>
 <p>Both, fragment and ignore tags and attributes, will render the inner content only but ignore
-   will not compile the content where fragment will.</p>
+   does not compile the content where fragment does.</p>
 <include partial="documentation-menu" data="{currentPage}"></include>

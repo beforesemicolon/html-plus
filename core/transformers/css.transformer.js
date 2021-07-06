@@ -73,7 +73,6 @@ async function cssTransformer(content, opt = defaultOptions) {
     postcssPresetEnv({
       stage: 0
     }),
-    comments({removeAll: true}),
     ...opt.plugins
   ];
   
@@ -88,6 +87,7 @@ async function cssTransformer(content, opt = defaultOptions) {
   if (opt.env === 'production') {
     post = postcss([
       ...plugins,
+      comments({removeAll: true}),
       purgeCSS({
         content: [
           `${opt.destPath || opt.file.srcDirectoryPath}/**/*.html`

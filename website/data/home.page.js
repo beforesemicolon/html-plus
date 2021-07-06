@@ -22,8 +22,8 @@ module.exports = {
     list: [
       {
         title: "It is just HTML",
-        description: "There is no weird syntax. You already know this language.",
-        path: "/documentation",
+        description: "The syntax is of HTML so you already know this language.",
+        path: "/documentation/getting-started",
         partial: "just-html"
       },
       {
@@ -41,13 +41,13 @@ module.exports = {
       {
         title: "Write Future CSS",
         description: "<a href=\"/documenation#engine\">HTML+ engine</a> allows you to write modern CSS that works in any browser.",
-        path: "/documentation/styling",
+        path: "/documentation/styling/modern-css",
         partial: "future-css"
       },
       {
         title: "Powerful data binding and data contextualization",
         description: "It allows you to reference data in separate files and create data context for specific parts of the page.",
-        path: "/documentation/data",
+        path: "/documentation/template-data-binding",
         partial: "data-binding"
       },
       {
@@ -59,13 +59,13 @@ module.exports = {
       {
         title: "Static and Dynamic <abbr title=\"Server Side Rendering\">SSR</abbr> website",
         description: "Create faster website by rendering on the Server with static or dynamic pages.",
-        path: "/documentation",
+        path: "/documentation/routes",
         partial: ""
       },
       {
         title: "A site builder",
         description: "<a href=\"/documenation#site-builder\">HTML+ builder</a> takes care of exporting production ready site files to be hosted anywhere.",
-        path: "/documentation",
+        path: "/documentation/build",
         partial: ""
       },
       {
@@ -77,7 +77,7 @@ module.exports = {
       {
         title: "Generates optimal code for production",
         description: "The site builder will only export optimal and needed CSS, Javascript and HTML for production.",
-        path: "/documentation",
+        path: "/documentation/build",
         partial: ""
       }
     ]

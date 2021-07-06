@@ -59,7 +59,7 @@ describe('cssTransformer', () => {
   
     it('should import', () => {
       return cssTransformer('@import "./__box.css";', {file}).then(res => {
-        expect(res.content).toEqual('*{box-sizing:border-box;}');
+        expect(res.content).toEqual('* {box-sizing: border-box;}');
       })
     });
   });

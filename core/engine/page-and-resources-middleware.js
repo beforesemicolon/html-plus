@@ -10,10 +10,13 @@ const sourcesExtensions = new Set([
   '.less',
   '.styl',
   '.js',
+  '.mjs',
+  '.cjs',
   '.ts',
   '.tsx',
   '.jsx',
-])
+]);
+const cache = {};
 
 function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPageRequest}) {
   return async (req, res, next) => {
@@ -21,67 +24,65 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
     
     if (ext && sourcesExtensions.has(ext)) {
       let content = '';
+      let contentType = 'text/css';
       let resourcePath = '';
+      let file = null;
   
       if (/node_modules/.test(req.path)) {
         resourcePath = path.join(process.cwd(), req.path);
-  
-        try {
-          content = readFileContent(resourcePath);
-          
-          if (ext === '.css') {
-            res.setHeader('Content-Type', 'text/css');
-          } else if(ext === '.js' || ext === '.mjs') {
-            res.setHeader('Content-Type', 'application/javascript');
-          }
-          
-          return res.send(content);
-        } catch(e) {
-          console.error(`Failed to load page resource "${req.path}"`, e);
-          return res.sendStatus(404);
-        }
+      } else {
+        resourcePath = path.join(pagesDirectoryPath, req.path);
       }
   
-      resourcePath = path.join(pagesDirectoryPath, req.path);
+      if (env === 'production' && cache[resourcePath]) {
+        res.setHeader('Content-Type', cache[resourcePath].contentType);
+        return res.send(cache[resourcePath].content);
+      }
   
+      file = new File(resourcePath, pagesDirectoryPath);
+      
       try {
-        const file = new File(resourcePath, pagesDirectoryPath);
-        
         switch (ext) {
           case '.scss':
           case '.sass':
-            content = await transformResource.sass({file, env});
-            res.setHeader('Content-Type', 'text/css');
+            content = await transformResource.sass({file});
+            content = (await transformResource.css(content, {file, env})).content;
             break;
           case '.less':
-            content = await transformResource.less({file, env});
-            res.setHeader('Content-Type', 'text/css');
+            content = await transformResource.less({file});
+            content = (await transformResource.css(content, {file, env})).content;
             break;
           case '.styl':
-            content = await transformResource.stylus({file, env});
-            res.setHeader('Content-Type', 'text/css');
+            content = await transformResource.stylus({file});
+            content = (await transformResource.css(content, {file, env})).content;
             break;
           case '.css':
-            content = await transformResource.css({file, env});
-            res.setHeader('Content-Type', 'text/css');
+            content = (await transformResource.css({file, env})).content;
             break;
           case '.js':
           case '.jsx':
           case '.ts':
           case '.tsx':
           case '.mjs':
+          case '.cjs':
             const result = await transformResource.js({file, env});
             content = result.content;
-            res.setHeader('Content-Type', 'application/javascript');
+            contentType = 'application/javascript';
             break;
         }
+  
+        if (env === 'production') {
+          cache[resourcePath] = {content, contentType}
+        }
+  
+        res.setHeader('Content-Type', contentType);
         
         return res.send(content);
       } catch(e) {
-        console.error(`Failed to load page resource "${req.path}"`, e);
+        console.error(`Failed to load style/script content "${req.path}"`, e);
         return res.sendStatus(404);
       }
-    } else {
+    } else if(!ext || ext === '.html') {
       const template = pagesRoutes[req.path] ?? pagesRoutes[`${req.path}/`] ?? pagesRoutes['/404'];
       
       if (template) {

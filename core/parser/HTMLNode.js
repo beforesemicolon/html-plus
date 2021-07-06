@@ -32,7 +32,7 @@ class HTMLNode {
     options = {...defaultOptions, ...options}
     this.#node = typeof htmlString === 'string'
       ? parse(replaceSpecialCharactersInHTML(htmlString), {
-        comment: options.env === 'development'
+        comment: true
       })
       : htmlString;
     this.#node.context = {...this.#node.context, ...options.context};
@@ -90,7 +90,7 @@ class HTMLNode {
       ? composeTagString(this, this.#node.innerHTML)
       : `<fragment>${this.#node.outerHTML}</fragment>`;
     const clonedNode = (parse(outerHTML, {
-      comment: this.#options.env === 'development'
+      comment: true
     })).childNodes[0];
     
     clonedNode.context = {...this.#node.context};
@@ -104,7 +104,7 @@ class HTMLNode {
       ? composeTagString(this, this.#node.innerHTML)
       : `<fragment>${this.#node.outerHTML}</fragment>`;
     const clonedNode = parse(outerHTML, {
-      comment: this.#options.env === 'development'
+      comment: true
     }).childNodes[0];
     
     clonedNode.context = {...this.#node.context, ...context};

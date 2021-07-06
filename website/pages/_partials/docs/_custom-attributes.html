@@ -1,6 +1,6 @@
-<p>Custom attributes must all be a class that extends the <a href="/documentation/api-reference/attribute-class">Attribute class</a>. This class must
-   also contain a render method which is called the value of the attribute and the <a href="/documentation/api-reference/html-node-class">HTMLNode</a> instance.</p>
-<p>A optional method of you custom attribute is the <strong>process</strong> method which is called with the value
+<p>Custom attributes must all be a class that may extend the <a href="/documentation/api-reference/attribute-class">Attribute class</a>. This class must
+   also contain a render method which is called with the value of the attribute and the <a href="/documentation/api-reference/html-node-class">HTMLNode</a> instance.</p>
+<p>An optional method of your custom attribute is the <strong>process</strong> method which is called with the value
    of the attribute which you can tweak into a different string to be bind or executed before the rendering.</p>
 <p>The below <em>WrapWith</em> custom attribute will receive a comma separated name of tags and wrap
    the tag it is placed on with those.</p>
@@ -45,7 +45,7 @@ engine(app, path.resolve(__dirname, './pages'), {
 <!-- becomes: <section><div><p>wrapped</p></div></section>-->
 </code-snippet>
 <p>Attributes dont necessary need to render anything. Your attribute can simply change something about the
-node provide like setting attribute or update the node context.</p>
+node provided like setting attribute or update the node context.</p>
 <h3>Custom Tag Custom Attributes</h3>
 <p>Your custom tags can also contain specific attributes. These attributes won't be marked with hash symbol(#).</p>
 <p>You may define them as a static property on a class or function.</p>
@@ -66,6 +66,20 @@ class SearchField {
 			value: new Attribute('value', '', false, true)
 		};
 	}
+}
+</code-snippet>
+<p>If you use a function it would look like this:</p>
+<code-snippet language="js">
+function SearchField {
+	return () => `
+		<label class="search-field" aria-label="search field">
+			<input type="search" name="search" placeholder="Search...">
+		</label>
+	`;
+}
+
+SearchField.customAttributes = {
+	value: new Attribute('value', '', false, true)
 }
 </code-snippet>
 <p>These custom attributes can be simple objects as well. Not necessary a Attribute instance unless you want
