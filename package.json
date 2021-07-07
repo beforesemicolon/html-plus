@@ -1,10 +1,6 @@
 {
   "name": "@beforesemicolon/html-plus",
-<<<<<<< Updated upstream
-  "version": "0.4.4",
-=======
   "version": "0.4.6",
->>>>>>> Stashed changes
   "description": "HTML Template Engine/Language",
   "main": "dist/index.js",
   "files": [
