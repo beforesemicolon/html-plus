@@ -1,7 +1,9 @@
+const site = require('./site.json');
+
 module.exports = {
   path: "/",
-  title: "HTML+ - HTML template language, engine and site builder",
-  description: "HTML+ - HTML template language, engine and site builder",
+  title: "HTML Plus",
+  description: `HTML Plus - ${site.description}`,
   banner: {
     description: "HTML is powerful on its own and there is no need to change its syntax. <strong>HTML+</strong> simply\n\t\tadds and allows you to add extra capabilities while still enjoying the HTML syntax.",
     links: [

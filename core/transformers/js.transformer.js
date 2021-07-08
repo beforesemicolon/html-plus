@@ -89,7 +89,6 @@ async function jsTransformer(content, opt = defaultOptions) {
 
   const isProduction = opt.env === 'production';
   const workingDirectory = opt.workingDirectoryPath || process.cwd();
-  const configPath = opt.tsConfigPath || path.resolve(__dirname, workingDirectory, 'tsconfig.json');
   
   const options = {
     target: opt.target,
@@ -103,6 +102,7 @@ async function jsTransformer(content, opt = defaultOptions) {
   };
   
   if (typeof content === 'string') {
+    const configPath = opt.tsConfigPath || path.resolve(__dirname, workingDirectory, 'tsconfig.json');
     return esbuild.transform(content, {
         ...options,
         loader: opt.loader,
@@ -126,7 +126,7 @@ async function jsTransformer(content, opt = defaultOptions) {
     
     return esbuild.build({
         ...options,
-        tsconfig: configPath,
+        ...(opt.tsConfigPath && {tsconfig: opt.tsConfigPath}),
         absWorkingDir: workingDirectory,
         entryPoints: [opt.file.fileAbsolutePath],
         allowOverwrite: true,
