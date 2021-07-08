@@ -1,5 +1,7 @@
+const site = require('./site.json');
+
 module.exports = {
   path: "/learn",
   title: "HTML+ Learn",
-  description: "HTML+ - HTML template language, engine and site builder",
+  description: `HTML Plus - ${site.description}`,
 }

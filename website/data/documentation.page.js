@@ -12,6 +12,7 @@ const faqLink = '/documentation/faq';
 const apiReferenceLink = '/documentation/api-reference';
 const vocabularyLink = '/documentation/vocabulary';
 const faqs = require('./faqs.json');
+const site = require('./site.json');
 
 function addNextAndPrevPaths(list, preListItem, postListItem) {
   for (let i = 0; i < list.length; i++) {
@@ -37,8 +38,8 @@ function addNextAndPrevPaths(list, preListItem, postListItem) {
 
 const data = {
   path: docLink,
-  title: "Documentation",
-  description: "HTML+ - HTML template language, engine and site builder",
+  title: "HTML+ Documentation",
+  description: `HTML Plus - ${site.description}`,
   searchLabel: 'Search...',
   partial: 'documentation',
   next: {path: `${docLink}/getting-started`, title: 'Getting Started'},
