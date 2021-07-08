@@ -6,8 +6,10 @@
           value="currentGroup.path === path
 	            ? currentGroup
 	            : currentGroup.list.find((item) => item.path === path)"></variable>
+<variable name="title"
+          value="`${page.title} ${currentPage === page ? '' : `: ${currentPage.title}`}`"></variable>
 
-<include partial="layout" data="{...page, title: `${page.title}: ${currentPage.title}`}">
+<include partial="layout" data="{...page, title}">
 	<link rel="stylesheet" href="documentation.scss" inject-id="style">
 	<link rel="stylesheet" href="./../../node_modules/highlight.js/styles/github-dark-dimmed.css" inject-id="style">
 
