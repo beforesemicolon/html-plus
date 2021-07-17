@@ -7,6 +7,8 @@ const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
 const {File} = require('../File');
 const validUrl = require('valid-url');
+const {isObject, isArray, isFunction} = require("util");
+const {mergeObjects} = require("../utils/merge-objects");
 
 const defaultOptions = {
   staticData: {},
@@ -17,22 +19,37 @@ const defaultOptions = {
   }
 }
 
-const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
+const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
     throw new Error('engine first argument must be provided and be a valid express app.')
   }
   
-  opt = {...defaultOptions, ...opt}
+  let hbConfig = {};
   
-  if (typeof opt.staticData !== 'object') {
-    throw new Error('HTML+ static data must be an javascript object')
+  try {
+    hbConfig = require(path.join(process.cwd(), 'hp.config.js'));
+  } catch (e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      e.message = `hp.config.js file loading failed: ${e.message}`
+      throw new Error(e)
+    }
   }
   
-  if (!Array.isArray(opt.customTags)) {
-    throw new Error('HTML+ custom tags must be an array of valid tags.')
+  opt = {...defaultOptions, ...mergeObjects(hbConfig, opt)};
+  
+  if (!isObject(opt.staticData)) {
+    throw new Error('HTML+ static data option must be a javascript object')
   }
   
-  if (typeof opt.onPageRequest !== 'function') {
+  if (!isArray(opt.customTags)) {
+    throw new Error('HTML+ custom tags option must be an array of valid tags.')
+  }
+  
+  if (!isArray(opt.customAttributes)) {
+    throw new Error('HTML+ custom attributes option must be an array of valid attributes.')
+  }
+  
+  if (!isFunction(opt.onPageRequest)) {
     throw new Error('"onPageRequest" option must be a function')
   }
   
@@ -54,7 +71,7 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
         filePath = filePath.replace(pagesDirectoryPath, '');
         const template = `${filePath.replace('.html', '')}`.slice(1);
         let tempPath = '';
-  
+        
         if (filePath.endsWith('index.html')) {
           tempPath = filePath.replace('/index.html', '');
           pagesRoutes[tempPath || '/'] = template;
@@ -73,11 +90,11 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
     .then(() => {
       app.engine('html', (filePath, {settings, _locals, cache, ...context}, callback) => {
         const fileName = path.basename(filePath);
-
+        
         if (fileName.startsWith('_')) {
           callback(new Error(`Cannot render partial(${fileName}) file as page. Partial files can only be included.`));
         }
-
+        
         fs.readFile(filePath, (err, content) => {
           if (err) return callback(err);
           const file = new File(filePath, settings.views);
@@ -92,25 +109,25 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
               partialFiles: partials,
               onBeforeRender: (node, nodeFile) => {
                 let attrName = '';
-
+                
                 if (node.tagName === 'link') {
                   attrName = 'href';
                 } else if (node.tagName === 'script') {
                   attrName = 'src';
                 }
-
+                
                 const srcPath = node.attributes[attrName];
-
+                
                 if (srcPath && !validUrl.isUri(srcPath)) {
                   const resourceFullPath = path.resolve(nodeFile.fileDirectoryPath, srcPath);
-
+                  
                   if (resourceFullPath.startsWith(pagesDirectoryPath)) {
                     node.setAttribute(attrName, resourceFullPath.replace(pagesDirectoryPath, ''))
                   }
                 }
               }
             })
-
+            
             callback(null, result);
           } catch (e) {
             console.error(e.message);
@@ -121,17 +138,17 @@ const engine = (app, pagesDirectoryPath, opt = defaultOptions) => {
           }
         })
       });
-
+      
       app.set('views', pagesDirectoryPath);
       app.set('view engine', 'html');
-
+      
       app.use(pageAndResourcesMiddleware(
         pagesRoutes,
         pagesDirectoryPath,
         opt
       ));
       app.use(express.static(pagesDirectoryPath))
-
+      
       console.log('HTML+ engine is ready');
     })
 };
