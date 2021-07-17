@@ -8,7 +8,7 @@ on:
   push:
     branches: [ master, develop ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ master, develop, release-* ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -22,7 +22,7 @@ jobs:
     
     strategy:
       matrix:
-        node: [10.x, 12.x, 14.x]
+        node: [14.x]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
