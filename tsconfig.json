@@ -73,6 +73,7 @@
   "exclude": [
     "./website",
     "./docs",
+    "./hp.config.js",
     "**/*.spec.js"
   ]
 }
