@@ -50,11 +50,15 @@ pages directory.</p>
 		{
 			concept: 'options',
 			type: 'type: object, optional',
-			description: 'Object with different options to be consumed by the engine.'
+			description: 'Object with different options to be consumed by the engine. If not provided, the engine will try to find for the <strong>hp.config.js</strong> file on the project root directory.'
 		},
 	]
 }"></include>
 <h3>Options</h3>
+<p>Options can be provided directly to the engine function as third argument or you can simply create a <strong>hp.config.js</strong>
+at the root directory and export(<em #ignore>using module.exports = {...}</em>) an object with the following properties.</p>
+<p>If you provide options both, by providing the <strong>hp.config.js</strong> file and engine options, these are deeply merged
+   and the engine options will override the <strong>hp.config.js</strong> file where they match in properties.</p>
 <include partial="api-description-list" data="{
 	descriptions: [
 		{
@@ -85,8 +89,31 @@ pages directory.</p>
 	]
 }"></include>
 <h3>Return</h3>
-<p>The engine returns undefined.</p>
+<p>The engine returns a <strong>Promise</strong>.</p>
 <h3>Usage Examples</h3>
+<p>How <strong>hp.config.js</strong> file may look like. Right now you must always export with <strong>module.exports</strong>.</p>
+<code-snippet language="js">
+// hp.config.js
+const homePage = require('./website/data/home.page');
+const aboutPage = require('./website/data/about.page');
+const {CodeSnippet} = require('./website/tags/code-snippet');
+
+const env = process.env.NODE_ENV || 'development';
+
+module.exports = {
+	env,
+	staticData: {
+		pages: {
+			home: homePage,
+			about: aboutPage,
+		},
+	},
+	customTags: [
+		CodeSnippet,
+	]
+}
+</code-snippet>
+<p>Providing static data to the engine.</p>
 <code-snippet language="js">
 engine(app, path.resolve(__dirname, './pages'), {
 	staticData: {
@@ -97,6 +124,7 @@ engine(app, path.resolve(__dirname, './pages'), {
 	}
 });
 </code-snippet>
+<p>Providing a page request handler which inject <a href="/documentation/data/dynamic-data">context data</a> to the templates.</p>
 <code-snippet language="js">
 engine(app, path.resolve(__dirname, './pages'), {
 	onPageRequest: (req) => {
