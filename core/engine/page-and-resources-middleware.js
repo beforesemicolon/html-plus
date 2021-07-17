@@ -17,7 +17,7 @@ const sourcesExtensions = new Set([
 ]);
 const cache = {};
 
-function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPageRequest}) {
+function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPageRequest, sass, less}) {
   return async (req, res, next) => {
     if (req.method === 'GET') {
       const ext = path.extname(req.path);
@@ -45,11 +45,11 @@ function pageAndResourcesMiddleware(pagesRoutes, pagesDirectoryPath, {env, onPag
           switch (ext) {
             case '.scss':
             case '.sass':
-              content = await transformResource.sass({file});
+              content = await transformResource.sass({file, ...sass});
               content = (await transformResource.css(content, {file, env})).content;
               break;
             case '.less':
-              content = await transformResource.less({file});
+              content = await transformResource.less({file, ...less});
               content = (await transformResource.css(content, {file, env})).content;
               break;
             case '.styl':
