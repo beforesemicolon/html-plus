@@ -5,7 +5,14 @@ const render = promisify(less.render);
 
 const defaultOptions = {
   env: 'development',
-  file: null
+  file: null,
+  strictUnits: false,
+  insecure: false,
+  paths: [],
+  math: 1,
+  urlArgs: '',
+  modifyVars: null,
+  lint: false,
 }
 
 async function lessTransformer(content, opt = defaultOptions) {
@@ -22,10 +29,9 @@ async function lessTransformer(content, opt = defaultOptions) {
   content = content ?? '';
   
   const options = {
-    ...defaultOptions,
-    env: opt.env,
+    ...opt,
     filename: opt.file?.fileAbsolutePath,
-    // ...(opt.env === 'development' && {sourceMap: {}})
+    ...(opt.env === 'production' && {sourceMap: {}})
   }
   
   return render(content, options).then(res => {

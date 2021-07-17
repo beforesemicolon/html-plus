@@ -63,4 +63,32 @@ const app = express();
 </code-snippet>
 <p><strong>HTML+ engine</strong> will setup your <a href="/documentation/routes">Routes</a> for your pages
  and all handlers for CSS(including preprocessors), Javascript and Typescript files.</p>
+<h3>Config file</h3>
+<p>The <a href="/documentation/api-reference/engine-function">engine function</a> takes an option object as third argument
+which you can also provide by creating a <strong>hp.config.js</strong> file on the root of your project with same properties.</p>
+<code-snippet language="js">
+// hp.config.js
+const homePage = require('./website/data/home.page');
+const aboutPage = require('./website/data/about.page');
+const {CodeSnippet} = require('./website/tags/code-snippet');
+const tailwind = require('tailwindcss');
+
+const env = process.env.NODE_ENV || 'development';
+
+module.exports = {
+	env,
+	staticData: {
+		pages: {
+			home: homePage,
+			about: aboutPage,
+		},
+	},
+	customTags: [
+		CodeSnippet,
+	],
+	postCSS: [
+		plugins: [tailwind]
+	]
+};
+</code-snippet>
 <include partial="documentation-menu" data="{currentPage}"></include>
