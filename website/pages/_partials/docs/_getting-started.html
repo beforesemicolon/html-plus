@@ -71,6 +71,7 @@ which you can also provide by creating a <strong>hp.config.js</strong> file on t
 const homePage = require('./website/data/home.page');
 const aboutPage = require('./website/data/about.page');
 const {CodeSnippet} = require('./website/tags/code-snippet');
+const tailwind = require('tailwindcss');
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -84,6 +85,9 @@ module.exports = {
 	},
 	customTags: [
 		CodeSnippet,
+	],
+	postCSS: [
+		plugins: [tailwind]
 	]
 };
 </code-snippet>
