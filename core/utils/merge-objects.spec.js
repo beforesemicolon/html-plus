@@ -29,12 +29,4 @@ describe('mergeObjects', () => {
     expect(mergeObjects({a: {b: 100}}, {a: {c: 200, b: 13}})).toEqual({a: {b: 13, c: 200}})
     expect(mergeObjects({a: {c: 200, b: 13}}, {a: {b: 100}})).toEqual({a: {b: 100, c: 200}})
   });
-  
-  it('should leave other objects intact', () => {
-    const m = new Map([['a', 56]]);
-    expect(mergeObjects(new Map([['a', 12]]), m)).toEqual(m);
-    
-    const s = new Set([2, 4]);
-    expect(mergeObjects(new Set([2, 4, 6]), s)).toEqual(s);
-  });
 });

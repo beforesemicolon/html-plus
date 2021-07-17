@@ -1,9 +1,7 @@
 const {isObject, isArray} = require("util");
 
-const isObjectLiteral = x => isObject(x) && x.toString() === '[object Object]';
-
 function mergeObjects(a, b) {
-  if(!isObjectLiteral(a) || !isObjectLiteral(b)) return b ?? {};
+  if(!isObject(a) || !isObject(b)) return b ?? {};
   
   const obj = isArray(a) ? [...a] : a;
   
