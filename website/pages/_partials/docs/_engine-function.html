@@ -86,6 +86,26 @@ at the root directory and export(<em #ignore>using module.exports = {...}</em>) 
 			type: 'type: function',
 			description: 'A callback function that will be called on every page request with a <a href=\'https://expressjs.com/en/4x/api.html#req\'>express request</a> that must return an object representing the <a href=\'/documentation/data/local-context-data\'>context data</a> to be passed to the template to be rendered on that page request.'
 		},
+		{
+			concept: 'sass',
+			type: 'type: object',
+			description: 'object of <a href=\'https://sass-lang.com/documentation/js-api#options\'>sass options</a> but only these are supported: <strong>indentWidth</strong>, <strong>precision</strong>, <strong>indentType</strong>, <strong>linefeed</strong>, <strong>sourceComments</strong>, <strong>includePaths</strong>, <strong>functions</strong>.'
+		},
+		{
+			concept: 'less',
+			type: 'type: object',
+			description: 'object of <a href=\'https://lesscss.org/usage/#less-options\'>less options</a> but only these are supported: <strong>strictUnits</strong>, <strong>insecure</strong>, <strong>paths</strong>, <strong>urlArgs</strong>, <strong>sourceComments</strong>, <strong>modifyVars</strong>, <strong>lint</strong>.'
+		},
+		{
+			concept: 'stylus',
+			type: 'type: object',
+			description: 'object of <a href=\'https://lesscss.org/usage/#less-options\'>stylus options</a> but only these are supported: <strong>paths</strong>.'
+		},
+		{
+			concept: 'postCSS',
+			type: 'type: object',
+			description: 'object of <a href=\'https://postcss.org/api/#processoptions\'>postCSS options</a> but only these are supported: <strong>plugins</strong>. It already uses <a href=\'https://github.com/postcss/postcss-import\'>atImport</a>, <a href=\'https://github.com/csstools/postcss-preset-env\'>postcssPresetEnv</a>, <a href=\'https://github.com/postcss/autoprefixer\'>autoprefixer</a>, <a href=\'https://purgecss.com/\'>purgeCSS</a>, <a href=\'https://github.com/cssnano/cssnano\'>cssnano</a> and <a href=\'https://www.npmjs.com/package/postcss-discard-comments\'>Discard Comments</a> plugins by default.'
+		},
 	]
 }"></include>
 <h3>Return</h3>
