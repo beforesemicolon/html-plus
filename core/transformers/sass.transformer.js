@@ -6,6 +6,13 @@ const render = promisify(nodeSass.render);
 const defaultOptions = {
   env: 'development',
   file: null,
+  indentWidth: 2,
+  precision: 5,
+  indentType: 'space',
+  linefeed: 'lf',
+  sourceComments: false,
+  functions: {},
+  includePaths: [],
 }
 
 async function sassTransformer(content, opt = defaultOptions) {
