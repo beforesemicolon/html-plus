@@ -34,11 +34,7 @@ const defaultOptions = {
     lint: false,
   },
   stylus: {
-    functions: {},
-    set: {},
-    define: {},
-    includes: [],
-    imports: [],
+    paths: [],
   },
   postCSS: {
     plugins: []

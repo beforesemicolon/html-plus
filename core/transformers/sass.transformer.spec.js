@@ -87,4 +87,61 @@ describe('sassTransformer', () => {
     return expect(sassTransformer({})).rejects.toThrowError('If no string content is provided, the "file" option must be provided.')
   });
   
+  describe('should work with other options', () => {
+    it('indentWidth', () => {
+      return sassTransformer(`
+      body {
+          background: #edd;
+      }
+      `, {
+        indentWidth: 8
+      }).then(res => {
+        expect(res).toEqual('body {\n' +
+          '        background: #edd; }\n');
+      })
+    });
+  
+    it('precision', () => {
+      return sassTransformer(`
+      $w: (10 / 3);
+      body {
+          width: #{$w}px;
+      }
+      `, {
+        precision: 5
+      }).then(res => {
+        expect(res).toEqual('body {\n' +
+          '  width: 3.33333px; }\n');
+      })
+    });
+  
+    it('indentType', () => {
+      return sassTransformer(`
+      body {
+          width: 300px;
+      }
+      `, {
+        indentWidth: 1,
+        indentType: 'tab'
+      }).then(res => {
+        expect(res).toEqual('body {\n' +
+          '\twidth: 300px; }\n');
+      })
+    });
+  
+    it('sourceComments', () => {
+      return sassTransformer(`
+      body {
+          width: 300px;
+      }
+      `, {
+        sourceComments: true
+      }).then(res => {
+        expect(res).toEqual('/* line 2, stdin */\n' +
+          'body {\n' +
+          '  width: 300px; }\n');
+      })
+    });
+  });
+  
 });

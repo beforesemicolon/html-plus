@@ -3,11 +3,7 @@ const stylus = require('stylus');
 const defaultOptions = {
   env: 'development',
   file: null,
-  functions: {},
-  set: {},
-  define: {},
-  includes: [],
-  imports: [],
+  paths: []
 }
 
 async function stylusTransformer(content = null, opt = defaultOptions) {
@@ -24,33 +20,13 @@ async function stylusTransformer(content = null, opt = defaultOptions) {
   content = content ?? '';
   
   return await (new Promise((res, rej) => {
-    const {set, define, includes, imports, ...options} = opt;
     
     const styl = stylus(content, {
-      ...options,
+      ...opt,
       filename: opt.file?.fileAbsolutePath,
       ...(opt.env === 'production' && {sourceMap: 'inline'}),
     });
-  
-    for (let x in set) {
-      if (set.hasOwnProperty(x)) {
-        styl.set(x, opt.set[x])
-      }
-    }
-  
-    for (let x in define) {
-      if (define.hasOwnProperty(x)) {
-        styl.define(x, define[x])
-      }
-    }
-    
-    includes.forEach(inc => {
-      styl.include(inc)
-    })
-  
-    imports.forEach(imp => {
-      styl.import(imp)
-    })
+
   
     styl.render((err, css) => {
         if (err) {
