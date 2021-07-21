@@ -1,16 +1,22 @@
 const hljs = require('highlight.js');
 
 class CodeSnippet {
-  preStyle = `
-    padding: 15px;
-    display: block;
-    overflow: auto;
-    font-weight: 200;
-    border-radius: 5px;
-    text-align: left;
-    line-height: 135%;
-    tab-size: 2;
-  `.replace(/\s{2}/g, '');
+  static get style() {
+    return `
+      <style>
+          .hljs {
+            padding: 15px;
+            display: block;
+            overflow: auto;
+            font-weight: 200;
+            border-radius: 5px;
+            text-align: left;
+            line-height: 135%;
+            tab-size: 2;
+          }
+      </style>
+    `
+  }
   
   constructor(node) {
     this.node = node;
@@ -22,7 +28,7 @@ class CodeSnippet {
   }
   
   render() {
-    return '<pre class="hljs" style="' + this.preStyle + '">' +
+    return '<pre class="hljs">' +
       '<code class="language-' + this.language + '">' +
       this.content +
       '</code>' +

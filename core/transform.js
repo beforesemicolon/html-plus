@@ -1,3 +1,4 @@
+const {isString} = require("util");
 const {HTMLNode} = require("./parser/HTMLNode");
 const {defaultAttributesMap} = require("./default-attributes");
 const {defaultTagsMap} = require("./default-tags");
@@ -10,13 +11,12 @@ const defaultOptions = {
   customTags: [],
   customAttributes: [],
   file: null,
-  rootNode: null,
   onBeforeRender() {
   },
   partialFiles: [],
 };
 
-function transform(content, options = defaultOptions) {
+async function transform(content, options = defaultOptions) {
   if (content && typeof content === 'object') {
     options = content;
     
@@ -30,8 +30,9 @@ function transform(content, options = defaultOptions) {
   }
   
   content = content.replace(/\s+/, ' ');
+  options = {...defaultOptions, ...options, rootNode: null};
   
-  options = {...defaultOptions, ...options};
+  const styles = [];
   
   const customTagsMap = options.customTags.reduce((acc, tag) => {
     const tagName = turnCamelOrPascalToKebabCasing(tag.name);
@@ -45,13 +46,41 @@ function transform(content, options = defaultOptions) {
     return acc;
   }, {});
   
-  const node = new HTMLNode(content, {
-    ...options,
-    customTags: {...customTagsMap, ...defaultTagsMap},
-    customAttributes: {...customAttributesMap, ...defaultAttributesMap}
-  })
+  const customTags = {...customTagsMap, ...defaultTagsMap};
+  const customAttributes = {...customAttributesMap, ...defaultAttributesMap};
   
-  return (node.render()).trim();
+  // collect tag associated styles
+  for (let name in customTags) {
+    const style = await customTags[name].style;
+    
+    // only collect the style if the tag is actually used
+    if (isString(style) && new RegExp(`<${name}[^>]*>`, 'g').test(content)) {
+      let css = style;
+      
+      if (style.trim().startsWith('<style')) {
+        css = style.match(/<style[^>]*>(.*)<\/?style>/s)[1];
+      }
+      
+      styles.push(`<style id="${name}-tag">${css}</style>`);
+    }
+  }
+  
+  const node = new HTMLNode(content, {...options, customTags, customAttributes})
+  
+  let html = (node.render()).trim();
+  
+  // include the collected styles at the end of the head tag
+  if (styles.length) {
+    const endOfHeadPattern = /<\/head[^>]*>/gm;
+    
+    if (endOfHeadPattern.test(html)) {
+      html = html.replace(endOfHeadPattern, m => {
+        return `${styles.join('\n')}${m}`;
+      })
+    }
+  }
+  
+  return html;
 }
 
 module.exports.transform = transform;

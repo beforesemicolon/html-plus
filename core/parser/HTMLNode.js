@@ -2,7 +2,6 @@ const {handleError} = require("./handle-error");
 const {renderByAttribute} = require("./render-by-attribute");
 const {createCustomTag} = require("./create-custom-tag");
 const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
-const {bindData} = require("../utils/bind-data");
 const {TextNode, CommentNode, parse} = require("node-html-parser");
 const {composeTagString} = require("./compose-tag-string");
 const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
