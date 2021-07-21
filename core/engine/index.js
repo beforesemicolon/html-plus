@@ -7,8 +7,8 @@ const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
 const {File} = require('../File');
 const validUrl = require('valid-url');
+const {collectHPConfig} = require("../utils/collect-hp-config");
 const {isObject, isArray, isFunction} = require("util");
-const {mergeObjects} = require("../utils/merge-objects");
 
 const defaultOptions = {
   staticData: {},
@@ -48,18 +48,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
     throw new Error('engine first argument must be provided and be a valid express app.')
   }
   
-  let hbConfig = {};
-  
-  try {
-    hbConfig = require(path.join(process.cwd(), 'hp.config.js'));
-  } catch (e) {
-    if (e.code !== 'MODULE_NOT_FOUND') {
-      e.message = `hp.config.js file loading failed: ${e.message}`
-      throw new Error(e)
-    }
-  }
-  
-  opt = {...defaultOptions, ...mergeObjects(hbConfig, opt)};
+  opt = collectHPConfig(defaultOptions, opt);
   
   if (!isObject(opt.staticData)) {
     throw new Error('HTML+ static data option must be a javascript object')
