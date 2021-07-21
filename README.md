@@ -4,8 +4,9 @@ HTML Template Language
 
 ![license](https://img.shields.io/github/license/beforesemicolon/html-plus)
 ![npm](https://img.shields.io/npm/v/@beforesemicolon/html-plus)
-![Build](https://github.com/beforesemicolon/html-plus/actions/workflows/mac.yml/badge.svg)
-![Build](https://github.com/beforesemicolon/html-plus/actions/workflows/linux.yml/badge.svg)
+![node-current](https://img.shields.io/node/v/html-plus)
+![Mac Build](https://github.com/beforesemicolon/html-plus/actions/workflows/mac.yml/badge.svg)
+![Linux Build](https://github.com/beforesemicolon/html-plus/actions/workflows/linux.yml/badge.svg)
 
 ## Simply HTML and much more
 ```html
