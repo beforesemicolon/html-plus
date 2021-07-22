@@ -1,4 +1,4 @@
-const {isString} = require("util");
+const {collectPageTagsStyle} = require("./utils/collect-page-tags-style");
 const {HTMLNode} = require("./parser/HTMLNode");
 const {defaultAttributesMap} = require("./default-attributes");
 const {defaultTagsMap} = require("./default-tags");
@@ -32,8 +32,6 @@ async function transform(content, options = defaultOptions) {
   content = content.replace(/\s+/, ' ');
   options = {...defaultOptions, ...options, rootNode: null};
   
-  const styles = [];
-  
   const customTagsMap = options.customTags.reduce((acc, tag) => {
     const tagName = turnCamelOrPascalToKebabCasing(tag.name);
     acc[tagName] = tag;
@@ -46,41 +44,15 @@ async function transform(content, options = defaultOptions) {
     return acc;
   }, {});
   
-  const customTags = {...customTagsMap, ...defaultTagsMap};
-  const customAttributes = {...customAttributesMap, ...defaultAttributesMap};
+  const node = new HTMLNode(content, {
+    ...options,
+    customTags: {...customTagsMap, ...defaultTagsMap},
+    customAttributes: {...customAttributesMap, ...defaultAttributesMap},
+    defaultTags: defaultTagsMap,
+    defaultAttributes: defaultAttributesMap,
+  })
   
-  // collect tag associated styles
-  for (let name in customTags) {
-    const style = await customTags[name].style;
-    
-    // only collect the style if the tag is actually used
-    if (isString(style) && new RegExp(`<${name}[^>]*>`, 'g').test(content)) {
-      let css = style;
-      
-      if (style.trim().startsWith('<style')) {
-        css = style.match(/<style[^>]*>(.*)<\/?style>/s)[1];
-      }
-      
-      styles.push(`<style id="${name}-tag">${css}</style>`);
-    }
-  }
-  
-  const node = new HTMLNode(content, {...options, customTags, customAttributes})
-  
-  let html = (node.render()).trim();
-  
-  // include the collected styles at the end of the head tag
-  if (styles.length) {
-    const endOfHeadPattern = /<\/head[^>]*>/gm;
-    
-    if (endOfHeadPattern.test(html)) {
-      html = html.replace(endOfHeadPattern, m => {
-        return `${styles.join('\n')}${m}`;
-      })
-    }
-  }
-  
-  return html;
+  return (node.render()).trim();
 }
 
 module.exports.transform = transform;

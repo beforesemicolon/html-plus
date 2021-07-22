@@ -4,7 +4,7 @@ class CodeSnippet {
   static get style() {
     return `
       <style>
-          .hljs {
+          pre.hljs {
             padding: 15px;
             display: block;
             overflow: auto;

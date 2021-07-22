@@ -34,19 +34,15 @@ const transformFile = async (file, opt = {}) => {
       case '.scss':
       case '.sass':
         content = await transform.sass({file, ...opt});
-        content = (await transform.css(content, {file, ...opt})).content;
-        break;
+        return (await transform.css(content, {file, ...opt})).content;
       case '.less':
         content = await transform.less({file, ...opt});
-        content = (await transform.css(content, {file, ...opt})).content;
-        break;
+        return (await transform.css(content, {file, ...opt})).content;
       case '.styl':
         content = await transform.stylus({file, ...opt});
-        content = (await transform.css(content, {file, ...opt})).content;
-        break;
+        return (await transform.css(content, {file, ...opt})).content;
       case '.css':
-        content = (await transform.css({file, ...opt})).content;
-        break;
+        return (await transform.css({file, ...opt})).content;
       case '.js':
       case '.jsx':
       case '.ts':
@@ -54,11 +50,10 @@ const transformFile = async (file, opt = {}) => {
       case '.mjs':
       case '.cjs':
         const result = await transform.js({file, ...opt});
-        content = result.content;
-        break;
+        return result.content;
+      default:
+        return content;
     }
-    
-    return content;
   }
 }
 

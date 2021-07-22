@@ -15,6 +15,7 @@ const defaultOptions = {
   context: {},
   rootNode: null,
   customTags: {},
+  defaultTags: {},
   customAttributes: {},
   file: null,
   onBeforeRender() {
@@ -54,7 +55,7 @@ class HTMLNode {
         );
         
         this.#tag = createCustomTag(this.#tag, this.#node, this, this.#options);
-      } catch(e) {
+      } catch (e) {
         handleError(e, this.#node, this.#options);
       }
     }
@@ -108,10 +109,10 @@ class HTMLNode {
     
     clonedNode.context = {...this.#node.context, ...context};
     clonedNode.parentNode = this.#node.parentNode;
-  
+    
     if (clonedNode.parentNode) {
       const index = clonedNode.parentNode.childNodes.indexOf(this.#node);
-  
+      
       if (index >= 0) {
         this.#node.parentNode.childNodes.splice(index, 0, clonedNode)
       } else {
@@ -125,7 +126,7 @@ class HTMLNode {
   setAttribute(key, value) {
     if (typeof key === 'string' && typeof value === 'string') {
       this.#node.setAttribute(key, value);
-       const processAttrs = processNodeAttributes(
+      const processAttrs = processNodeAttributes(
         {[`${key}`]: value},
         this.#tag ? this.#tag.customAttributes : {},
         {$data: this.#options.data, ...this.context}
@@ -186,30 +187,32 @@ class HTMLNode {
     let result = '';
     if (this.#node.rawAttrs.length && /\s?#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
       result = renderByAttribute(this, this.#options);
-    
+      
       if (typeof result === 'string') {
         return result
       }
     }
-  
+    
     if (this.#tag) {
       this.#onBeforeRender();
       
-      return this.#tag.render();
+      return this.#options.defaultTags[this.tagName]
+        ? this.#tag.render()
+        : composeTagString(this, this.#tag.render(), Object.keys(this.#options.customAttributes));
     }
-  
+    
     try {
       this.attributes = processNodeAttributes(
         this.#node.attributes,
         {},
         {$data: this.#options.data, ...this.context}
       );
-    } catch(e) {
+    } catch (e) {
       handleError(e, this.#node, this.#options);
     }
-  
+    
     this.#onBeforeRender();
-  
+    
     return (this.tagName
         ? composeTagString(this, this.renderChildren(), Object.keys(this.#options.customAttributes))
         : this.renderChildren()
@@ -220,7 +223,7 @@ class HTMLNode {
     if (typeof this.#options.onBeforeRender === 'function') {
       try {
         this.#options.onBeforeRender(this, this.#options.file);
-      } catch(e) {
+      } catch (e) {
         console.error('Error in before rendering callback', e);
       }
     }
@@ -229,7 +232,7 @@ class HTMLNode {
   render() {
     try {
       return this.#render();
-    } catch(e) {
+    } catch (e) {
       handleError(e, this.#node, this.#options);
     }
   }
@@ -237,7 +240,7 @@ class HTMLNode {
   toString() {
     try {
       return this.#render();
-    } catch(e) {
+    } catch (e) {
       handleError(e, this.#node, this.#options);
     }
   }
