@@ -48,16 +48,18 @@ describe('engine', () => {
   describe('should throw error', () => {
     let spy;
     
-    beforeAll(() => {
+    beforeEach(() => {
+      const oldJoin = path.join;
       spy = jest.spyOn(path, 'join').mockImplementation((...args) => {
         if (args[1] === 'hp.config.js') {
-            return args[0];
+            return __dirname;
         }
-        return args.join('/')
+        
+        return oldJoin(...args);
       })
     })
     
-    afterAll(() => {
+    afterEach(() => {
       spy.mockRestore();
     })
     
@@ -66,20 +68,20 @@ describe('engine', () => {
         .toThrowError('HTML+ static data option must be a javascript object')
     });
     
-    // it('if custom tags is not an array', () => {
-    //   expect(() => engine(app, src, {customTags: {}}))
-    //     .toThrowError('HTML+ custom tags option must be an array of valid tags.')
-    // });
-    //
-    // it('if custom attributes is not an array', () => {
-    //   expect(() => engine(app, src, {customAttributes: {}}))
-    //     .toThrowError('HTML+ custom attributes option must be an array of valid attributes.')
-    // });
-    //
-    // it('if onPageRequest is not an function', () => {
-    //   expect(() => engine(app, src, {onPageRequest: null}))
-    //     .toThrowError('"onPageRequest" option must be a function')
-    // });
+    it('if custom tags is not an array', () => {
+      expect(() => engine(app, src, {customTags: {}}))
+        .toThrowError('HTML+ custom tags option must be an array of valid tags.')
+    });
+
+    it('if custom attributes is not an array', () => {
+      expect(() => engine(app, src, {customAttributes: {}}))
+        .toThrowError('HTML+ custom attributes option must be an array of valid attributes.')
+    });
+
+    it('if onPageRequest is not an function', () => {
+      expect(() => engine(app, src, {onPageRequest: null}))
+        .toThrowError('"onPageRequest" option must be a function')
+    });
   });
   
   describe('should render', () => {
