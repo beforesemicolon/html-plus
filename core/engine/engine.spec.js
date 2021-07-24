@@ -126,7 +126,7 @@ describe('engine', () => {
       return request(app).get('/project/project.ts')
         .then(res => {
           expect(res.status).toBe(200)
-          expect(res.text).toBe('// project/project.ts\n' +
+          expect(res.text).toBe('// core/engine/__src-engine/project/project.ts\n' +
             'var x;\n' +
             'x = 14;\n')
         })
