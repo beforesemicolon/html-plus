@@ -6,6 +6,7 @@ const {rmdir, mkdir, writeFile} = require('fs/promises');
 const {cacheService} = require('../CacheService');
 
 describe('engine', () => {
+  const projDir = process.cwd();
   let app;
   const src = path.resolve(__dirname, '__src-engine');
   const homePage = path.resolve(src, 'index.html');
@@ -34,6 +35,7 @@ describe('engine', () => {
   
   afterAll(async () => {
     await rmdir(src);
+    process.chdir(projDir);
   })
   
   it('should redirect to 404 page', () => {
