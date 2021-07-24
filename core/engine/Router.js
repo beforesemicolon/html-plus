@@ -1,0 +1,126 @@
+const express = require("express");
+const path = require("path");
+const {defaultOptions} = require("./default-options");
+const {transform: transformResource} = require('../transformers');
+const {File} = require('../File');
+
+class Router {
+  sourcesExtensions = new Set([
+    '.scss',
+    '.sass',
+    '.css',
+    '.less',
+    '.styl',
+    '.js',
+    '.mjs',
+    '.cjs',
+    '.ts',
+    '.tsx',
+    '.jsx',
+  ]);
+  cache = {};
+  #onPageRequest;
+  
+  constructor(app, {pagesRoutes, pagesDirectoryPath, options}) {
+    this.pagesRoutes = pagesRoutes;
+    this.pagesDirectoryPath = pagesDirectoryPath;
+    this.options = {...defaultOptions, ...options};
+    this.#onPageRequest = this.options.onPageRequest || (() => {});
+    
+    app.use(this.#resourceMiddleware.bind(this));
+    app.use(express.static(this.pagesDirectoryPath))
+  }
+  
+  async #resourceMiddleware(req, res, next) {
+    if (req.method === 'GET') {
+      const ext = path.extname(req.path);
+    
+      if (ext && this.sourcesExtensions.has(ext)) {
+        const {postCSS, less, sass, stylus, env} = this.options
+        let content = '';
+        let contentType = 'text/css';
+        let resourcePath;
+        let file = null;
+      
+        if (/node_modules/.test(req.path)) {
+          resourcePath = path.join(process.cwd(), req.path);
+        } else {
+          resourcePath = path.join(this.pagesDirectoryPath, req.path);
+        }
+      
+        if (env === 'production' && this.cache[resourcePath]) {
+          res.setHeader('Content-Type', this.cache[resourcePath].contentType);
+          return res.send(this.cache[resourcePath].content);
+        }
+      
+        file = new File(resourcePath, this.pagesDirectoryPath);
+      
+        try {
+          switch (ext) {
+            case '.scss':
+            case '.sass':
+              content = await transformResource.sass({file, ...sass});
+              content = (await transformResource.css(content, {file, env, ...postCSS})).content;
+              break;
+            case '.less':
+              content = await transformResource.less({file, ...less});
+              content = (await transformResource.css(content, {file, env, ...postCSS})).content;
+              break;
+            case '.styl':
+              content = await transformResource.stylus({file, ...stylus});
+              content = (await transformResource.css(content, {file, env, ...postCSS})).content;
+              break;
+            case '.css':
+              content = (await transformResource.css({file, env, ...postCSS})).content;
+              break;
+            case '.js':
+            case '.jsx':
+            case '.ts':
+            case '.tsx':
+            case '.mjs':
+            case '.cjs':
+              const result = await transformResource.js({file, env});
+              content = result.content;
+              contentType = 'application/javascript';
+              break;
+          }
+        
+          if (env === 'production') {
+            this.cache[resourcePath] = {content, contentType}
+          }
+        
+          res.setHeader('Content-Type', contentType);
+        
+          return res.send(content);
+        } catch(e) {
+          console.error(`Failed to load style/script content "${req.path}"`, e);
+          return res.sendStatus(404);
+        }
+      } else if(!ext || ext === '.html') {
+        const template = this.pagesRoutes[req.path] ?? this.pagesRoutes[`${req.path}/`];
+      
+        if (template) {
+          return res.render(template, this.#onPageRequest(req) || {})
+        } else if(!ext || ext === '.html') {
+        
+          if (req.path.startsWith('/404')) {
+            return this.pagesRoutes['/404']
+              ? res.render(this.pagesRoutes['/404'])
+              : res.send('<h1>404 - Page Not Found</h1>')
+          }
+        
+          return res.redirect('/404')
+        }
+      }
+    }
+  
+    next()
+  }
+  
+  onPageRequest(callback) {
+    this.#onPageRequest = callback;
+  }
+  
+}
+
+module.exports.Router = Router;

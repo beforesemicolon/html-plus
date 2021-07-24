@@ -1,47 +1,14 @@
 const fs = require('fs');
 const path = require('path');
-const express = require("express");
-const {PartialFile} = require("../PartialFile");
-const {pageAndResourcesMiddleware} = require("./page-and-resources-middleware");
+const {collectHPConfig} = require("../utils/collect-hp-config");
+const {traverseSourceDirectoryAndCollect} = require("./traverse-source-directory-and-collect");
 const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
 const {File} = require('../File');
-const validUrl = require('valid-url');
-const {collectHPConfig} = require("../utils/collect-hp-config");
+const {traverseNode} = require("./traverse-node");
+const {Router} = require("./Router");
 const {isObject, isArray, isFunction} = require("util");
-
-const defaultOptions = {
-  staticData: {},
-  customTags: [],
-  customAttributes: [],
-  env: 'development',
-  sass: {
-    indentWidth: 2,
-    precision: 5,
-    indentType: 'space',
-    linefeed: 'lf',
-    sourceComments: false,
-    includePaths: [],
-    functions: {},
-  },
-  less: {
-    strictUnits: false,
-    insecure: false,
-    paths: [],
-    math: 1,
-    urlArgs: '',
-    modifyVars: null,
-    lint: false,
-  },
-  stylus: {
-    paths: [],
-  },
-  postCSS: {
-    plugins: []
-  },
-  onPageRequest() {
-  }
-}
+const {defaultOptions} = require("./default-options");
 
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
@@ -74,32 +41,10 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   const partials = [];
   const pagesRoutes = {};
   
-  return getDirectoryFilesDetail(pagesDirectoryPath, filePath => {
-    if (filePath.endsWith('.html')) {
-      const fileName = path.basename(filePath);
-      
-      if (fileName.startsWith('_')) {
-        partials.push(new PartialFile(filePath, pagesDirectoryPath));
-      } else {
-        filePath = filePath.replace(pagesDirectoryPath, '');
-        const template = `${filePath.replace('.html', '')}`.slice(1);
-        let tempPath = '';
-        
-        if (filePath.endsWith('index.html')) {
-          tempPath = filePath.replace('/index.html', '');
-          pagesRoutes[tempPath || '/'] = template;
-          pagesRoutes[`${tempPath}/`] = template;
-          pagesRoutes[`${tempPath}/index.html`] = template;
-        } else {
-          tempPath = filePath.replace('.html', '');
-          pagesRoutes[tempPath] = template;
-          pagesRoutes[`${tempPath}/`] = template;
-        }
-      }
-    }
-    
-    return false;
-  })
+  return getDirectoryFilesDetail(
+    pagesDirectoryPath,
+    traverseSourceDirectoryAndCollect(pagesDirectoryPath, partials, pagesRoutes)
+  )
     .then(() => {
       app.engine('html', (filePath, {settings, _locals, cache, ...context}, callback) => {
         const fileName = path.basename(filePath);
@@ -120,25 +65,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
               customTags: opt.customTags,
               customAttributes: opt.customAttributes,
               partialFiles: partials,
-              onBeforeRender: (node, nodeFile) => {
-                let attrName = '';
-                
-                if (node.tagName === 'link') {
-                  attrName = 'href';
-                } else if (node.tagName === 'script') {
-                  attrName = 'src';
-                }
-                
-                const srcPath = node.attributes[attrName];
-                
-                if (srcPath && !validUrl.isUri(srcPath)) {
-                  const resourceFullPath = path.resolve(nodeFile.fileDirectoryPath, srcPath);
-                  
-                  if (resourceFullPath.startsWith(pagesDirectoryPath)) {
-                    node.setAttribute(attrName, resourceFullPath.replace(pagesDirectoryPath, ''))
-                  }
-                }
-              }
+              onBeforeRender: traverseNode(pagesDirectoryPath)
             })
             
             callback(null, result);
@@ -146,7 +73,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
             console.error(e.message);
             const cleanMsg = e.message
               .replace(/\[\d+m/g, '')
-              .replace(/(>|<)/g, m => m === '<' ? '&lt;' : '&gt;');
+              .replace(/([><])/g, m => m === '<' ? '&lt;' : '&gt;');
             callback(null, `<pre>${cleanMsg}</pre>`);
           }
         })
@@ -154,15 +81,10 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
       
       app.set('views', pagesDirectoryPath);
       app.set('view engine', 'html');
-      
-      app.use(pageAndResourcesMiddleware(
-        pagesRoutes,
-        pagesDirectoryPath,
-        opt
-      ));
-      app.use(express.static(pagesDirectoryPath))
-      
+  
       console.log('HTML+ engine is ready');
+      
+      return new Router(app, {pagesRoutes, pagesDirectoryPath, options: opt});
     })
 };
 
