@@ -43,6 +43,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   
   const partials = [];
   const pagesRoutes = {};
+  const isProduction = opt.env === 'production';
   
   return getDirectoryFilesDetail(
     pagesDirectoryPath,
@@ -60,19 +61,20 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
           if (err) return callback(err);
           
           // if context of the page does not change, return the cached page
-          if (opt.env === 'production') {
+          if (isProduction) {
             if (cacheService.hasCachedValue(filePath)) {
               const oldContext = cacheService.getCachedValue(filePath);
               
               try {
                 deepStrictEqual(context, oldContext);
                 return callback(null, await cacheService.getCachedFile(filePath));
-              } catch(e) {}
+              } catch (e) {
+              }
             }
-  
+            
             cacheService.cache(filePath, context);
           }
-  
+          
           const file = new File(filePath, settings.views);
           file.content = content;
           
@@ -87,7 +89,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
               onBeforeRender: traverseNode(pagesDirectoryPath)
             })
             
-            if (opt.env === 'production') {
+            if (isProduction) {
               // cache the html content so it can be used for CSS purge
               await cacheService.cacheFile(filePath, html);
             }
@@ -95,9 +97,15 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
             callback(null, html);
           } catch (e) {
             console.error(e.message);
+            
+            if (isProduction) {
+              return callback(e)
+            }
+            
             const cleanMsg = e.message
               .replace(/\[\d+m/g, '')
               .replace(/([><])/g, m => m === '<' ? '&lt;' : '&gt;');
+            
             callback(null, `<pre>${cleanMsg}</pre>`);
           }
         })
@@ -105,7 +113,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
       
       app.set('views', pagesDirectoryPath);
       app.set('view engine', 'html');
-  
+      
       console.info(chalk.green('[HTML+] engine is ready'));
       
       return new Router(app, {pagesRoutes, pagesDirectoryPath, options: opt});
