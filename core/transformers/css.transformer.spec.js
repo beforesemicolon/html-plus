@@ -17,7 +17,7 @@ describe('cssTransformer', () => {
     beforeAll(async () => {
       await exec(`echo "${data.css.trim()}" > ${cssFile}`);
       await exec(`echo "* {box-sizing: border-box;}" > ${css2File}`);
-      await exec(`echo "<body><div class="image"></div></body>" > ${htmlFile}`);
+      await exec(`echo "<html><head><link rel="stylesheet" href="__style.css"></head><body><div class="image"></div></body></html>" > ${htmlFile}`);
       file = new File(cssFile, __dirname);
     })
     
