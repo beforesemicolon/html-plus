@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const {collectHPConfig} = require("../utils/collect-hp-config");
+const chalk = require("chalk");
 const {traverseSourceDirectoryAndCollect} = require("./traverse-source-directory-and-collect");
 const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
@@ -9,6 +10,7 @@ const {traverseNode} = require("./traverse-node");
 const {Router} = require("./Router");
 const {isObject, isArray, isFunction} = require("util");
 const {defaultOptions} = require("./default-options");
+const {cacheService} = require('../CacheService');
 
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
@@ -53,12 +55,12 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
           callback(new Error(`Cannot render partial(${fileName}) file as page. Partial files can only be included.`));
         }
         
-        fs.readFile(filePath, (err, content) => {
+        fs.readFile(filePath, async (err, content) => {
           if (err) return callback(err);
           const file = new File(filePath, settings.views);
           file.content = content;
           try {
-            const result = transform(file.content, {
+            const html = transform(file.content, {
               data: opt.staticData,
               context,
               file,
@@ -68,7 +70,12 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
               onBeforeRender: traverseNode(pagesDirectoryPath)
             })
             
-            callback(null, result);
+            if (opt.env === 'production') {
+              // cache the html content so it can be used for CSS purge
+              await cacheService.cacheFile(filePath, html);
+            }
+            
+            callback(null, html);
           } catch (e) {
             console.error(e.message);
             const cleanMsg = e.message
@@ -82,7 +89,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
       app.set('views', pagesDirectoryPath);
       app.set('view engine', 'html');
   
-      console.log('HTML+ engine is ready');
+      console.info(chalk.green('[HTML+] engine is ready'));
       
       return new Router(app, {pagesRoutes, pagesDirectoryPath, options: opt});
     })

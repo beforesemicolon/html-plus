@@ -3,6 +3,7 @@ const path = require("path");
 const {defaultOptions} = require("./default-options");
 const {transform: transformResource} = require('../transformers');
 const {File} = require('../File');
+const {cacheService} = require('../CacheService');
 
 class Router {
   sourcesExtensions = new Set([
@@ -18,7 +19,6 @@ class Router {
     '.tsx',
     '.jsx',
   ]);
-  cache = {};
   #onPageRequest;
   
   constructor(app, {pagesRoutes, pagesDirectoryPath, options}) {
@@ -48,9 +48,10 @@ class Router {
           resourcePath = path.join(this.pagesDirectoryPath, req.path);
         }
       
-        if (env === 'production' && this.cache[resourcePath]) {
-          res.setHeader('Content-Type', this.cache[resourcePath].contentType);
-          return res.send(this.cache[resourcePath].content);
+        if (env === 'production' && cacheService.hasCachedValue(resourcePath)) {
+          const cachedResource = cacheService.getCachedValue(resourcePath)
+          res.setHeader('Content-Type', cachedResource.contentType);
+          return res.send(cachedResource.content);
         }
       
         file = new File(resourcePath, this.pagesDirectoryPath);
@@ -86,7 +87,7 @@ class Router {
           }
         
           if (env === 'production') {
-            this.cache[resourcePath] = {content, contentType}
+            cacheService.cache(resourcePath, {content, contentType})
           }
         
           res.setHeader('Content-Type', contentType);

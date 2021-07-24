@@ -1,6 +1,5 @@
-const {File} = require('./../File');
 const fs = require('fs');
-const {mkdir, rmdir, copyFile, writeFile} = require('fs/promises');
+const {mkdir, rmdir, writeFile} = require('fs/promises');
 const path = require('path');
 const chalk = require("chalk");
 const {collectHPConfig} = require("../utils/collect-hp-config");
