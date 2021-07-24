@@ -42,7 +42,7 @@ const data = {
   description: `HTML Plus - ${site.description}`,
   searchLabel: 'Search...',
   partial: 'documentation',
-  next: {path: `${docLink}/getting-started`, title: 'Getting Started'},
+  next: {path: `${docLink}/getting-started`, title: 'Get Started'},
   menu: {
     title: 'Documentation',
     list: [

@@ -23,7 +23,6 @@
 				}"></include>
 			</header>
 			<section class="doc-menu-section">
-				<h2>{page.menu.title}</h2>
 				<ul role="menu" aria-label="Documentation Menu" class="doc-menu">
 					<li #repeat="page.menu.list" #attr="class, current, path === $item.path">
 						<variable name="hasSubmenu"
@@ -48,7 +47,7 @@
 			</section>
 		</aside>
 		<article #if="currentPage" id="documentation">
-			<h2><ignore value="currentPage === page ? page.menu.title : currentPage.title" escape></ignore></h2>
+			<h2 #if="currentPage !== page"><ignore value="currentPage.title" escape></ignore></h2>
 			<include partial="{currentPage.partial}"></include>
 		</article>
 	</main>
