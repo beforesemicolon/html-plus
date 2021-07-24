@@ -97,7 +97,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
             callback(null, html);
           } catch (e) {
             console.error(e.message);
-            
+
             if (isProduction) {
               return callback(e)
             }
