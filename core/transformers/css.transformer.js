@@ -8,6 +8,7 @@ const cssnano = require('cssnano');
 const comments = require('postcss-discard-comments');
 const {uniqueAlphaNumericId} = require("../utils/unique-alpha-numeric-id");
 const {readFileContent} = require("../utils/readFileContent");
+const purgeHTML = require('purgecss-from-html');
 
 const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) => {
   let absPath = urlInfo.absolutePath;
@@ -45,6 +46,8 @@ const defaultOptions = {
   map: false,
   file: null
 };
+
+// <body.*>(.*?)<\/body>
 
 async function cssTransformer(content, opt = defaultOptions) {
   if (content === undefined || content === null) {
@@ -84,6 +87,18 @@ async function cssTransformer(content, opt = defaultOptions) {
       ...plugins,
       comments({removeAll: true}),
       purgeCSS({
+        extractors: [
+          {
+            extractor: function (content) {
+              if (content.match(new RegExp(`${opt.file.file}`, 'g'))) {
+                return purgeHTML(content);
+              }
+              
+              return [];
+            },
+            extensions: ['html']
+          }
+        ],
         content: [
           `${opt.destPath || opt.file.srcDirectoryPath}/**/*.html`
         ],

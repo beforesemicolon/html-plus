@@ -33,7 +33,7 @@ class CacheService {
   async getCachedFile(filePath) {
     if (this.hasCachedFile(filePath)) {
       const hashedFilePath = this.hashString(filePath);
-      return readFile(path.join(this.cacheDir, `${hashedFilePath}${path.extname(filePath)}`));
+      return readFile(path.join(this.cacheDir, `${hashedFilePath}${path.extname(filePath)}`), 'utf-8');
     }
     
     return null;

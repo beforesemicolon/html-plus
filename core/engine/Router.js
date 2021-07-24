@@ -55,24 +55,29 @@ class Router {
         }
       
         file = new File(resourcePath, this.pagesDirectoryPath);
+        // for production, using the cached transformed pages help the CSS purge
+        // better decide which CSS to keep or remove
+        const destPath = env === 'production'
+          ? cacheService.cacheDir
+          : this.pagesDirectoryPath;
       
         try {
           switch (ext) {
             case '.scss':
             case '.sass':
               content = await transformResource.sass({file, ...sass});
-              content = (await transformResource.css(content, {file, env, ...postCSS})).content;
+              content = (await transformResource.css(content, {file, destPath, env, ...postCSS})).content;
               break;
             case '.less':
               content = await transformResource.less({file, ...less});
-              content = (await transformResource.css(content, {file, env, ...postCSS})).content;
+              content = (await transformResource.css(content, {file, destPath, env, ...postCSS})).content;
               break;
             case '.styl':
               content = await transformResource.stylus({file, ...stylus});
-              content = (await transformResource.css(content, {file, env, ...postCSS})).content;
+              content = (await transformResource.css(content, {file, destPath, env, ...postCSS})).content;
               break;
             case '.css':
-              content = (await transformResource.css({file, env, ...postCSS})).content;
+              content = (await transformResource.css({file, destPath, env, ...postCSS})).content;
               break;
             case '.js':
             case '.jsx':

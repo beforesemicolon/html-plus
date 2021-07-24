@@ -11,6 +11,7 @@ const {Router} = require("./Router");
 const {isObject, isArray, isFunction} = require("util");
 const {defaultOptions} = require("./default-options");
 const {cacheService} = require('../CacheService');
+const {deepStrictEqual} = require('assert');
 
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
@@ -57,10 +58,26 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
         
         fs.readFile(filePath, async (err, content) => {
           if (err) return callback(err);
+          
+          // if context of the page does not change, return the cached page
+          if (opt.env === 'production') {
+            if (cacheService.hasCachedValue(filePath)) {
+              const oldContext = cacheService.getCachedValue(filePath);
+              
+              try {
+                deepStrictEqual(context, oldContext);
+                return callback(null, await cacheService.getCachedFile(filePath));
+              } catch(e) {}
+            }
+  
+            cacheService.cache(filePath, context);
+          }
+  
           const file = new File(filePath, settings.views);
           file.content = content;
+          
           try {
-            const html = transform(file.content, {
+            let html = transform(file.content, {
               data: opt.staticData,
               context,
               file,
