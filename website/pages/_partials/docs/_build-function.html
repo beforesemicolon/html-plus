@@ -8,6 +8,10 @@
 	}
 }"></include>
 <h3>Options</h3>
+<p>Options can be provided directly to the build function or you can simply create a <strong>hp.config.js</strong> file
+   at the root directory and export(<em #ignore>using module.exports = {...}</em>) an object with the following properties.</p>
+<p>If you provide options both, by providing the <strong>hp.config.js</strong> file and build options, these are deeply merged
+   and the options provided to the build function directly will override the <strong>hp.config.js</strong> file ones where they match in properties.</p>
 <include partial="api-description-list" data="{
 	descriptions: [
 		{
@@ -48,6 +52,9 @@
 	]
 }"></include>
 <h3>Usage Examples</h3>
+<p>The <strong>build</strong> function shares a lot of options with the
+	<a href="/documentation/api-reference/engine-function">engine</a> function. Use the <strong>hp.config.js</strong>
+to share common options between them.</p>
 <code-snippet language="js">
 const {build} = require("@beforesemicolon/html-plus");
 const CodeSnippet = require("./tags/code-snippet.js");
@@ -66,6 +73,9 @@ build({
 		console.log('done');
 	})
 </code-snippet>
+<p>The <strong>contextDataProvider</strong> is the equivalent of the <strong>onPageRequest</strong> option
+for <a href="/documentation/api-reference/engine-function">engine</a> and to replace
+	<a href="/documentation/data/dynamic-data">dynamic route context data</a>.</p>
 <code-snippet language="js">
 const {build} = require("@beforesemicolon/html-plus");
 const path = require("path");
@@ -80,6 +90,8 @@ build({
 	console.log('done');
 })
 </code-snippet>
+<p>The <strong>templates</strong> option is for cases where you have created <a href="/documentation/data/dynamic-data">dynamic pages</a>
+which the builder can't see but you can replicate here.</p>
 <code-snippet language="js">
 const {build} = require("@beforesemicolon/html-plus");
 const path = require("path");

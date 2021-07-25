@@ -3,6 +3,7 @@ const fs = require('fs');
 const {mkdir, rmdir, copyFile, writeFile} = require('fs/promises');
 const path = require('path');
 const chalk = require("chalk");
+const {collectHPConfig} = require("../utils/collect-hp-config");
 const {processPageResource} = require("./utils/process-page-resource");
 const {processPage} = require("./utils/process-page");
 const {collectFilePaths} = require("./utils/collect-file-paths");
@@ -30,7 +31,8 @@ let partials = [];
 let pages = [];
 
 async function build(options = defaultOptions) {
-  options = {...defaultOptions, ...options, env: 'production'};
+  options.env = 'production'
+  options = collectHPConfig(defaultOptions, options);
   
   if (!options.srcDir) {
     throw new Error('The build option "srcDir" is required to find all assets, partials and resources linked to the template.')

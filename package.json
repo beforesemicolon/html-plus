@@ -11,7 +11,7 @@
     "tests": "jest",
     "build": "rm -rf dist && tsc",
     "build:docs": "node website/build.js",
-    "local": "nodemon --watch website -e '*' --exec node website/server-test.js"
+    "local": "nodemon --watch website -e '*' --exec node website/server.js"
   },
   "keywords": [
     "template engine",
