@@ -18,7 +18,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
     throw new Error('engine first argument must be provided and be a valid express app.')
   }
   
-  opt = collectHPConfig(defaultOptions, opt);
+  opt = collectHPConfig(opt, defaultOptions);
   
   if (!isObject(opt.staticData)) {
     throw new Error('HTML+ static data option must be a javascript object')

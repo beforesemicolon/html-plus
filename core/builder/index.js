@@ -31,7 +31,7 @@ let pages = [];
 
 async function build(options = defaultOptions) {
   options.env = 'production'
-  options = collectHPConfig(defaultOptions, options);
+  options = collectHPConfig(options, defaultOptions);
   
   if (!options.srcDir) {
     throw new Error('The build option "srcDir" is required to find all assets, partials and resources linked to the template.')

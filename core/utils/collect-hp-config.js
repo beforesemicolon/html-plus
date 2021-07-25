@@ -1,7 +1,7 @@
 const {mergeObjects} = require("./merge-objects");
 const path = require('path');
 
-function collectHPConfig(defaultOptions, options) {
+function collectHPConfig(options = {}, defaultOptions = {}) {
   let hbConfig = {};
   
   try {
