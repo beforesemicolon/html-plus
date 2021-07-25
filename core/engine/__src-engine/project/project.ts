@@ -1,1 +1,0 @@
-let x: number; x = 14;

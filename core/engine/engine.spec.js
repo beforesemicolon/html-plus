@@ -32,7 +32,7 @@ describe('engine', () => {
   })
   
   afterAll(async () => {
-    await rmdir(src);
+    await rmdir(src, {recursive: true});
   })
   
   it('should redirect to 404 page', () => {
