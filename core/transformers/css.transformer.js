@@ -7,7 +7,6 @@ const atImport = require("postcss-import");
 const cssnano = require('cssnano');
 const comments = require('postcss-discard-comments');
 const {uniqueAlphaNumericId} = require("../utils/unique-alpha-numeric-id");
-const {readFileContent} = require("../utils/readFileContent");
 const purgeHTML = require('purgecss-from-html');
 
 const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) => {
@@ -37,17 +36,26 @@ const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) =
   return `${assetsPath}/${path.basename(urlInfo.url)}`;
 };
 
+function defaultHtmlExtractor(fileName) {
+  return content => {
+    if (content.match(new RegExp(`${fileName}`, 'g'))) {
+      return purgeHTML(content);
+    }
+  
+    return [];
+  }
+}
+
 const defaultOptions = {
   plugins: [],
   destPath: undefined,
   assetsPath: '',
   assetsHashedMap: {},
+  htmlExtractor: null,
   env: 'development',
   map: false,
   file: null
 };
-
-// <body.*>(.*?)<\/body>
 
 async function cssTransformer(content, opt = defaultOptions) {
   if (content === undefined || content === null) {
@@ -64,7 +72,12 @@ async function cssTransformer(content, opt = defaultOptions) {
   }
   
   opt = {...defaultOptions, ...opt};
-  content = content ?? readFileContent(opt.file.fileAbsolutePath);
+  
+  if (!content) {
+    opt.file.load();
+    
+    content = opt.file.content
+  }
   
   const plugins = [
     atImport(),
@@ -83,19 +96,15 @@ async function cssTransformer(content, opt = defaultOptions) {
   const linkedResources = [];
   
   if (opt.env === 'production') {
+    const htmlExtractor = opt.htmlExtractor || defaultHtmlExtractor(opt.file.file);
+    
     post = postcss([
       ...plugins,
       comments({removeAll: true}),
       purgeCSS({
         extractors: [
           {
-            extractor: function (content) {
-              if (content.match(new RegExp(`${opt.file.file}`, 'g'))) {
-                return purgeHTML(content);
-              }
-              
-              return [];
-            },
+            extractor: htmlExtractor,
             extensions: ['html']
           }
         ],
@@ -114,8 +123,6 @@ async function cssTransformer(content, opt = defaultOptions) {
         url: resolveUrl(opt.assetsPath, linkedResources, opt.assetsHashedMap || {}, opt.file)
       }));
     }
-    
-    options.map = true;
   } else {
     post = postcss(plugins);
   }
