@@ -1,8 +1,8 @@
 <variable name="page" value="$data.pages.home"></variable>
 
 <include partial="layout" data="page">
-	<link rel="stylesheet" href="./home.scss" inject-id="style">
-	<link rel="stylesheet" href="./../../node_modules/highlight.js/styles/github-dark-dimmed.css" inject-id="style">
+	<link rel="stylesheet" href="./home.scss" inject-id="style" defer>
+	<link rel="stylesheet" href="./../../node_modules/highlight.js/styles/github-dark-dimmed.css" inject-id="style" defer>
 
 	<section role="banner" class="wrapper">
 		<h2>{$data.site.description}</h2>

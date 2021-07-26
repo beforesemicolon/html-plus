@@ -11,7 +11,6 @@ const serveLiveLink = '/documentation/serve-live';
 const buildLink = '/documentation/build-static-site';
 const faqLink = '/documentation/faq';
 const apiReferenceLink = '/documentation/api-reference';
-const vocabularyLink = '/documentation/vocabulary';
 const faqs = require('./faqs.json');
 const site = require('./site.json');
 
