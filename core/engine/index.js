@@ -69,6 +69,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
                 deepStrictEqual(context, oldContext);
                 return callback(null, await cacheService.getCachedFile(filePath));
               } catch (e) {
+                // if the deepStrictEqual fails it is because the data is the same
               }
             }
             

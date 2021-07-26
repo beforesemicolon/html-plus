@@ -105,13 +105,14 @@ class Router {
         }
       } else if (!ext || ext === '.html') {
         const template = this.pagesRoutes[req.path] ?? this.pagesRoutes[`${req.path}/`];
+        const contextData = this.#onPageRequest(req) || {};
         
         if (template) {
-          return res.render(template, this.#onPageRequest(req) || {}, (err, html) => this.#handleTemplateError(err, html, res))
+          return res.render(template, contextData, (err, html) => this.#handleTemplateError(err, html, res))
         } else if (!ext || ext === '.html') {
           if (req.path.startsWith('/404')) {
             return this.pagesRoutes['/404']
-              ? res.render(this.pagesRoutes['/404'], (err, html) => this.#handleTemplateError(err, html, res))
+              ? res.render(this.pagesRoutes['/404'], contextData, (err, html) => this.#handleTemplateError(err, html, res))
               : res.send('<h1>404 - Page Not Found</h1>')
           }
           
