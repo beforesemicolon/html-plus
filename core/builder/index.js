@@ -90,7 +90,7 @@ async function build(options = defaultOptions) {
       )
       
       console.timeEnd(chalk.cyan('build duration'));
-  
+      
       if (options.templates.length) {
         console.log(chalk.cyan('\nBuilding dynamic pages...'));
         console.time(chalk.cyan('build duration'));
@@ -117,13 +117,13 @@ async function build(options = defaultOptions) {
         }
         console.timeEnd(chalk.cyan('build duration'));
       }
-  
+      
       console.log(chalk.greenBright('\nProcessing pages connected resources...'));
       console.time(chalk.greenBright('processing duration'));
       await Promise.all(
         Object.values(pageResources).map(resource => {
           console.log(resource.srcPath.replace(process.cwd(), ''));
-          return processPageResource(resource, options.destDir, resources)
+          return processPageResource(resource, options, resources)
         })
       )
       console.timeEnd(chalk.greenBright('processing duration'));
