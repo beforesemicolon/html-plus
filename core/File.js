@@ -4,7 +4,6 @@ const {readFileContent} = require("./utils/readFileContent");
 
 class File {
   resources = [];
-  resourceBase = '';
   #content = '';
   #loaded = false;
   #srcDirectoryPath = '';
