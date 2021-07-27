@@ -2,6 +2,9 @@ const fs = require('fs');
 const {mkdir, rmdir, writeFile} = require('fs/promises');
 const path = require('path');
 const chalk = require("chalk");
+const {getFileSourceHashedDestPath} = require("./utils/get-file-source-hashed-dest-path");
+const {uniqueAlphaNumericId} = require("../utils/unique-alpha-numeric-id");
+const {readFileContent} = require("../utils/readFileContent");
 const {collectHPConfig} = require("../utils/collect-hp-config");
 const {processPageResource} = require("./utils/process-page-resource");
 const {processPage} = require("./utils/process-page");
@@ -54,7 +57,7 @@ async function build(options = defaultOptions) {
       if (fs.existsSync(options.destDir)) {
         await rmdir(options.destDir, {recursive: true});
       }
-  
+      
       // create destination directory with all essential subdirectories
       await mkdir(options.destDir);
       await mkdir(path.join(options.destDir, 'stylesheets'));
@@ -62,7 +65,7 @@ async function build(options = defaultOptions) {
       await mkdir(path.join(options.destDir, 'assets'));
       
       const pageResources = {};
-  
+      // Build pages
       console.log(chalk.cyan('\nBuilding static pages...'));
       console.time(chalk.cyan('build duration'));
       await Promise.all(
@@ -71,7 +74,7 @@ async function build(options = defaultOptions) {
             .replace(options.srcDir, '')
             .replace(/\/index\.html$/, '')
             .replace(/\.html$/, '') || '/';
-  
+          
           const logMsg = chalk.green(`${pageRoutePath} `).padEnd(75, '-');
           console.time(logMsg);
           
@@ -91,43 +94,44 @@ async function build(options = defaultOptions) {
       
       console.timeEnd(chalk.cyan('build duration'));
       
+      // Build template pages
       if (options.templates.length) {
         console.log(chalk.cyan('\nBuilding dynamic pages...'));
         console.time(chalk.cyan('build duration'));
         for (let template of options.templates) {
-          for (let [filePath, contextData] of template.dataList) {
-            const logMsg = chalk.green(`${filePath} `).padEnd(75, '-');
-            console.time(logMsg);
-            let fileName = path.basename(filePath);
+          console.log('Template:', chalk.cyan(template.path), '\nPaths:');
+          await Promise.all(
+            template.dataList.map(async ([filePath, contextData], i) => {
+              console.log(chalk.cyan(filePath));
+              let fileName = path.basename(filePath);
 
-            if (!fileName.endsWith('.html')) {
-              fileName += '.html';
-              filePath += '.html';
-            }
+              if (!fileName.endsWith('.html')) {
+                fileName += '.html';
+                filePath += '.html';
+              }
 
-            await handleProcessedPageResult(
-              processPage(template.path, fileName, resources, {...options, contextData, partials}, filePath),
-              pageResources,
-              options,
-              filePath
-            );
-
-            console.timeEnd(logMsg);
-          }
+              await handleProcessedPageResult(
+                processPage(template.path, fileName, resources, {...options, contextData, partials}, filePath),
+                pageResources,
+                options,
+                filePath
+              );
+            })
+          );
         }
         console.timeEnd(chalk.cyan('build duration'));
       }
       
+      // Processing page resources
       console.log(chalk.greenBright('\nProcessing pages connected resources...'));
       console.time(chalk.greenBright('processing duration'));
       await Promise.all(
         Object.values(pageResources).map(resource => {
-          console.log(resource.srcPath.replace(process.cwd(), ''));
           return processPageResource(resource, options, resources)
         })
       )
       console.timeEnd(chalk.greenBright('processing duration'));
-
+      
       console.timeEnd(chalk.cyan('\ntotal duration'));
     })
     .catch(async e => {

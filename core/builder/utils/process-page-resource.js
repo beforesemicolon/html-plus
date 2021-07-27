@@ -4,6 +4,7 @@ const {File} = require("../../File");
 const {copyFile, writeFile} = require('fs/promises');
 const path = require('path');
 const purgeHTML = require('purgecss-from-html');
+const {readFileContent} = require("../../utils/readFileContent");
 
 function htmlExtractor(fileName) {
   return content => {
@@ -15,7 +16,7 @@ function htmlExtractor(fileName) {
   }
 }
 
-async function processPageResource({srcPath, srcDestPath, pageFile}, options, resources) {
+async function processPageResource({srcPath, srcDestPath, pageFile, type}, options, resources) {
   const env = 'production';
   const ext = path.extname(srcPath);
   const {destDir, sass, less, postCSS, stylus} = options;
@@ -78,17 +79,36 @@ async function processPageResource({srcPath, srcDestPath, pageFile}, options, re
     case '.tsx':
       ({content, linkedResources} = await transform.js({env, file}));
       break;
+    case '.json':
+      if (type === 'manifest') {
+        const fileName = path.basename(srcPath);
+        const dir = srcPath.replace(fileName, '');
+        const manifest = JSON.parse(readFileContent(srcPath));
+        linkedResources = [];
+  
+        manifest.icons.forEach(icon => {
+          linkedResources.push(path.resolve(dir, icon.src));
+          // update the src path to point to the destination directory
+          icon.src = `./${path.basename(icon.src)}`
+        })
+  
+        content = JSON.stringify(manifest, null, 2);
+      }
+      break;
     default:
       await copyFile(srcPath, absoluteDestPath)
   }
   
   if (typeof content === 'string') {
     await writeFile(absoluteDestPath, content);
+    // log so the user can track it
+    console.log(absoluteDestPath.replace(process.cwd(), ''));
     
     for (let source of linkedResources) {
       if (!resources[source].copied) {
         const srcDestPath = path.join(destPath, getFileSourceHashedDestPath(source, resources[source].hash));
         resources[source].copied = true;
+        // log so the user can track it
         console.log(source.replace(process.cwd(), ''));
         
         try {
