@@ -2,6 +2,10 @@ const {cacheService} = require('./CacheService');
 const path = require('path');
 
 describe('CacheService', () => {
+  beforeAll(async () => {
+    await cacheService.init();
+  })
+  
   it('should get cache dir', () => {
     expect(cacheService.cacheDir).toBe(path.join(process.cwd(), '.hp-cache'))
   });
@@ -43,7 +47,7 @@ describe('CacheService', () => {
   
     it('should remove cached value', async () => {
       await cacheService.removeCachedFile(testCacheFile)
-  
+
       expect(cacheService.hasCachedFile(testCacheFile)).toBeFalsy();
     });
   });

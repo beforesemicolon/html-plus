@@ -1,12 +1,16 @@
 const {createHash} = require('crypto');
-const {mkdir, writeFile, readFile, unlink} = require('fs/promises');
-const {existsSync} = require('fs');
+const {mkdir, rmdir, writeFile, readFile, unlink} = require('fs/promises');
 const path = require('path');
 
 class CacheService {
   #cacheDir = path.resolve(process.cwd(), '.hp-cache');
   #memCache = new Map();
   #cacheFiles = new Set();
+  
+  async init() {
+    await rmdir(this.cacheDir, {recursive: true});
+    await mkdir(this.cacheDir);
+  }
   
   hashString(content) {
     const hash = createHash('sha256');
@@ -20,10 +24,6 @@ class CacheService {
   
   async cacheFile(filePath, content) {
     const hashedFilePath = this.hashString(filePath);
-    
-    if (!existsSync(this.cacheDir)) {
-      await mkdir(this.cacheDir);
-    }
     
     await writeFile(path.join(this.cacheDir, `${hashedFilePath}${path.extname(filePath)}`), content, 'utf-8');
     

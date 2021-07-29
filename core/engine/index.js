@@ -1,7 +1,7 @@
-const fs = require('fs');
 const path = require('path');
 const {collectHPConfig} = require("../utils/collect-hp-config");
 const chalk = require("chalk");
+const serialize = require('serialize-javascript');
 const {traverseSourceDirectoryAndCollect} = require("./traverse-source-directory-and-collect");
 const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
@@ -11,7 +11,6 @@ const {Router} = require("./Router");
 const {isObject, isArray, isFunction} = require("util");
 const {defaultOptions} = require("./default-options");
 const {cacheService} = require('../CacheService');
-const {deepStrictEqual} = require('assert');
 
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
@@ -47,69 +46,66 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   
   return getDirectoryFilesDetail(
     pagesDirectoryPath,
-    traverseSourceDirectoryAndCollect(pagesDirectoryPath, partials, pagesRoutes)
+    traverseSourceDirectoryAndCollect(pagesDirectoryPath, partials, pagesRoutes, opt.env)
   )
-    .then(() => {
-      app.engine('html', (filePath, {settings, _locals, cache, ...context}, callback) => {
+    .then(async () => {
+      await cacheService.init();
+      
+      app.engine('html', async function (filePath, {settings, _locals, cache, ...context}, callback) {
         const fileName = path.basename(filePath);
         
         if (fileName.startsWith('_')) {
           callback(new Error(`Cannot render partial(${fileName}) file as page. Partial files can only be included.`));
         }
         
-        fs.readFile(filePath, async (err, content) => {
-          if (err) return callback(err);
-          
-          // if context of the page does not change, return the cached page
+        const file = new File(filePath, pagesDirectoryPath);
+  
+        if (isProduction) {
+          const cachedPage = await cacheService.getCachedFile(`${serialize(context)}${filePath}`);
+    
+          if (cachedPage) {
+            return callback(null, cachedPage);
+          }
+    
+          if (cacheService.hasCachedFile(filePath)) {
+            file.content = await cacheService.getCachedFile(filePath);
+          }
+        }
+  
+        if (!file.content) {
+          file.load();
+        }
+  
+        try {
+          let html = transform(file.content, {
+            data: opt.staticData,
+            context,
+            file,
+            customTags: opt.customTags,
+            customAttributes: opt.customAttributes,
+            partialFiles: partials,
+            onBeforeRender: traverseNode(pagesDirectoryPath)
+          })
+  
+          callback(null, html);
+    
           if (isProduction) {
-            if (cacheService.hasCachedValue(filePath)) {
-              const oldContext = cacheService.getCachedValue(filePath);
-              
-              try {
-                deepStrictEqual(context, oldContext);
-                return callback(null, await cacheService.getCachedFile(filePath));
-              } catch (e) {
-                // if the deepStrictEqual fails it is because the data is the same
-              }
-            }
-            
-            cacheService.cache(filePath, context);
+            await cacheService.cacheFile(`${serialize(context)}${filePath}`, html);
+            await cacheService.cacheFile(filePath, file.content);
           }
-          
-          const file = new File(filePath, settings.views);
-          file.content = content;
-          
-          try {
-            let html = transform(file.content, {
-              data: opt.staticData,
-              context,
-              file,
-              customTags: opt.customTags,
-              customAttributes: opt.customAttributes,
-              partialFiles: partials,
-              onBeforeRender: traverseNode(pagesDirectoryPath)
-            })
-            
-            if (isProduction) {
-              // cache the html content so it can be used for CSS purge
-              await cacheService.cacheFile(filePath, html);
-            }
-            
-            callback(null, html);
-          } catch (e) {
-            console.error(e.message);
-
-            if (isProduction) {
-              return callback(e)
-            }
-            
-            const cleanMsg = e.message
-              .replace(/\[\d+m/g, '')
-              .replace(/([><])/g, m => m === '<' ? '&lt;' : '&gt;');
-            
-            callback(null, `<pre>${cleanMsg}</pre>`);
+        } catch (e) {
+          console.error(e.message);
+    
+          if (isProduction) {
+            return callback(e)
           }
-        })
+    
+          const cleanMsg = e.message
+            .replace(/\[\d+m/g, '')
+            .replace(/([><])/g, m => m === '<' ? '&lt;' : '&gt;');
+    
+          callback(null, `<pre>${cleanMsg}</pre>`);
+        }
       });
       
       app.set('views', pagesDirectoryPath);

@@ -9,43 +9,6 @@ const comments = require('postcss-discard-comments');
 const {uniqueAlphaNumericId} = require("../utils/unique-alpha-numeric-id");
 const purgeHTML = require('purgecss-from-html');
 
-const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) => {
-  let absPath = urlInfo.absolutePath;
-  if (!assetsHashedMap[absPath]) {
-    const relativePath = urlInfo.relativePath.match(/(?=\w).+/)[0];
-    let found = false;
-    
-    for (let key in assetsHashedMap) {
-      if (key.endsWith(relativePath)) {
-        absPath = key;
-        found = true;
-        break;
-      }
-    }
-    
-    if (!found) {
-      assetsHashedMap[urlInfo.absolutePath] = {
-        path: urlInfo.absolutePath,
-        hash: uniqueAlphaNumericId(8)
-      }
-    }
-  }
-  
-  linkedResources.push(absPath);
-  
-  return `${assetsPath}/${path.basename(urlInfo.url)}`;
-};
-
-function defaultHtmlExtractor(fileName) {
-  return content => {
-    if (content.match(new RegExp(`${fileName}`, 'g'))) {
-      return purgeHTML(content);
-    }
-  
-    return [];
-  }
-}
-
 const defaultOptions = {
   plugins: [],
   destPath: undefined,
@@ -134,6 +97,43 @@ async function cssTransformer(content, opt = defaultOptions) {
         ? {content: res.css, linkedResources}
         : res.css;
     })
+}
+
+const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) => {
+  let absPath = urlInfo.absolutePath;
+  if (!assetsHashedMap[absPath]) {
+    const relativePath = urlInfo.relativePath.match(/(?=\w).+/)[0];
+    let found = false;
+    
+    for (let key in assetsHashedMap) {
+      if (key.endsWith(relativePath)) {
+        absPath = key;
+        found = true;
+        break;
+      }
+    }
+    
+    if (!found) {
+      assetsHashedMap[urlInfo.absolutePath] = {
+        path: urlInfo.absolutePath,
+        hash: uniqueAlphaNumericId(8)
+      }
+    }
+  }
+  
+  linkedResources.push(absPath);
+  
+  return `${assetsPath}/${path.basename(urlInfo.url)}`;
+};
+
+function defaultHtmlExtractor(fileName) {
+  return content => {
+    if (content.match(new RegExp(`${fileName}`, 'g'))) {
+      return purgeHTML(content);
+    }
+    
+    return [];
+  }
 }
 
 module.exports.cssTransformer = cssTransformer;

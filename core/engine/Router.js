@@ -1,24 +1,10 @@
 const express = require("express");
 const path = require("path");
+const {getPageProcessedLinkedResource} = require("./get-page-processed-linked-resource");
 const {defaultOptions} = require("./default-options");
-const {transform: transformResource} = require('../transformers');
-const {File} = require('../File');
-const {cacheService} = require('../CacheService');
+const {resourceExtensions} = require('./resource-extensions');
 
 class Router {
-  sourcesExtensions = new Set([
-    '.scss',
-    '.sass',
-    '.css',
-    '.less',
-    '.styl',
-    '.js',
-    '.mjs',
-    '.cjs',
-    '.ts',
-    '.tsx',
-    '.jsx',
-  ]);
   #onPageRequest;
   
   constructor(app, {pagesRoutes, pagesDirectoryPath, options}) {
@@ -36,12 +22,8 @@ class Router {
     if (req.method === 'GET') {
       const ext = path.extname(req.path);
       
-      if (ext && this.sourcesExtensions.has(ext)) {
-        const {postCSS, less, sass, stylus, env} = this.options
-        let content = '';
-        let contentType = 'text/css';
+      if (ext && resourceExtensions.has(ext)) {
         let resourcePath;
-        let file = null;
         
         if (/node_modules/.test(req.path)) {
           resourcePath = path.join(process.cwd(), req.path);
@@ -49,52 +31,8 @@ class Router {
           resourcePath = path.join(this.pagesDirectoryPath, req.path);
         }
         
-        if (env === 'production' && cacheService.hasCachedValue(resourcePath)) {
-          const cachedResource = cacheService.getCachedValue(resourcePath)
-          res.setHeader('Content-Type', cachedResource.contentType);
-          return res.send(cachedResource.content);
-        }
-        
-        file = new File(resourcePath, this.pagesDirectoryPath);
-        // for production, using the cached transformed pages help the CSS purge
-        // better decide which CSS to keep or remove
-        const destPath = env === 'production'
-          ? cacheService.cacheDir
-          : this.pagesDirectoryPath;
-        
         try {
-          switch (ext) {
-            case '.scss':
-            case '.sass':
-              content = await transformResource.sass({file, ...sass});
-              content = (await transformResource.css(content, {file, destPath, env, ...postCSS})).content;
-              break;
-            case '.less':
-              content = await transformResource.less({file, ...less});
-              content = (await transformResource.css(content, {file, destPath, env, ...postCSS})).content;
-              break;
-            case '.styl':
-              content = await transformResource.stylus({file, ...stylus});
-              content = (await transformResource.css(content, {file, destPath, env, ...postCSS})).content;
-              break;
-            case '.css':
-              content = (await transformResource.css({file, destPath, env, ...postCSS})).content;
-              break;
-            case '.js':
-            case '.jsx':
-            case '.ts':
-            case '.tsx':
-            case '.mjs':
-            case '.cjs':
-              const result = await transformResource.js({file, env});
-              content = result.content;
-              contentType = 'application/javascript';
-              break;
-          }
-          
-          if (env === 'production') {
-            cacheService.cache(resourcePath, {content, contentType})
-          }
+          const {content, contentType} = await getPageProcessedLinkedResource(resourcePath, this.pagesDirectoryPath, this.options)
           
           res.setHeader('Content-Type', contentType);
           

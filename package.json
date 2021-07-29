@@ -12,7 +12,8 @@
     "tests:coverage": "jest --coverage",
     "build": "rm -rf dist && tsc",
     "build:docs": "node website/build.js",
-    "local": "nodemon --watch website -e '*' --exec node website/server.js"
+    "local": "nodemon --watch website -e '*' --exec node website/server.js",
+    "serve": "NODE_ENV=production PORT=4500 node website/server.js"
   },
   "keywords": [
     "template engine",
@@ -49,6 +50,7 @@
     "postcss-preset-env": "^6.7.0",
     "postcss-url": "^10.1.3",
     "purgecss-from-html": "^4.0.3",
+    "serialize-javascript": "^6.0.0",
     "stylus": "^0.54.8",
     "valid-url": "^1.0.9"
   },
