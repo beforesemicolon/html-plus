@@ -17,7 +17,7 @@ function traverseNode(pagesDirectoryPath) {
       const resourceFullPath = path.resolve(nodeFile.fileDirectoryPath, srcPath);
       
       if (resourceFullPath.startsWith(pagesDirectoryPath)) {
-        const value = resourceFullPath.replace(pagesDirectoryPath, '')
+        const value = resourceFullPath.replace(pagesDirectoryPath, '');
         node.setAttribute(attrName, value)
       }
     }

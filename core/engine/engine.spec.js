@@ -9,7 +9,7 @@ describe('engine', () => {
   let app;
   const src = path.resolve(__dirname, '__src-engine');
   const homePage = path.resolve(src, 'index.html');
-  const homeStyle = path.resolve(src, 'home.css');
+  const homeStyle = path.resolve(src, 'home.scss');
   const logoFile = path.resolve(src, 'logo.png');
   const projectPage = path.resolve(src, 'project/index.html');
   const projectStyle = path.resolve(src, 'project/project.css');
@@ -144,14 +144,33 @@ describe('engine', () => {
   });
   
   describe('prod mode', () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
       app = express();
       router = await engine(app, src, {env: 'production'});
     })
   
-    it('should redirect to error page', async () => {
-      await engine(app, src, {env: 'production'});
+    it('should cache home page', async () => {
+      const spy = jest.spyOn(cacheService, 'cacheFile');
     
+      router.onPageRequest(req => {
+        return {title: 'Home'}
+      })
+    
+      await request(app).get('/')
+      expect(spy).toHaveBeenCalledTimes(1);
+      spy.mockClear();
+    
+      await request(app).get('/')
+        .then(res => {
+          expect(res.status).toBe(200)
+          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.css"/></head><body><h2>Home</h2></body></html>');
+          expect(spy).not.toHaveBeenCalled()
+        });
+    
+      spy.mockRestore();
+    });
+  
+    it('should redirect to error page', async () => {
       return request(app)
         .get('/project')
         .then((res) => {
@@ -159,36 +178,19 @@ describe('engine', () => {
           expect(res.text).toBe('<h2>500 - Internal Server Error</h2>');
         })
     });
-  
-    it('should cache page', async () => {
-      const spy = jest.spyOn(cacheService, 'getCachedFile');
-    
-      router.onPageRequest(req => {
-        return {title: 'Home'}
-      })
-    
-      await request(app).get('/')
-        .then(res => {
-          expect(res.status).toBe(200)
-          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.css"/></head><body><h2>Home</h2></body></html>');
-          expect(spy).toHaveBeenCalled()
-        });
-    
-      spy.mockRestore();
-    });
-  
+
     it('should cache page resource', async () => {
       const spy = jest.spyOn(cacheService, 'getCachedValue');
-    
-      await request(app).get('/home.css')
+
+      await request(app).get('/home.scss')
       expect(spy).not.toHaveBeenCalled();
-    
-      await request(app).get('/home.css')
+
+      await request(app).get('/home.scss')
         .then(res => {
           expect(res.status).toBe(200);
-          expect(spy).toHaveBeenCalled();
+          expect(spy).toHaveBeenCalledTimes(1);
         })
-    
+
       spy.mockRestore();
     });
   });

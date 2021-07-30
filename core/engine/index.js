@@ -67,8 +67,8 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
             return callback(null, cachedPage);
           }
     
-          if (cacheService.hasCachedFile(filePath)) {
-            file.content = await cacheService.getCachedFile(filePath);
+          if (cacheService.hasCachedValue(filePath)) {
+            file.content = await cacheService.getCachedValue(filePath);
           }
         }
   
@@ -91,7 +91,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
     
           if (isProduction) {
             await cacheService.cacheFile(`${serialize(context)}${filePath}`, html);
-            await cacheService.cacheFile(filePath, file.content);
+            await cacheService.cache(filePath, file.content);
           }
         } catch (e) {
           console.error(e.message);
