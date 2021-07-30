@@ -1,54 +1,23 @@
-const fs = require('fs');
 const path = require('path');
-const express = require("express");
-const {PartialFile} = require("../PartialFile");
-const {pageAndResourcesMiddleware} = require("./page-and-resources-middleware");
+const {collectHPConfig} = require("../utils/collect-hp-config");
+const chalk = require("chalk");
+const serialize = require('serialize-javascript');
+const {traverseSourceDirectoryAndCollect} = require("./traverse-source-directory-and-collect");
 const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
 const {File} = require('../File');
-const validUrl = require('valid-url');
-const {collectHPConfig} = require("../utils/collect-hp-config");
+const {traverseNode} = require("./traverse-node");
+const {Router} = require("./Router");
 const {isObject, isArray, isFunction} = require("util");
-
-const defaultOptions = {
-  staticData: {},
-  customTags: [],
-  customAttributes: [],
-  env: 'development',
-  sass: {
-    indentWidth: 2,
-    precision: 5,
-    indentType: 'space',
-    linefeed: 'lf',
-    sourceComments: false,
-    includePaths: [],
-    functions: {},
-  },
-  less: {
-    strictUnits: false,
-    insecure: false,
-    paths: [],
-    math: 1,
-    urlArgs: '',
-    modifyVars: null,
-    lint: false,
-  },
-  stylus: {
-    paths: [],
-  },
-  postCSS: {
-    plugins: []
-  },
-  onPageRequest() {
-  }
-}
+const {defaultOptions} = require("./default-options");
+const {cacheService} = require('../CacheService');
 
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
     throw new Error('engine first argument must be provided and be a valid express app.')
   }
   
-  opt = collectHPConfig(defaultOptions, opt);
+  opt = collectHPConfig(opt, defaultOptions);
   
   if (!isObject(opt.staticData)) {
     throw new Error('HTML+ static data option must be a javascript object')
@@ -73,96 +42,78 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   
   const partials = [];
   const pagesRoutes = {};
+  const isProduction = opt.env === 'production';
   
-  return getDirectoryFilesDetail(pagesDirectoryPath, filePath => {
-    if (filePath.endsWith('.html')) {
-      const fileName = path.basename(filePath);
+  return getDirectoryFilesDetail(
+    pagesDirectoryPath,
+    traverseSourceDirectoryAndCollect(pagesDirectoryPath, partials, pagesRoutes, opt.env)
+  )
+    .then(async () => {
+      await cacheService.init();
       
-      if (fileName.startsWith('_')) {
-        partials.push(new PartialFile(filePath, pagesDirectoryPath));
-      } else {
-        filePath = filePath.replace(pagesDirectoryPath, '');
-        const template = `${filePath.replace('.html', '')}`.slice(1);
-        let tempPath = '';
-        
-        if (filePath.endsWith('index.html')) {
-          tempPath = filePath.replace('/index.html', '');
-          pagesRoutes[tempPath || '/'] = template;
-          pagesRoutes[`${tempPath}/`] = template;
-          pagesRoutes[`${tempPath}/index.html`] = template;
-        } else {
-          tempPath = filePath.replace('.html', '');
-          pagesRoutes[tempPath] = template;
-          pagesRoutes[`${tempPath}/`] = template;
-        }
-      }
-    }
-    
-    return false;
-  })
-    .then(() => {
-      app.engine('html', (filePath, {settings, _locals, cache, ...context}, callback) => {
+      app.engine('html', async function (filePath, {settings, _locals, cache, ...context}, callback) {
         const fileName = path.basename(filePath);
         
         if (fileName.startsWith('_')) {
           callback(new Error(`Cannot render partial(${fileName}) file as page. Partial files can only be included.`));
         }
         
-        fs.readFile(filePath, (err, content) => {
-          if (err) return callback(err);
-          const file = new File(filePath, settings.views);
-          file.content = content;
-          try {
-            const result = transform(file.content, {
-              data: opt.staticData,
-              context,
-              file,
-              customTags: opt.customTags,
-              customAttributes: opt.customAttributes,
-              partialFiles: partials,
-              onBeforeRender: (node, nodeFile) => {
-                let attrName = '';
-                
-                if (node.tagName === 'link') {
-                  attrName = 'href';
-                } else if (node.tagName === 'script') {
-                  attrName = 'src';
-                }
-                
-                const srcPath = node.attributes[attrName];
-                
-                if (srcPath && !validUrl.isUri(srcPath)) {
-                  const resourceFullPath = path.resolve(nodeFile.fileDirectoryPath, srcPath);
-                  
-                  if (resourceFullPath.startsWith(pagesDirectoryPath)) {
-                    node.setAttribute(attrName, resourceFullPath.replace(pagesDirectoryPath, ''))
-                  }
-                }
-              }
-            })
-            
-            callback(null, result);
-          } catch (e) {
-            console.error(e.message);
-            const cleanMsg = e.message
-              .replace(/\[\d+m/g, '')
-              .replace(/(>|<)/g, m => m === '<' ? '&lt;' : '&gt;');
-            callback(null, `<pre>${cleanMsg}</pre>`);
+        const file = new File(filePath, pagesDirectoryPath);
+  
+        if (isProduction) {
+          const cachedPage = await cacheService.getCachedFile(`${serialize(context)}${filePath}`);
+    
+          if (cachedPage) {
+            return callback(null, cachedPage);
           }
-        })
+    
+          if (cacheService.hasCachedValue(filePath)) {
+            file.content = await cacheService.getCachedValue(filePath);
+          }
+        }
+  
+        if (!file.content) {
+          file.load();
+        }
+  
+        try {
+          let html = transform(file.content, {
+            data: opt.staticData,
+            context,
+            file,
+            customTags: opt.customTags,
+            customAttributes: opt.customAttributes,
+            partialFiles: partials,
+            onBeforeRender: traverseNode(pagesDirectoryPath)
+          })
+  
+          callback(null, html);
+    
+          if (isProduction) {
+            await cacheService.cacheFile(`${serialize(context)}${filePath}`, html);
+            await cacheService.cache(filePath, file.content);
+          }
+        } catch (e) {
+          console.error(e.message);
+    
+          if (isProduction) {
+            return callback(e)
+          }
+    
+          const cleanMsg = e.message
+            .replace(/\[\d+m/g, '')
+            .replace(/([><])/g, m => m === '<' ? '&lt;' : '&gt;');
+    
+          callback(null, `<pre>${cleanMsg}</pre>`);
+        }
       });
       
       app.set('views', pagesDirectoryPath);
       app.set('view engine', 'html');
       
-      app.use(pageAndResourcesMiddleware(
-        pagesRoutes,
-        pagesDirectoryPath,
-        opt
-      ));
-      app.use(express.static(pagesDirectoryPath))
+      console.info(chalk.green('[HTML+] engine is ready'));
       
-      console.log('HTML+ engine is ready');
+      return new Router(app, {pagesRoutes, pagesDirectoryPath, options: opt});
     })
 };
 

@@ -7,10 +7,10 @@ const advTemplatingLink = '/documentation/advanced-templating';
 const stylingLink = '/documentation/styling';
 const scriptingLink = '/documentation/scripting';
 const assetsLink = '/documentation/static-assets';
-const buildLink = '/documentation/build';
+const serveLiveLink = '/documentation/serve-live';
+const buildLink = '/documentation/build-static-site';
 const faqLink = '/documentation/faq';
 const apiReferenceLink = '/documentation/api-reference';
-const vocabularyLink = '/documentation/vocabulary';
 const faqs = require('./faqs.json');
 const site = require('./site.json');
 
@@ -187,9 +187,9 @@ const data = {
         partial: 'static-assets',
       },
       {
-        title: "Build Project",
+        title: "Build Static Site",
         path: buildLink,
-        partial: 'build',
+        partial: 'build-static',
         list: [
           {
             title: "Build Static Pages",
@@ -202,6 +202,11 @@ const data = {
             partial: 'by-data',
           },
         ]
+      },
+      {
+        title: "Serve Live",
+        path: serveLiveLink,
+        partial: 'serve-live',
       },
       {
         title: "FAQ",

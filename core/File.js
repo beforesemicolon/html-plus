@@ -4,7 +4,6 @@ const {readFileContent} = require("./utils/readFileContent");
 
 class File {
   resources = [];
-  resourceBase = '';
   #content = '';
   #loaded = false;
   #srcDirectoryPath = '';
@@ -66,11 +65,11 @@ class File {
   set content(value) {
     if (typeof value === "string" || value instanceof Buffer) {
       this.#loaded = true;
-      this.#content = value.toString();
+      this.#content = value;
       return;
     }
     
-    throw new Error('File content can only be a string or a Buffer type')
+    throw new Error('File content can only be a string or a Buffer')
   }
   
   load() {

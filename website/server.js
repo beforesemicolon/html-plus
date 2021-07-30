@@ -7,6 +7,8 @@ const {collectPaths} = require("./data/collect-paths");
 
 const app = express();
 const paths = collectPaths(documentationPage.menu.list);
+const port = process.env.PORT || 3000;
+const env = process.env.NODE_ENV || 'development';
 
 (async () => {
   app.get('/documentation/:group/:doc?', (req, res, next) => {
@@ -17,7 +19,8 @@ const paths = collectPaths(documentationPage.menu.list);
       
       if (paths.has(fullPath)) {
         return res.render('documentation', {
-          path: fullPath
+          path: fullPath,
+          env
         });
       } else {
         return res.redirect('/404')
@@ -27,19 +30,20 @@ const paths = collectPaths(documentationPage.menu.list);
     next();
   })
   
-  await engine(app, path.resolve(__dirname, './pages'), {
+  await engine(app, path.resolve(__dirname, './src'), {
     onPageRequest: (req) => {
       const fullPath = req.path.replace(/(\/|\.html)$/, '');
       return {
-        path: fullPath
+        path: fullPath,
+        env
       }
     }
   });
   
   const server = http.createServer(app);
   
-  server.listen(3000, () => {
-    console.log('listening on port http://localhost:3000/');
+  server.listen(port, () => {
+    console.log(`listening on port http://localhost:${port}/`);
   })
 })()
 
