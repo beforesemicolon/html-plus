@@ -80,7 +80,7 @@ async function build(options = defaultOptions) {
             : {}
           
           await handleProcessedPageResult(
-            processPage(page, path.basename(page), resources, {...options, contextData, partials}),
+            await processPage(page, path.basename(page), resources, {...options, contextData, partials}),
             pageResources,
             options
           );
@@ -108,7 +108,7 @@ async function build(options = defaultOptions) {
               }
 
               await handleProcessedPageResult(
-                processPage(template.path, fileName, resources, {...options, contextData, partials}, filePath),
+                await processPage(template.path, fileName, resources, {...options, contextData, partials}, filePath),
                 pageResources,
                 options,
                 filePath

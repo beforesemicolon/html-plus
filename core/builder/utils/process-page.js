@@ -3,7 +3,7 @@ const {File} = require("../../File");
 const {collectAndUpdateNodeSourceLink} = require('./collect-and-update-node-source-link');
 const path = require('path');
 
-function processPage(pagePath, fileName, resources, opt, filePath) {
+async function processPage(pagePath, fileName, resources, opt, filePath) {
   const linkedSources = [];
   const file = new File(pagePath, opt.srcDir);
   const fileExportName = pagePath.replace(path.basename(pagePath), fileName);
@@ -11,7 +11,7 @@ function processPage(pagePath, fileName, resources, opt, filePath) {
     ? path.join(opt.srcDir, filePath.replace(path.basename(filePath), ''))
     : file.fileDirectoryPath;
   
-  const content = transform(file.toString(), {
+  const content = await transform(file.toString(), {
     file,
     data: opt.staticData,
     context: opt.contextData,

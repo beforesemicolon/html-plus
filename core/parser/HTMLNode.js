@@ -37,7 +37,7 @@ class HTMLNode {
       : htmlString;
     this.#node.context = {...this.#node.context, ...options.context};
     this.#options = options;
-    this.#tag = options.customTags[this.#node.rawTagName];
+    this.#tag = options.defaultTags[this.#node.rawTagName] || options.customTags[this.#node.rawTagName];
     this.attributes = this.#node.attributes;
     
     this.#node.getContext = () => {

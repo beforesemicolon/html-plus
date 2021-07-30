@@ -24,9 +24,9 @@ describe('processPage', () => {
     await rm(home)
   })
   
-  it('should process', () => {
+  it('should process', async () => {
     const resources = {};
-    const res = processPage(
+    const res = await processPage(
       path.join(__dirname, 'index.html'),
       'app.html',
       resources,
