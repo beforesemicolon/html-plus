@@ -8,11 +8,11 @@ const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
 const {File} = require('../File');
 const {traverseNode} = require("./traverse-node");
 const {Router} = require("./Router");
-const validUrl = require('valid-url');
-const {collectPageTagsStyle} = require("../utils/collect-page-tags-style");
+const {collectPageTagsStyle} = require("./collect-page-tags-style");
 const {isObject, isArray, isFunction} = require("util");
 const {defaultOptions} = require("./default-options");
 const {cacheService} = require('../CacheService');
+const {injectTagStylesToPage} = require("./inject-tag-styles-to-page");
 
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
@@ -86,7 +86,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
         try {
           const onBeforeRender = traverseNode(pagesDirectoryPath);
           
-          let html = transform(file.content, {
+          let html = await transform(file.content, {
             data: opt.staticData,
             context,
             file,
@@ -105,29 +105,22 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   
               onBeforeRender(node, nodeFile)
             }
+          }).then(async html => {
+            // include the collected styles at the end of the head tag
+            if (usedTagsWithStyle.size) {
+              let styles = tagStyles[tagsStylesheetName];
+  
+              if (!styles) {
+                styles = await collectPageTagsStyle(usedTagsWithStyle, customTags);
+                tagStyles[tagsStylesheetName] = styles;
+              }
+              
+              return injectTagStylesToPage(html, {env: opt.env, styles, tagsStylesheetName})
+            }
+            
+            return html;
           })
-  
-          // include the collected styles at the end of the head tag
-          if (usedTagsWithStyle.size) {
-            const endOfHeadPattern = /<\/head>/gm;
-            let styles = tagStyles[tagsStylesheetName];
-    
-            if (!styles) {
-              styles = await collectPageTagsStyle(usedTagsWithStyle, customTags);
-              tagStyles[tagsStylesheetName] = styles;
-            }
-    
-            if (opt.env === 'development') {
-              html = html.replace(endOfHeadPattern, m => {
-                return `${styles.map((css) => `<style>${css}</style>`).join('\n')}${m}`;
-              })
-            } else {
-              html = html.replace(endOfHeadPattern, m => {
-                return `<link rel="stylesheet" href="${tagsStylesheetName}">${m}`;
-              })
-            }
-          }
-  
+          
           callback(null, html);
     
           if (isProduction) {

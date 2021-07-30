@@ -1,4 +1,4 @@
-const {collectPageTagsStyle} = require("./utils/collect-page-tags-style");
+const {collectPageTagsStyle} = require("./engine/collect-page-tags-style");
 const {HTMLNode} = require("./parser/HTMLNode");
 const {defaultAttributesMap} = require("./default-attributes");
 const {defaultTagsMap} = require("./default-tags");

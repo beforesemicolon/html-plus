@@ -1,4 +1,4 @@
-async function collectPageTagsStyle(usedTagsWithStyle, customTags, html) {
+async function collectPageTagsStyle(usedTagsWithStyle, customTags) {
   const styles = [];
   
   for (let name of usedTagsWithStyle) {
