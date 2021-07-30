@@ -49,7 +49,6 @@ async function getPageProcessedLinkedResource(resourcePath, pagesDirectoryPath, 
       break;
   }
   
-  console.log(' content', typeof content);
   return {content, contentType};
 }
 

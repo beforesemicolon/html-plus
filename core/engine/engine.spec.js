@@ -21,7 +21,7 @@ describe('engine', () => {
     await rmdir(src, {recursive: true});
     await mkdir(src);
     await mkdir(path.join(src, 'project'));
-    await writeFile(homePage, '<html><head><title>{title}</title><link rel="stylesheet" href="./home.css"></head><body><h2>{title}</h2></body></html>');
+    await writeFile(homePage, '<html><head><title>{title}</title><link rel="stylesheet" href="./home.scss"></head><body><h2>{title}</h2></body></html>');
     await writeFile(homeStyle, 'body{background: #222} h2{color: #fff}');
     await writeFile(projectPage, '<html><head><title>{title}</title></head><body><h2>{title}</h2></body></html>');
     await writeFile(projectStyle, 'body{background: #fff} h2{color: #222}');
@@ -94,7 +94,7 @@ describe('engine', () => {
       return request(app).get('/')
         .then(res => {
           expect(res.status).toBe(200)
-          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.css"/></head><body><h2>Home</h2></body></html>')
+          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.scss"/></head><body><h2>Home</h2></body></html>')
         })
     });
     
@@ -111,10 +111,10 @@ describe('engine', () => {
     });
     
     it('requested css file', async () => {
-      await request(app).get('/home.css')
+      await request(app).get('/home.scss')
         .then(res => {
           expect(res.status).toBe(200)
-          expect(res.text).toBe('body{background: #222} h2{color: #fff}')
+          expect(res.text.replace(/\s+/g, '')).toBe('body{background: #222;} h2{color: #fff;}'.replace(/\s+/g, ''))
         })
       
       await request(app).get('/project/project.css')
@@ -163,10 +163,10 @@ describe('engine', () => {
       await request(app).get('/')
         .then(res => {
           expect(res.status).toBe(200)
-          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.css"/></head><body><h2>Home</h2></body></html>');
+          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.scss"/></head><body><h2>Home</h2></body></html>');
           expect(spy).not.toHaveBeenCalled()
         });
-    
+
       spy.mockRestore();
     });
   
