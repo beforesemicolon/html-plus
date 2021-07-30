@@ -8,6 +8,7 @@ const {collectPaths} = require("./data/collect-paths");
 const app = express();
 const paths = collectPaths(documentationPage.menu.list);
 const port = process.env.PORT || 3000;
+const env = process.env.NODE_ENV || 'development';
 
 (async () => {
   app.get('/documentation/:group/:doc?', (req, res, next) => {
@@ -18,7 +19,8 @@ const port = process.env.PORT || 3000;
       
       if (paths.has(fullPath)) {
         return res.render('documentation', {
-          path: fullPath
+          path: fullPath,
+          env
         });
       } else {
         return res.redirect('/404')
@@ -28,11 +30,12 @@ const port = process.env.PORT || 3000;
     next();
   })
   
-  await engine(app, path.resolve(__dirname, './pages'), {
+  await engine(app, path.resolve(__dirname, './src'), {
     onPageRequest: (req) => {
       const fullPath = req.path.replace(/(\/|\.html)$/, '');
       return {
-        path: fullPath
+        path: fullPath,
+        env
       }
     }
   });

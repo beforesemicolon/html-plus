@@ -11,7 +11,7 @@
     "tests": "jest",
     "tests:coverage": "jest --coverage",
     "build": "rm -rf dist && tsc",
-    "build:docs": "node website/build.js",
+    "build:docs": "NODE_ENV=production node website/build.js",
     "local": "nodemon --watch website -e '*' --exec node website/server.js",
     "serve": "NODE_ENV=production PORT=4500 node website/server.js"
   },
