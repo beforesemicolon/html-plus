@@ -9,6 +9,7 @@ describe('processPage', () => {
     contextData: {},
     customTags: [],
     customAttributes: [],
+    customTagStyles: {},
     partials: [],
     env: 'production',
     srcDir: __dirname,
