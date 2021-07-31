@@ -59,6 +59,7 @@ async function build(options = defaultOptions) {
   return getDirectoryFilesDetail(options.srcDir, collectFilePaths(options.srcDir, {partials, pages, resources}))
     .then(async () => {
       console.timeEnd(chalk.blue('reading duration'));
+      console.log('-- partials', partials);
       // clear previous destination directory
       if (fs.existsSync(options.destDir)) {
         await rmdir(options.destDir, {recursive: true});

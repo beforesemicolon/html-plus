@@ -15,6 +15,7 @@ class Include {
       throw new Error('The "<include>" tag "data" attribute value must be a normal object literal')
     }
     
+    console.log('-- partialName', partialName, partialFiles.length);
     if (partialName || partialPath) {
       if (partialFiles.length ) {
         if (partialPath) {
