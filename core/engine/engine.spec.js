@@ -16,19 +16,33 @@ describe('engine', () => {
   const projectScript = path.resolve(src, 'project/project.ts');
   let router;
   
+  class Heading {
+    constructor(node) {
+      this.attributes = node.attributes;
+    }
+    
+    static get style() {
+      return `<style>h2 {font-size: 12px}</style>`
+    }
+    
+    render() {
+      return `<h2>${this.attributes.text}</h2>`
+    }
+  }
+  
   beforeAll(async () => {
     app = express();
     await rmdir(src, {recursive: true});
     await mkdir(src);
     await mkdir(path.join(src, 'project'));
-    await writeFile(homePage, '<html><head><title>{title}</title><link rel="stylesheet" href="./home.scss"></head><body><h2>{title}</h2></body></html>');
+    await writeFile(homePage, '<html><head><title>{title}</title><link rel="stylesheet" href="./home.scss"></head><body><heading text="{title}"></heading></body></html>');
     await writeFile(homeStyle, 'body{background: #222} h2{color: #fff}');
     await writeFile(projectPage, '<html><head><title>{title}</title></head><body><h2>{title}</h2></body></html>');
     await writeFile(projectStyle, 'body{background: #fff} h2{color: #222}');
     await writeFile(projectScript, 'let x: number; x = 14;');
     await writeFile(logoFile, '');
   
-    router = await engine(app, src, {env: 'development'});
+    router = await engine(app, src, {env: 'development', customTags: [Heading]});
   })
   
   afterAll(async () => {
@@ -94,7 +108,8 @@ describe('engine', () => {
       return request(app).get('/')
         .then(res => {
           expect(res.status).toBe(200)
-          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.scss"/></head><body><h2>Home</h2></body></html>')
+          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.scss"/><style>\n' +
+            'heading h2 {font-size: 12px}</style></head><body><heading text="Home"><h2>Home</h2></heading></body></html>')
         })
     });
     
@@ -146,7 +161,7 @@ describe('engine', () => {
   describe('prod mode', () => {
     beforeEach(async () => {
       app = express();
-      router = await engine(app, src, {env: 'production'});
+      router = await engine(app, src, {env: 'production', customTags: [Heading]});
     })
   
     it('should cache home page', async () => {
@@ -158,13 +173,12 @@ describe('engine', () => {
     
       await request(app).get('/')
       expect(spy).toHaveBeenCalledTimes(1);
-      spy.mockClear();
     
       await request(app).get('/')
         .then(res => {
           expect(res.status).toBe(200)
-          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.scss"/></head><body><h2>Home</h2></body></html>');
-          expect(spy).not.toHaveBeenCalled()
+          expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.scss"/><style>\n' +
+            'heading h2 {font-size: 12px}</style></head><body><heading text="Home"><h2>Home</h2></heading></body></html>');
         });
 
       spy.mockRestore();
