@@ -13,6 +13,7 @@ const {isObject, isArray, isFunction} = require("util");
 const {defaultOptions} = require("./default-options");
 const {cacheService} = require('../CacheService');
 const {injectTagStylesToPage} = require("./inject-tag-styles-to-page");
+const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
 
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
@@ -44,8 +45,14 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   
   const partials = [];
   const pagesRoutes = {};
-  const tagStyles = {};
   const isProduction = opt.env === 'production';
+  const customTagStyles = opt.customTags.reduce((acc, tag) => {
+    if (tag.style) {
+      acc[turnCamelOrPascalToKebabCasing(tag.name)] = tag.style;
+    }
+    
+    return acc;
+  }, {})
   
   return getDirectoryFilesDetail(
     pagesDirectoryPath,
@@ -62,7 +69,6 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
         }
         
         const file = new File(filePath, pagesDirectoryPath);
-        const tagsStylesheetName = `${file.filePath.replace(file.file, '')}tags.css`;
   
         if (isProduction) {
           const cachedPage = await cacheService.getCachedFile(`${serialize(context)}${filePath}`);
@@ -81,7 +87,6 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
         }
   
         const usedTagsWithStyle = new Set();
-        let customTags = null;
   
         try {
           const onBeforeRender = traverseNode(pagesDirectoryPath);
@@ -94,12 +99,8 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
             customAttributes: opt.customAttributes,
             partialFiles: partials,
             onBeforeRender: (node, nodeFile) => {
-              if (!customTags) {
-                customTags = node._options.customTags;
-              }
-  
               // collect any tag style if not already collected
-              if (node._options.customTags[node.tagName] && !usedTagsWithStyle.has(node.tagName) && node._options.customTags[node.tagName].style) {
+              if (customTagStyles[node.tagName] && !usedTagsWithStyle.has(node.tagName)) {
                 usedTagsWithStyle.add(node.tagName)
               }
   
@@ -108,14 +109,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
           }).then(async html => {
             // include the collected styles at the end of the head tag
             if (usedTagsWithStyle.size) {
-              let styles = tagStyles[tagsStylesheetName];
-  
-              if (!styles) {
-                styles = await collectPageTagsStyle(usedTagsWithStyle, customTags);
-                tagStyles[tagsStylesheetName] = styles;
-              }
-              
-              return injectTagStylesToPage(html, {env: opt.env, styles, tagsStylesheetName})
+              return injectTagStylesToPage(html, await collectPageTagsStyle(usedTagsWithStyle, customTagStyles))
             }
             
             return html;
@@ -147,12 +141,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
       
       console.info(chalk.green('[HTML+] engine is ready'));
       
-      return new Router(app, {pagesRoutes, pagesDirectoryPath, options: {
-          ...opt,
-          get tagStyles() {
-            return tagStyles
-          }
-        }});
+      return new Router(app, {pagesRoutes, pagesDirectoryPath, options: opt});
     })
 };
 

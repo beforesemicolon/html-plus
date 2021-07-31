@@ -20,11 +20,6 @@ class Router {
   
   async #resourceMiddleware(req, res, next) {
     if (req.method === 'GET') {
-      if (this.options.tagStyles[req.path]) {
-        res.setHeader('Content-Type', 'text/css');
-        return res.send(this.options.tagStyles[req.path].join('\n').replace(/\s+/gm, ' '));
-      }
-      
       const ext = path.extname(req.path);
       
       if (ext && resourceExtensions.has(ext)) {

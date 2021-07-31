@@ -1,8 +1,8 @@
-async function collectPageTagsStyle(usedTagsWithStyle, customTags) {
+async function collectPageTagsStyle(usedTagsWithStyle, tagStyles) {
   const styles = [];
   
   for (let name of usedTagsWithStyle) {
-    let css = await customTags[name].style;
+    let css = await tagStyles[name];
     
     if (css.trim().startsWith('<style')) {
       css = css.match(/<style[^>]*>(.*)<\/?style>/s)[1];

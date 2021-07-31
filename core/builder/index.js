@@ -7,6 +7,7 @@ const {processPageResource} = require("./utils/process-page-resource");
 const {processPage} = require("./utils/process-page");
 const {collectFilePaths} = require("./utils/collect-file-paths");
 const {getDirectoryFilesDetail} = require("../utils/getDirectoryFilesDetail");
+const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
 
 const defaultOptions = {
   // absolute path to the directory containing the page, style, script and asset files
@@ -44,6 +45,14 @@ async function build(options = defaultOptions) {
   resources = {};
   partials = [];
   pages = [];
+  const customTagStyles = options.customTags.reduce((acc, tag) => {
+    if (tag.style) {
+      acc[turnCamelOrPascalToKebabCasing(tag.name)] = tag.style;
+    }
+    
+    return acc;
+  }, {})
+  const tagStyles = {};
   console.time(chalk.cyan('\ntotal duration'));
   console.log(chalk.blue('\nReading source directory'));
   console.time(chalk.blue('reading duration'));
@@ -80,7 +89,7 @@ async function build(options = defaultOptions) {
             : {}
           
           await handleProcessedPageResult(
-            await processPage(page, path.basename(page), resources, {...options, contextData, partials}),
+            await processPage(page, path.basename(page), resources, {...options, contextData, partials, customTagStyles}),
             pageResources,
             options
           );
@@ -108,10 +117,10 @@ async function build(options = defaultOptions) {
               }
 
               await handleProcessedPageResult(
-                await processPage(template.path, fileName, resources, {...options, contextData, partials}, filePath),
+                await processPage(template.path, fileName, resources, {...options, contextData, partials, customTagStyles}, filePath),
                 pageResources,
                 options,
-                filePath
+                filePath,
               );
             })
           );

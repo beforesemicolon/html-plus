@@ -1,14 +1,8 @@
-async function injectTagStylesToPage(html, {env, styles, tagsStylesheetName}) {
+async function injectTagStylesToPage(html, styles) {
   const endOfHeadPattern = /<\/head>/gm;
   
-  if (env === 'development') {
-    return html.replace(endOfHeadPattern, m => {
-      return `${styles.map((css) => `<style>${css}</style>`).join('\n')}${m}`;
-    })
-  }
-  
   return html.replace(endOfHeadPattern, m => {
-    return `<link rel="stylesheet" href="${tagsStylesheetName}">${m}`;
+    return `${styles.map((css) => `<style>${css}</style>`.replace(/\s{2,}/g, '')).join('\n')}${m}`;
   })
 }
 
