@@ -1,3 +1,4 @@
+const {importStyle} = require("./core/utils/import-style");
 const {Attribute} = require('./core/Attribute');
 const {engine} = require("./core/engine");
 const {build} = require("./core/builder");
@@ -17,3 +18,4 @@ module.exports.Comment = Comment;
 module.exports.engine = engine;
 module.exports.build = build;
 module.exports.composeTagString = composeTagString;
+module.exports.importStyle = importStyle;

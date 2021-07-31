@@ -19,25 +19,28 @@ describe('transform', () => {
   `;
   
   it('should transform html file', async () => {
-    return expect(transform(html).replace(/\s+/g, '')).toEqual(`
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width initial-scale=1.0, minimum-scale=1.0"/>
-    <meta name="description" content="Blog & Youtube Channel | Web, UI, Software Development"/>
-    <title>Home - Before Semicolon</title>
-    <link rel="stylesheet" href="/website/src/home.scss" type="text/css"/>
-    <script defer src="/bfs.js" type="application/javascript"></script></head>
-    <body>
-    </body>
-    </html>
-    `.replace(/\s+/g, ''));
+    return transform(html)
+      .then(res => {
+        expect(res.replace(/\s+/g, '')).toEqual(`
+        <html lang="en">
+        <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width initial-scale=1.0, minimum-scale=1.0"/>
+        <meta name="description" content="Blog & Youtube Channel | Web, UI, Software Development"/>
+        <title>Home - Before Semicolon</title>
+        <link rel="stylesheet" href="/website/src/home.scss" type="text/css"/>
+        <script defer src="/bfs.js" type="application/javascript"></script></head>
+        <body>
+        </body>
+        </html>
+        `.replace(/\s+/g, ''));
+      })
   });
   
   describe('should take options as first arg', () => {
     it('should throw error if no file specified', async () => {
-      expect(() => transform({}))
-        .toThrowError('If no string content is provided, the "file" option must be provided.')
+      await expect(transform({}))
+        .rejects.toThrowError('If no string content is provided, the "file" option must be provided.')
     });
   
     it('should throw error if no file specified', async () => {
@@ -48,7 +51,7 @@ describe('transform', () => {
         }
       }
       const spy = jest.spyOn(opt.file, 'load').mockReturnValue('');
-      const res = transform(opt);
+      const res = await transform(opt);
       
       expect(spy).toHaveBeenCalled();
       expect(res).toEqual('');
@@ -69,7 +72,7 @@ describe('transform', () => {
         }
       }
       
-      expect(transform({
+      await expect(transform({
         file: {
           load() {},
           content: '<tag></tag><p #cls="paragraph">attr</p>'
@@ -77,7 +80,7 @@ describe('transform', () => {
         customTags: [Tag],
         customAttributes: [Cls],
       }))
-        .toEqual('<p>tag</p><p class="paragraph">attr</p>')
+        .resolves.toEqual('<tag><p>tag</p></tag><p class="paragraph">attr</p>')
     });
   });
 });

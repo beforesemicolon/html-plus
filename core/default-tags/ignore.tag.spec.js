@@ -2,30 +2,30 @@ const {transform} = require('./../transform');
 
 describe('Ignore Tag', () => {
   describe('should not bind data', () => {
-    it('when no value', () => {
+    it('when no value', async () => {
       const str = '<ignore><b>{sample}</b></div>'
       
-      expect(transform(str)).toEqual('<b>{sample}</b>');
+      await expect(transform(str)).resolves.toEqual('<b>{sample}</b>');
     });
     
-    it('with value', () => {
+    it('with value', async () => {
       const str = '<ignore value="$data.content"><b>{sample}</b></ignore>'
       
-      expect(transform(str, {
+      await expect(transform(str, {
         data: {
           content: '<p>Sample</p>'
         }
-      })).toEqual('<b>{sample}</b><p>Sample</p>');
+      })).resolves.toEqual('<b>{sample}</b><p>Sample</p>');
     });
   });
   
-  it('should escape html', () => {
+  it('should escape html', async () => {
     const str = '<ignore escape><b>{sample}</b></div>'
     
-    expect(transform(str, {
+    await expect(transform(str, {
       data: {
         content: '<p>Sample</p>'
       }
-    })).toEqual('&lt;b&gt;{sample}&lt;/b&gt;');
+    })).resolves.toEqual('&lt;b&gt;{sample}&lt;/b&gt;');
   });
 });

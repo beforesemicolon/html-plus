@@ -10,13 +10,12 @@ const defaultOptions = {
   customTags: [],
   customAttributes: [],
   file: null,
-  rootNode: null,
   onBeforeRender() {
   },
   partialFiles: [],
 };
 
-function transform(content, options = defaultOptions) {
+async function transform(content, options = defaultOptions) {
   if (content && typeof content === 'object') {
     options = content;
     
@@ -30,8 +29,7 @@ function transform(content, options = defaultOptions) {
   }
   
   content = content.replace(/\s+/, ' ');
-  
-  options = {...defaultOptions, ...options};
+  options = {...defaultOptions, ...options, rootNode: null};
   
   const customTagsMap = options.customTags.reduce((acc, tag) => {
     const tagName = turnCamelOrPascalToKebabCasing(tag.name);
@@ -48,7 +46,9 @@ function transform(content, options = defaultOptions) {
   const node = new HTMLNode(content, {
     ...options,
     customTags: {...customTagsMap, ...defaultTagsMap},
-    customAttributes: {...customAttributesMap, ...defaultAttributesMap}
+    customAttributes: {...customAttributesMap, ...defaultAttributesMap},
+    defaultTags: defaultTagsMap,
+    defaultAttributes: defaultAttributesMap,
   })
   
   return (node.render()).trim();

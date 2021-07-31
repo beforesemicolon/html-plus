@@ -8,9 +8,12 @@ const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
 const {File} = require('../File');
 const {traverseNode} = require("./traverse-node");
 const {Router} = require("./Router");
+const {collectPageTagsStyle} = require("./collect-page-tags-style");
 const {isObject, isArray, isFunction} = require("util");
 const {defaultOptions} = require("./default-options");
 const {cacheService} = require('../CacheService');
+const {injectTagStylesToPage} = require("./inject-tag-styles-to-page");
+const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
 
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
@@ -43,6 +46,13 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   const partials = [];
   const pagesRoutes = {};
   const isProduction = opt.env === 'production';
+  const customTagStyles = opt.customTags.reduce((acc, tag) => {
+    if (tag.style) {
+      acc[turnCamelOrPascalToKebabCasing(tag.name)] = tag.style;
+    }
+    
+    return acc;
+  }, {})
   
   return getDirectoryFilesDetail(
     pagesDirectoryPath,
@@ -76,17 +86,35 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
           file.load();
         }
   
+        const usedTagsWithStyle = new Set();
+  
         try {
-          let html = transform(file.content, {
+          const onBeforeRender = traverseNode(pagesDirectoryPath);
+          
+          let html = await transform(file.content, {
             data: opt.staticData,
             context,
             file,
             customTags: opt.customTags,
             customAttributes: opt.customAttributes,
             partialFiles: partials,
-            onBeforeRender: traverseNode(pagesDirectoryPath)
-          })
+            onBeforeRender: (node, nodeFile) => {
+              // collect any tag style if not already collected
+              if (customTagStyles[node.tagName] && !usedTagsWithStyle.has(node.tagName)) {
+                usedTagsWithStyle.add(node.tagName)
+              }
   
+              onBeforeRender(node, nodeFile)
+            }
+          }).then(async html => {
+            // include the collected styles at the end of the head tag
+            if (usedTagsWithStyle.size) {
+              return injectTagStylesToPage(html, await collectPageTagsStyle(usedTagsWithStyle, customTagStyles))
+            }
+            
+            return html;
+          })
+          
           callback(null, html);
     
           if (isProduction) {
