@@ -1,0 +1,15 @@
+@import "_sass/common";
+@import "_partials/layout";
+
+.error-warning {
+  text-align: center;
+  max-width: 450px;
+  background: #eee;
+  border-radius: 5px;
+  margin: 100px auto;
+  padding: 35px;
+
+  h2 {
+    margin: 0;
+  }
+}

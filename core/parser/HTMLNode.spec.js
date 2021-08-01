@@ -130,14 +130,14 @@ describe('HTMLNode', () => {
     it('from class', () => {
       const node = new HTMLNode(htmlNode, {customTags: {'title': Title}});
   
-      return expect(node.render()).toEqual('<h5>My title</h5>');
+      return expect(node.render()).toEqual('<title><h5>My title</h5></title>');
     });
     
     it('from function', () => {
       htmlNode.setAttribute('type', 'm')
       const node = new HTMLNode(htmlNode, {customTags: {'title': title}});
 
-      return expect(node.render()).toEqual('<h4>My title</h4>');
+      return expect(node.render()).toEqual('<title><h4>My title</h4></title>');
     });
   });
   
@@ -150,7 +150,7 @@ describe('HTMLNode', () => {
   describe('should clone', () => {
     it('without context', () => {
       const el = '<li>item</li>';
-      const node = new HTMLNode(el, {customTags: defaultTagsMap});
+      const node = new HTMLNode(el, {customTags: defaultTagsMap, defaultTags: defaultTagsMap});
       const nodeClone = node.clone();
       
       expect(node.render()).toEqual('<li>item</li>')
@@ -159,7 +159,7 @@ describe('HTMLNode', () => {
   
     it('with context', () => {
       const el = '<li>{item}</li>';
-      const node = new HTMLNode(el, {customTags: defaultTagsMap});
+      const node = new HTMLNode(el, {customTags: defaultTagsMap, defaultTags: defaultTagsMap});
       node.setContext('item', 'my item')
       const nodeClone = node.clone();
       nodeClone.setContext('item', 'my cloned item')
@@ -171,7 +171,7 @@ describe('HTMLNode', () => {
     it('without inheriting parent context', () => {
       const el = '<variable name="item">my item</variable><ul><li>{item}</li></ul>';
       const node = new HTMLNode(el, {
-        customTags: {'variable': Variable}
+        customTags: {'variable': Variable}, defaultTags: defaultTagsMap
       });
       const nodeClone = node.childNodes()[1].childNodes()[0].clone();
     
@@ -184,7 +184,7 @@ describe('HTMLNode', () => {
   describe('should duplicate', () => {
     it('without context', () => {
       const el = '<li>item</li>';
-      const node = new HTMLNode(el, {customTags: defaultTagsMap});
+      const node = new HTMLNode(el, {customTags: defaultTagsMap, defaultTags: defaultTagsMap});
       const nodeClone = node.duplicate();
     
       expect(node.render()).toEqual('<li>item</li>')
@@ -193,7 +193,7 @@ describe('HTMLNode', () => {
   
     it('with context', () => {
       const el = '<li>{item}</li>';
-      const node = new HTMLNode(el, {customTags: defaultTagsMap});
+      const node = new HTMLNode(el, {customTags: defaultTagsMap, defaultTags: defaultTagsMap});
       node.setContext('item', 'my item')
       const nodeClone = node.duplicate();
       nodeClone.setContext('item', 'my cloned item')
@@ -204,7 +204,7 @@ describe('HTMLNode', () => {
   
     it('by passing context', () => {
       const el = '<li>{item}</li>';
-      const node = new HTMLNode(el, {customTags: defaultTagsMap});
+      const node = new HTMLNode(el, {customTags: defaultTagsMap, defaultTags: defaultTagsMap});
       node.setContext('item', 'my item')
       const nodeClone = node.duplicate({
         item: 'my cloned item'
@@ -216,7 +216,7 @@ describe('HTMLNode', () => {
   
     it('inheriting parent context', () => {
       const el = '<variable name="item">my item</variable><ul><li>{item}</li></ul>';
-      const node = new HTMLNode(el, {customTags: defaultTagsMap});
+      const node = new HTMLNode(el, {customTags: defaultTagsMap, defaultTags: defaultTagsMap});
       const nodeClone = node.childNodes()[1].childNodes()[0].duplicate();
     
       expect(node.render()).toEqual('<ul><li>my item</li><li>my item</li></ul>');

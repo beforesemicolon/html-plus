@@ -1,0 +1,58 @@
+<api-table-details name="ignore tag" details="{
+	name: 'ignore',
+	type: 'tag',
+	attributes: 'value, escape',
+	description: 'A tag that will render only the content inside but does not compile the inner HTML and can escape it as well.',
+}"></api-table-details>
+<h3>Attributes</h3>
+<api-description-list descriptions="[
+		{
+			concept: 'value',
+			type: 'type: attribute',
+			description: 'An attribute that can hold value which must be a variable or property which value is text or HTML markup. No curly braces are needed since the value is executed and not bind.'
+		},
+		{
+			concept: 'escape',
+			type: 'type: boolean attribute',
+			description: 'A boolean attribute which does not need to have any value.'
+		},
+	]"></api-description-list>
+<h3>Usage Examples</h3>
+<p>Use it to wrap markup that contains special symbols that are special to HTML+ that you really want to show on the page</p>
+<code-snippet language="html">
+<!-- ignore since curly braces has special meaning
+ for HTML+ -->
+<ignore>
+	<pre>
+		<code>
+			const obj = {x: 10, y: 300};
+		</code>
+	</pre>
+</ignore>
+</code-snippet>
+<p>Use it to show HTML code on the page by escaping the HTML and not compiling it.</p>
+<code-snippet language="html">
+<!-- escape so the tag is shown to the user as code -->
+<ignore escape>
+	<p>This is a simple paragraph</p>
+</ignore>
+</code-snippet>
+<p>Use it to ignore parts of the page that has no HTML+ syntax, tags or attributes to skip compilation all together.</p>
+<code-snippet language="html">
+<!-- ignore tags with no inner HTML+ syntax to speed compilation -->
+<ignore>
+	<nav aria-label="Main Menu">
+		<h2 hidden="">main navigation</h2>
+		<a href="/">Home</a>
+		<a href="/documentation">Documentation</a>
+		<a href="/learn">Learn</a>
+	</nav>
+</ignore>
+</code-snippet>
+<p>Render markup coming from data fetched that contains HTML that is not HTML+ that needs to be rendered like articles post for example.</p>
+<code-snippet language="html">
+<!-- ignore variable with plain HTML markup as value
+	to be rendered as is ans skip compiling time -->
+<ignore value="$data.blog.post"></ignore>
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

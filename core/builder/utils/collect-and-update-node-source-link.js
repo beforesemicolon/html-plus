@@ -3,13 +3,24 @@ const {uniqueAlphaNumericId} = require("../../utils/unique-alpha-numeric-id");
 const path = require('path');
 const validUrl = require("valid-url");
 
+const resourceType = {
+  'link': 'link',
+  'image': 'image',
+  'img': 'image',
+  'audio': 'media',
+  'video': 'media',
+  'track': 'media',
+  'source': 'media',
+  'script': 'script',
+  'object': 'object'
+}
+
 function collectAndUpdateNodeSourceLink(node, pageFile, resources, fileDirPath) {
   let srcPath = '';
   let srcAttrName = '';
   
   switch (node.tagName) {
     case 'link':
-    case 'area':
     case 'image':
       srcPath = node.attributes.href;
       srcAttrName = 'href';
@@ -19,9 +30,6 @@ function collectAndUpdateNodeSourceLink(node, pageFile, resources, fileDirPath) 
     case 'audio':
     case 'track':
     case 'video':
-    case 'embed':
-    case 'iframe':
-    case 'portal':
       srcPath = node.attributes.src;
       srcAttrName = 'src';
       break;
@@ -60,7 +68,20 @@ function collectAndUpdateNodeSourceLink(node, pageFile, resources, fileDirPath) 
 
     node.setAttribute(srcAttrName, `${relativePath || '.'}/${srcDestPath}`);
     
-    return {srcPath, srcDestPath, pageFile};
+    let type = resourceType[node.tagName];
+    
+    if (type === 'link') {
+      const rel = node.attributes['rel'];
+  
+      if (/preload|prefetch|prerender|preconnect/.test(rel)) {
+        const as = node.attributes['as'];
+        type = as || type;
+      } else {
+        type = rel || type;
+      }
+    }
+    
+    return {srcPath, srcDestPath, pageFile, type};
   }
   
   return null;

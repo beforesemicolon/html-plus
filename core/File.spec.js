@@ -27,7 +27,7 @@ describe('File', () => {
     const file = new File(absPath, process.cwd());
   
     expect(() => file.content = ['sample text'])
-      .toThrowError('File content can only be a string or a Buffer type');
+      .toThrowError('File content can only be a string or a Buffer');
   });
   
   it('should throw error if no file path is provided', () => {

@@ -1,0 +1,74 @@
+<api-table-details name="inject tag" details="{
+	name: 'inject',
+	type: 'tag',
+	attributes: 'id, html',
+	'related attributes': 'inject-id',
+	description: 'A tag that is used as placeholder to inject HTML markup.',
+}"></api-table-details>
+<h3>Attributes</h3>
+<api-description-list descriptions="[
+		{
+			concept: 'id',
+			type: 'type: attribute',
+			description: 'An id to identify which markup to be injected.'
+		},
+		{
+			concept: 'html',
+			type: 'type: attribute, executed',
+			description: 'Attribute that takes variable or property which the values resolves to valid text or HTML content.'
+		},
+	]"></api-description-list>
+<h3>Related Attributes</h3>
+<api-description-list descriptions="[
+		{
+			concept: 'inject-id',
+			type: 'type: attribute',
+			description: 'Attribute that can be added to any tag inside the <a href=\'/documentation/api-reference/include-tag\'>include tag</a> and must match the id attribute of any inject tag inside the partial template. Multiple tags can have it with the same value.'
+		},
+	]"></api-description-list>
+<h3>Inner Content</h3>
+<p>Anything placed inside the tag will be used as default if no content or content resolves to empty string from the html attribute
+or the <a href="/documentation/api-reference/include-tag">include tag</a> content.</p>
+<blockquote><strong>Note:</strong> The inject tag works differently depending on where it is placed. When inside a partial
+ template, it depends on the <a href="/documentation/api-reference/include-tag">include tag</a> inner content. When the
+<strong>html attribute</strong> is specified, the inject simply relies on the value provided.</blockquote>
+<h3>Usage Examples</h3>
+<p>Below example will place all the links where inject with id of <em>"style"</em> is, same goes for the <em>"script"</em>
+   id one. Everything else will be placed where the inject with no id is.</p>
+<code-snippet language="html">
+<!-- _layout.html -->
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>{title}</title>
+	<inject id="style"></inject>
+</head>
+<body>
+	<main>
+		<inject></inject>
+	</main>
+	<inject id="script"></inject>
+</body>
+</html>
+
+<!-- index.html -->
+<include partial="layout" data="{title: 'My Projects'}">
+	<link rel="stylesheet" href="./normalizer.css" inject-id="style">
+	<link rel="stylesheet" href="./project.sass" inject-id="style">
+	<include partial="banner"></include>
+	<include partial="main-content"></include>
+	<include partial="footer"></include>
+	<script src="app.ts" inject-id="script"></script>
+</include>
+</code-snippet>
+
+<p>Inject markup from a variable or property. This works like the <a href="/documentation/api-reference/ignore-tag">ignore tag</a>
+with the only difference being that the markup is actually compiled.</p>
+<code-snippet language="html">
+<inject html="$data.blogPost.content"></inject>
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

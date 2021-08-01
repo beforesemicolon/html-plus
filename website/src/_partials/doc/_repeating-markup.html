@@ -1,0 +1,70 @@
+<p>Making parts of the markup repeat for a list or certain count is always needed in templates in order
+   to save the typing and only manipulate the data. <strong>HTML+</strong> allows you to do that using the
+	<a href="/documentation/api-reference/repeat-attribute">#repeat attribute</a> which comes with extra associated variables.</p>
+<h3>Repeat specific number of times</h3>
+<p>You can repeat a markup for a specific number of times.</p>
+<code-snippet language="html">
+<button><span #repeat="3">*</span></button>
+<!-- becomes:
+<button><span>*</span><span>*</span><span>*</span></button>
+-->
+</code-snippet>
+<h3>The $item, $key and $index variables</h3>
+<p>The <a href="/documentation/api-reference/repeat-attribute">#repeat attribute</a> creates three variables for you as context for the markup you
+   are repeating. These are:</p>
+<ul>
+	<li><strong>$item</strong>: contains the value of the item of the list</li>
+	<li><strong>$key</strong> contains the key or index value of the item in the list or dictionary</li>
+	<li><strong>$index</strong> contains the index of the item in the list</li>
+</ul>
+<code-snippet language="html">
+<ul>
+	<li #repeat="3" class="list-item-{$index}">Item {$item}</li>
+</ul>
+<!-- becomes:
+<ul>
+   <li class="list-item-0">Item 1</li>
+   <li class="list-item-1">Item 2</li>
+   <li class="list-item-2">Item 3</li>
+</ul>
+-->
+</code-snippet>
+<h3>Repeat for a list or dictionary</h3>
+<p>The <a href="/documentation/api-reference/repeat-attribute">#repeat</a> attribute can also take list-like-objects like Javascript Array and Set
+   as well as dictionaries like Javascript Map and Object.</p>
+<code-snippet language="html">
+<div #repeat="[2, 4, 6]">{$index}-{$item}</div>
+<div #repeat="new Set([2, 4, 6])">{$item}</div>
+<div #repeat="new Map([[a,2], [b,4], [c,6]])">{$key}-{$item}</div>
+<div #repeat="{a: 2, b: 4, c: 6}">{$key}-{$item}</div>
+<div #repeat="$data.list">$item.name</div>
+</code-snippet>
+<h3>Repeat as</h3>
+<p>By default, all item value is available under the <strong>$item</strong> variable but you can also
+   override it by specifying the <strong>as</strong> value</p>
+<code-snippet language="html">
+<nav>
+	<a #repeat="navLinks as link" href="{link.path}">{link.label}</a>
+</nav>
+<!-- becomes:
+<nav>
+   <a href="/">Home</a>
+   <a href="/about">About</a>
+   <a href="/contact">Contact</a>
+</nav>
+-->
+</code-snippet>
+<p>It also works for numeric repeats.</p>
+<code-snippet language="html">
+<ul>
+	<li #repeat="3 as n" class="list-item-{$index}">Item {n}</li>
+</ul>
+<!-- becomes:
+<ul>
+   <li class="list-item-0">Item 1</li>
+   <li class="list-item-1">Item 2</li>
+   <li class="list-item-2">Item 3</li>
+</ul>
+-->
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

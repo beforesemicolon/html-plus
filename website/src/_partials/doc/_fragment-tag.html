@@ -1,0 +1,20 @@
+<api-table-details name="fragment tag" details="{
+	name: 'fragment',
+	type: 'tag',
+	attributes: 'none',
+	description: 'A tag that will render only the content inside and can handle grouping render logic.',
+}"></api-table-details>
+<h3>Usage Examples</h3>
+<code-snippet language="html">
+<fragment #repeat="3">
+	<label for="field-{$item}"></label>
+	<input id="field-{$item}" type="text">
+</fragment>
+</code-snippet>
+<code-snippet language="html">
+<fragment #if="$data.description">
+	<h2>Description</h2>
+	<p>{$data.description}</p>
+</fragment>
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

@@ -1,0 +1,22 @@
+<api-table-details name="attr attribute" details="{
+	name: 'attr',
+	type: 'attribute',
+	value: 'executed; 2 to 3 parts expression.',
+	'related attributes': 'none',
+	description: 'An attribute that allows you to conditionally set an attribute on a tag based on a condition.',
+}"></api-table-details>
+<h3>Two parts value</h3>
+<p>For two parts value the first one is the name of the attribute and the second is the condition expression.</p>
+<p>This is to handle boolean attributes like <strong>hidden</strong>, <strong>disabled</strong>, <strong>checked</strong>, etc.
+Attributes that do not need a value.</p>
+<code-snippet language="html">
+<input #attr="checked, $data.accepted" type="checkbox"/>
+<button #attr="disabled, submitted" type="submit">Submitted</button>
+</code-snippet>
+<h3>Three parts value</h3>
+<p>For three parts value the first one is the name of the attribute and the second is the value and the third is the condition expression.</p>
+<code-snippet language="html">
+<h2 #attr="style, {$data.title.style}, $data.title.style ">Heading</h2>
+<h2 #attr="id, site-title, $data.page === '/'">Heading</h2>
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

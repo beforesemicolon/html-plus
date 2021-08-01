@@ -1,0 +1,47 @@
+<p>If you reuse a template to change is content based on the data you pass for different routes, you will need to
+change those into static pages on build as well. This is if you decide not to go with a live server.</p>
+<p>It may look something like this:</p>
+<code-snippet language="js">
+const {engine} = require('@beforesemicolon/html-plus');
+
+const app = express();
+
+engine(app, path.resolve(__dirname, './pages'));
+
+app.get('/documentation/:doc?', (req, res) => {
+	res.render('documentation', {doc: req.params.doc})
+});
+</code-snippet>
+<p>Here we are reusing the <strong>documentation</strong> template for different url parameter for <strong>doc</strong>.
+This is so we can change how the documentation page looks accordingly and since it is not based on a file structure,
+the builder will not know about it since it only look for files in your pages directory.</p>
+<h3>Templates option</h3>
+<p>The <strong>templates</strong> options allow you to specify as many dynamic templates you want with their respective
+data list and place to be to be compiled.</p>
+<code-snippet language="js">
+const {build} = require("@beforesemicolon/html-plus");
+const path = require("path");
+
+build({
+	srcDir: path.resolve(__dirname, './pages'),
+	destDir: path.resolve(__dirname, '../public'),
+	templates: [
+		{
+			path: path.resolve(__dirname, './pages/documentation.html'),
+			dataList: [
+				['/documentation/getting-started', {doc: 'getting-started'}],
+				['/documentation/faq', {doc: 'faq'}],
+				['/documentation/api-reference', {doc: 'api-reference'}],
+			]
+		}
+	]
+}).then(() => {
+	console.log('done');
+})
+</code-snippet>
+<p>Above we are doing the same thing we did in the dynamic routes. The difference here is that we are specifying
+all the <strong>doc</strong> params and the path where the file would be if it was not dynamic</p>
+<p>The building will use the template specified in <strong>path</strong> and for each data item
+will create a file with the first value of the list tuple and passe the second value as context data.</p>
+
+<content-navigation currentPage="currentPage"></content-navigation>

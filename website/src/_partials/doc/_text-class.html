@@ -1,0 +1,42 @@
+<api-table-details name="Text" details="{
+	name: 'Text',
+	type: 'class',
+	arguments: 'A text string',
+	properties: 'value, type',
+	methods: 'toString',
+	description: 'A class representing HTML comment.',
+}"></api-table-details>
+<h3>Constructor</h3>
+<p>The constructor takes the text string and a optional object representing the context data.</p>
+<h3>Properties</h3>
+<api-description-list descriptions="[
+		{
+			concept: 'value',
+			type: 'type: string',
+			description: 'The text value.'
+		},
+				{
+			concept: 'type',
+			type: 'type: string, readonly',
+			description: 'Always returns \'text\'.'
+		},
+	]"></api-description-list>
+<h3>Methods</h3>
+<api-description-list descriptions="[
+		{
+			concept: 'toString',
+			type: 'type: function',
+			description: 'Function that returns an HTML text string.'
+		},
+	]"></api-description-list>
+<h3>Usage Examples</h3>
+<code-snippet language="js">
+const path = require("path");
+const {Text} = require("@beforesemicolon/html-plus");
+
+const text = new Text('total is {total}', {
+	total: 200
+});
+console.log(text.toString());
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

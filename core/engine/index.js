@@ -1,65 +1,26 @@
-const fs = require('fs');
 const path = require('path');
-const express = require("express");
-const {PartialFile} = require("../PartialFile");
-const {pageAndResourcesMiddleware} = require("./page-and-resources-middleware");
+const {collectHPConfig} = require("../utils/collect-hp-config");
+const chalk = require("chalk");
+const serialize = require('serialize-javascript');
+const {traverseSourceDirectoryAndCollect} = require("./traverse-source-directory-and-collect");
 const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
 const {File} = require('../File');
-const validUrl = require('valid-url');
+const {traverseNode} = require("./traverse-node");
+const {Router} = require("./Router");
+const {collectPageTagsStyle} = require("./collect-page-tags-style");
 const {isObject, isArray, isFunction} = require("util");
-const {mergeObjects} = require("../utils/merge-objects");
-
-const defaultOptions = {
-  staticData: {},
-  customTags: [],
-  customAttributes: [],
-  env: 'development',
-  sass: {
-    indentWidth: 2,
-    precision: 5,
-    indentType: 'space',
-    linefeed: 'lf',
-    sourceComments: false,
-    includePaths: [],
-    functions: {},
-  },
-  less: {
-    strictUnits: false,
-    insecure: false,
-    paths: [],
-    math: 1,
-    urlArgs: '',
-    modifyVars: null,
-    lint: false,
-  },
-  stylus: {
-    paths: [],
-  },
-  postCSS: {
-    plugins: []
-  },
-  onPageRequest() {
-  }
-}
+const {defaultOptions} = require("./default-options");
+const {cacheService} = require('../CacheService');
+const {injectTagStylesToPage} = require("./inject-tag-styles-to-page");
+const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
 
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
     throw new Error('engine first argument must be provided and be a valid express app.')
   }
   
-  let hbConfig = {};
-  
-  try {
-    hbConfig = require(path.join(process.cwd(), 'hp.config.js'));
-  } catch (e) {
-    if (e.code !== 'MODULE_NOT_FOUND') {
-      e.message = `hp.config.js file loading failed: ${e.message}`
-      throw new Error(e)
-    }
-  }
-  
-  opt = {...defaultOptions, ...mergeObjects(hbConfig, opt)};
+  opt = collectHPConfig(opt, defaultOptions);
   
   if (!isObject(opt.staticData)) {
     throw new Error('HTML+ static data option must be a javascript object')
@@ -84,96 +45,103 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   
   const partials = [];
   const pagesRoutes = {};
-  
-  return getDirectoryFilesDetail(pagesDirectoryPath, filePath => {
-    if (filePath.endsWith('.html')) {
-      const fileName = path.basename(filePath);
-      
-      if (fileName.startsWith('_')) {
-        partials.push(new PartialFile(filePath, pagesDirectoryPath));
-      } else {
-        filePath = filePath.replace(pagesDirectoryPath, '');
-        const template = `${filePath.replace('.html', '')}`.slice(1);
-        let tempPath = '';
-        
-        if (filePath.endsWith('index.html')) {
-          tempPath = filePath.replace('/index.html', '');
-          pagesRoutes[tempPath || '/'] = template;
-          pagesRoutes[`${tempPath}/`] = template;
-          pagesRoutes[`${tempPath}/index.html`] = template;
-        } else {
-          tempPath = filePath.replace('.html', '');
-          pagesRoutes[tempPath] = template;
-          pagesRoutes[`${tempPath}/`] = template;
-        }
-      }
+  const isProduction = opt.env === 'production';
+  const customTagStyles = opt.customTags.reduce((acc, tag) => {
+    if (tag.style) {
+      acc[turnCamelOrPascalToKebabCasing(tag.name)] = tag.style;
     }
     
-    return false;
-  })
-    .then(() => {
-      app.engine('html', (filePath, {settings, _locals, cache, ...context}, callback) => {
+    return acc;
+  }, {})
+  
+  return getDirectoryFilesDetail(
+    pagesDirectoryPath,
+    traverseSourceDirectoryAndCollect(pagesDirectoryPath, partials, pagesRoutes, opt.env)
+  )
+    .then(async () => {
+      await cacheService.init();
+      
+      app.engine('html', async function (filePath, {settings, _locals, cache, ...context}, callback) {
         const fileName = path.basename(filePath);
         
         if (fileName.startsWith('_')) {
           callback(new Error(`Cannot render partial(${fileName}) file as page. Partial files can only be included.`));
         }
         
-        fs.readFile(filePath, (err, content) => {
-          if (err) return callback(err);
-          const file = new File(filePath, settings.views);
-          file.content = content;
-          try {
-            const result = transform(file.content, {
-              data: opt.staticData,
-              context,
-              file,
-              customTags: opt.customTags,
-              customAttributes: opt.customAttributes,
-              partialFiles: partials,
-              onBeforeRender: (node, nodeFile) => {
-                let attrName = '';
-                
-                if (node.tagName === 'link') {
-                  attrName = 'href';
-                } else if (node.tagName === 'script') {
-                  attrName = 'src';
-                }
-                
-                const srcPath = node.attributes[attrName];
-                
-                if (srcPath && !validUrl.isUri(srcPath)) {
-                  const resourceFullPath = path.resolve(nodeFile.fileDirectoryPath, srcPath);
-                  
-                  if (resourceFullPath.startsWith(pagesDirectoryPath)) {
-                    node.setAttribute(attrName, resourceFullPath.replace(pagesDirectoryPath, ''))
-                  }
-                }
-              }
-            })
-            
-            callback(null, result);
-          } catch (e) {
-            console.error(e.message);
-            const cleanMsg = e.message
-              .replace(/\[\d+m/g, '')
-              .replace(/(>|<)/g, m => m === '<' ? '&lt;' : '&gt;');
-            callback(null, `<pre>${cleanMsg}</pre>`);
+        const file = new File(filePath, pagesDirectoryPath);
+  
+        if (isProduction) {
+          const cachedPage = await cacheService.getCachedFile(`${serialize(context)}${filePath}`);
+    
+          if (cachedPage) {
+            return callback(null, cachedPage);
           }
-        })
+    
+          if (cacheService.hasCachedValue(filePath)) {
+            file.content = await cacheService.getCachedValue(filePath);
+          }
+        }
+  
+        if (!file.content) {
+          file.load();
+        }
+  
+        const usedTagsWithStyle = new Set();
+  
+        try {
+          const onBeforeRender = traverseNode(pagesDirectoryPath);
+          
+          let html = await transform(file.content, {
+            data: opt.staticData,
+            context,
+            file,
+            customTags: opt.customTags,
+            customAttributes: opt.customAttributes,
+            partialFiles: partials,
+            onBeforeRender: (node, nodeFile) => {
+              // collect any tag style if not already collected
+              if (customTagStyles[node.tagName] && !usedTagsWithStyle.has(node.tagName)) {
+                usedTagsWithStyle.add(node.tagName)
+              }
+  
+              onBeforeRender(node, nodeFile)
+            }
+          }).then(async html => {
+            // include the collected styles at the end of the head tag
+            if (usedTagsWithStyle.size) {
+              return injectTagStylesToPage(html, await collectPageTagsStyle(usedTagsWithStyle, customTagStyles))
+            }
+            
+            return html;
+          })
+          
+          callback(null, html);
+    
+          if (isProduction) {
+            await cacheService.cacheFile(`${serialize(context)}${filePath}`, html);
+            await cacheService.cache(filePath, file.content);
+          }
+        } catch (e) {
+          console.error(e.message);
+    
+          if (isProduction) {
+            return callback(e)
+          }
+    
+          const cleanMsg = e.message
+            .replace(/\[\d+m/g, '')
+            .replace(/([><])/g, m => m === '<' ? '&lt;' : '&gt;');
+    
+          callback(null, `<pre>${cleanMsg}</pre>`);
+        }
       });
       
       app.set('views', pagesDirectoryPath);
       app.set('view engine', 'html');
       
-      app.use(pageAndResourcesMiddleware(
-        pagesRoutes,
-        pagesDirectoryPath,
-        opt
-      ));
-      app.use(express.static(pagesDirectoryPath))
+      console.info(chalk.green('[HTML+] engine is ready'));
       
-      console.log('HTML+ engine is ready');
+      return new Router(app, {pagesRoutes, pagesDirectoryPath, options: opt});
     })
 };
 

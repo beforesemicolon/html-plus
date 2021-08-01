@@ -7,7 +7,97 @@ const atImport = require("postcss-import");
 const cssnano = require('cssnano');
 const comments = require('postcss-discard-comments');
 const {uniqueAlphaNumericId} = require("../utils/unique-alpha-numeric-id");
-const {readFileContent} = require("../utils/readFileContent");
+const purgeHTML = require('purgecss-from-html');
+
+const defaultOptions = {
+  plugins: [],
+  destPath: undefined,
+  assetsPath: '',
+  assetsHashedMap: {},
+  htmlExtractor: null,
+  env: 'development',
+  map: false,
+  file: null
+};
+
+async function cssTransformer(content, opt = defaultOptions) {
+  if (content === undefined || content === null) {
+      return '';
+  }
+  
+  if (typeof content === 'object') {
+    opt = content;
+    content = null;
+  
+    if (!opt.file) {
+      throw new Error('If no string content is provided, the "file" option must be provided.')
+    }
+  }
+  
+  opt = {...defaultOptions, ...opt};
+  
+  if (!content) {
+    opt.file.load();
+    
+    content = opt.file.content
+  }
+  
+  const plugins = [
+    atImport(),
+    postcssPresetEnv({
+      stage: 0
+    }),
+    ...opt.plugins
+  ];
+  
+  const options = {
+    to: opt.destPath,
+    from: opt.file?.fileAbsolutePath,
+  }
+  
+  let post = null;
+  const linkedResources = [];
+  
+  if (opt.env === 'production') {
+    const htmlExtractor = opt.htmlExtractor || defaultHtmlExtractor(opt.file.file);
+    
+    post = postcss([
+      ...plugins,
+      comments({removeAll: true}),
+      purgeCSS({
+        extractors: [
+          {
+            extractor: htmlExtractor,
+            extensions: ['html']
+          }
+        ],
+        content: [
+          `${opt.destPath || opt.file.srcDirectoryPath}/**/*.html`
+        ],
+        css: [
+          opt.file.fileAbsolutePath
+        ]
+      }),
+      cssnano
+    ]);
+    
+    if (opt.assetsPath) {
+      post.use(url({
+        url: resolveUrl(opt.assetsPath, linkedResources, opt.assetsHashedMap || {}, opt.file)
+      }));
+    }
+  } else {
+    post = postcss(plugins);
+  }
+  
+  return post
+    .process(content, options)
+    .then(res => {
+      return opt.env === 'production' || opt.file
+        ? {content: res.css, linkedResources}
+        : res.css;
+    })
+}
 
 const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) => {
   let absPath = urlInfo.absolutePath;
@@ -36,82 +126,14 @@ const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) =
   return `${assetsPath}/${path.basename(urlInfo.url)}`;
 };
 
-const defaultOptions = {
-  plugins: [],
-  destPath: undefined,
-  assetsPath: '',
-  assetsHashedMap: {},
-  env: 'development',
-  map: false,
-  file: null
-};
-
-async function cssTransformer(content, opt = defaultOptions) {
-  if (content === undefined || content === null) {
-      return '';
-  }
-  
-  if (typeof content === 'object') {
-    opt = content;
-    content = null;
-  
-    if (!opt.file) {
-      throw new Error('If no string content is provided, the "file" option must be provided.')
-    }
-  }
-  
-  opt = {...defaultOptions, ...opt};
-  content = content ?? readFileContent(opt.file.fileAbsolutePath);
-  
-  const plugins = [
-    atImport(),
-    postcssPresetEnv({
-      stage: 0
-    }),
-    ...opt.plugins
-  ];
-  
-  const options = {
-    to: opt.destPath,
-    from: opt.file?.fileAbsolutePath,
-  }
-  
-  let post = null;
-  const linkedResources = [];
-  
-  if (opt.env === 'production') {
-    post = postcss([
-      ...plugins,
-      comments({removeAll: true}),
-      purgeCSS({
-        content: [
-          `${opt.destPath || opt.file.srcDirectoryPath}/**/*.html`
-        ],
-        css: [
-          opt.file.fileAbsolutePath
-        ]
-      }),
-      cssnano
-    ]);
-    
-    if (opt.assetsPath) {
-      post.use(url({
-        url: resolveUrl(opt.assetsPath, linkedResources, opt.assetsHashedMap || {}, opt.file)
-      }));
+function defaultHtmlExtractor(fileName) {
+  return content => {
+    if (content.match(new RegExp(`${fileName}`, 'g'))) {
+      return purgeHTML(content);
     }
     
-    options.map = true;
-  } else {
-    post = postcss(plugins);
+    return [];
   }
-  
-  return post
-    .process(content, options)
-    .then(res => {
-      return opt.env === 'production' || opt.file
-        ? {content: res.css, linkedResources}
-        : res.css;
-    })
 }
 
 module.exports.cssTransformer = cssTransformer;

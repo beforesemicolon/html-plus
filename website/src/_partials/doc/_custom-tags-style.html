@@ -1,0 +1,61 @@
+<p>When it comes time to style your custom tags, <strong>HTML+</strong> allows you to associate custom style
+to your tags by specifying a <strong>static style property</strong>.</p>
+<code-snippet language="js">
+class SearchField {
+	constructor(node, options) {
+		this.node = node;
+	}
+
+	static style = `<style>
+		.search-field {
+			background: #eee;
+			color: #222;
+		}
+
+		.search-field input {
+			padding: 20px;
+			border-radius: 20px;
+		}
+	</style>`;
+
+	render() {
+		const {value = '', placeholder = 'Search...'} = this.node.attributes;
+
+		return `
+			<label class="search-field" aria-label="search field">
+				<input type="search" name="search" placeholder="${placeholder}" value="${value}">
+			</label>
+		`;
+	}
+}
+</code-snippet>
+<p>The <strong>style</strong> property must be a string with CSS wrapped inside the <strong>style</strong> tag. This
+will make it easier to edit CSS in your editor as well as give you control over how the style tag will show on
+the page.</p>
+<p>You may also import your style using the <a href="">importStyle</a> utility function that not only imports
+your CSS, it also handles <strong>SASS</strong>, <strong>Less</strong>, and <strong>Stylus</strong> CSS.</p>
+<code-snippet language="js">
+const {importStyle} = require('@before-semicolon/html-plus');
+const path = require('path');
+
+class SearchField {
+	...
+
+	static get style() {
+		return importStyle(path.join(__dirname, './search-field.scss'))
+	};
+
+	...
+}
+</code-snippet>
+<p>All tags styles are injected directly at the end of the <strong>head tag</strong>. This will make sure your
+tag styles load faster with the page without an extra file request from the browser. Styles are also injected in a way
+it will only target the tags inside your custom tag so you don't get CSS conflict.</p>
+<p>Because the tag styles are the last ones and are placed directly in the header, they are hard to override based
+on CSS specificity. You can always use the tag name to target the html inside to override their style if needed.</p>
+<code-snippet language="css">
+.page search-field .search-field {
+	background: #fff;
+}
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

@@ -1,33 +1,33 @@
 const {transform} = require('./../transform');
 
 describe('Fragment Attribute', () => {
-  it('should render children content only', () => {
+  it('should render children content only', async () => {
     const str = '<div #fragment><b>child text</b></div>'
     
-    expect(transform(str)).toEqual('<b>child text</b>');
+    await expect(transform(str)).resolves.toEqual('<b>child text</b>');
   });
   
-  it('should render empty if no children', () => {
+  it('should render empty if no children', async () => {
     const str = '<div #fragment></div>'
     
-    expect(transform(str)).toEqual('');
+    await expect(transform(str)).resolves.toEqual('');
   });
   
   describe('should work with other attributes', () => {
-    it('repeat', () => {
-      expect(transform('<b #fragment #repeat="3">{$item}</b>')).toEqual('123');
+    it('repeat', async () => {
+      await expect(transform('<b #fragment #repeat="3">{$item}</b>')).resolves.toEqual('123');
     });
     
-    it('attr', () => {
-      expect(transform('<b #attr="class, cls, true" #fragment>item</b>')).toEqual('item');
+    it('attr', async () => {
+      await expect(transform('<b #attr="class, cls, true" #fragment>item</b>')).resolves.toEqual('item');
     });
     
-    it('if', () => {
-      expect(transform('<b #if="true" #fragment>item</b>')).toEqual('item');
+    it('if', async () => {
+      await expect(transform('<b #if="true" #fragment>item</b>')).resolves.toEqual('item');
     });
     
-    it('ignore', () => {
-      expect(transform('<b #ignore #fragment>{item}</b>')).toEqual('<b>{item}</b>');
+    it('ignore', async () => {
+      await expect(transform('<b #ignore #fragment>{item}</b>')).resolves.toEqual('<b>{item}</b>');
     });
   });
 });
