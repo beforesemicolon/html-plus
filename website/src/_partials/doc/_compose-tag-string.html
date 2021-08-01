@@ -6,22 +6,22 @@
 }"></api-table-details>
 <h3>Arguments</h3>
 <api-description-list descriptions="[
-		{
-			concept: 'node',
-			type: 'type: HTMLNode-like, required',
-			description: 'a HTMLNode instance or HTMLNode-like object to compose as tag string.'
-		},
-		{
-			concept: 'content',
-			type: 'type: string, optional',
-			description: 'The HTML string representation to be used as the HTML or text content.'
-		},
-		{
-			concept: 'excludedAttributes',
-			type: 'type: string[], optional',
-			description: 'A list of attribute names to exclude from the HTML tag string.'
-		},
-	]"></api-description-list>
+    {
+        concept: 'node',
+        type: 'type: HTMLNode-like, required',
+        description: 'a HTMLNode instance or HTMLNode-like object to compose as tag string.'
+    },
+    {
+        concept: 'content',
+        type: 'type: string, optional',
+        description: 'The HTML string representation to be used as the HTML or text content.'
+    },
+    {
+        concept: 'excludedAttributes',
+        type: 'type: string[], optional',
+        description: 'A list of attribute names to exclude from the HTML tag string.'
+    },
+]"></api-description-list>
 <h3>Return</h3>
 <p>This function will return an HTML string representation that can be used to render the node, for example.</p>
 <p>The content is never parsed. Whatever the content you pass to it will be used as is.</p>
