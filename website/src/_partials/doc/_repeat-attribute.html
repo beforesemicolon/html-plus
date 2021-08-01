@@ -1,14 +1,11 @@
-<include partial="api-table-details" data="{
-	name: 'repeat attribute',
-	details: {
-		name: 'repeat',
-		type: 'attribute',
-		value: 'executed; number, list-like or map-like object.',
-		'related attributes': 'none',
-		'related variables': '$item, $key, $index',
-		description: 'An attribute that takes a number, a list or map-like object to repeat the tag it was placed on.',
-	}
-}"></include>
+<api-table-details name="repeat attribute" details="{
+	name: 'repeat',
+	type: 'attribute',
+	value: 'executed; number, list-like or map-like object.',
+	'related attributes': 'none',
+	'related variables': '$item, $key, $index',
+	description: 'An attribute that takes a number, a list or map-like object to repeat the tag it was placed on.',
+}"></api-table-details>
 <h3 id="related-variables">Related Variables</h3>
 <p>The <strong>#repeat</strong> attribute creates three variables for you as context for the markup you
    are repeating. These are:</p>
@@ -46,4 +43,4 @@
 	<li #repeat="3 as n" class="list-item-{$index}">Item {n}</li>
 </ul>
 </code-snippet>
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>

@@ -109,7 +109,7 @@ describe('engine', () => {
         .then(res => {
           expect(res.status).toBe(200)
           expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.scss"/><style>\n' +
-            'heading h2 {font-size: 12px}</style></head><body><heading text="Home"><h2>Home</h2></heading></body></html>')
+            'heading h2 {font-size: 12px}</style></head><body><heading><h2>Home</h2></heading></body></html>')
         })
     });
     
@@ -178,7 +178,7 @@ describe('engine', () => {
         .then(res => {
           expect(res.status).toBe(200)
           expect(res.text).toBe('<html><head><title>Home</title><link rel="stylesheet" href="/home.scss"/><style>\n' +
-            'heading h2 {font-size: 12px}</style></head><body><heading text="Home"><h2>Home</h2></heading></body></html>');
+            'heading h2 {font-size: 12px}</style></head><body><heading><h2>Home</h2></heading></body></html>');
         });
 
       spy.mockRestore();

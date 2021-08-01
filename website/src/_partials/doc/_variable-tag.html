@@ -1,15 +1,11 @@
-<include partial="api-table-details" data="{
-	name: 'variable tag',
-	details: {
-		name: 'variable',
-		type: 'tag',
-		attributes: 'name, value',
-		description: 'A tag that will update context with current value and make it available for all tags after it under the same tag or file.',
-	}
-}"></include>
+<api-table-details name="variable tag" details="{
+	name: 'variable',
+	type: 'tag',
+	attributes: 'name, value',
+	description: 'A tag that will update context with current value and make it available for all tags after it under the same tag or file.',
+}"></api-table-details>
 <h3>Attributes</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'name',
 			type: 'type: attribute',
@@ -20,8 +16,7 @@
 			type: 'type: attribute, executed',
 			description: 'Anything that can be used as a variable value.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Inner content</h3>
 <p>Anything placed inside the tag will be bind and used as string.</p>
 <h3>Usage Examples</h3>
@@ -34,3 +29,4 @@
           value="$data.prices.reduce((acc, x) => acc + x, 0)"></variable>
 <p>The total is {total}</p>>
 </code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

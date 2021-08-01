@@ -1,19 +1,15 @@
-<include partial="api-table-details" data="{
+<api-table-details name="build" details="{
 	name: 'build',
-	details: {
-		name: 'build',
-		type: 'function',
-		arguments: 'options',
-		description: 'A function that will compile all pages and their connected resource for production.',
-	}
-}"></include>
+	type: 'function',
+	arguments: 'options',
+	description: 'A function that will compile all pages and their connected resource for production.',
+}"></api-table-details>
 <h3>Options</h3>
 <p>Options can be provided directly to the build function or you can simply create a <strong>hp.config.js</strong> file
    at the root directory and export(<em #ignore>using module.exports = {...}</em>) an object with the following properties.</p>
 <p>If you provide options both, by providing the <strong>hp.config.js</strong> file and build options, these are deeply merged
    and the options provided to the build function directly will override the <strong>hp.config.js</strong> file ones where they match in properties.</p>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'srcDir',
 			type: 'type: string',
@@ -49,8 +45,7 @@
 			type: 'type: array',
 			description: 'An array of templates which is a object containing a path key with the absolute path to the template file to use and a dataList array key containing tuples where the first value is the routing path and the second the context data.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Usage Examples</h3>
 <p>The <strong>build</strong> function shares a lot of options with the
 	<a href="/documentation/api-reference/engine-function">engine</a> function. Use the <strong>hp.config.js</strong>
@@ -114,4 +109,4 @@ build({
 })
 </code-snippet>
 
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>

@@ -1,15 +1,11 @@
-<include partial="api-table-details" data="{
-	name: 'composeTagString',
-	details: {
-		name: 'composeTagString',
-		type: 'function',
-		arguments: 'node, content, excludedAttributes',
-		description: 'A function to compose an HTML tag with it\'s attributes and content.',
-	}
-}"></include>
+<api-table-details name="composeTagString" details="{
+    name: 'composeTagString',
+    type: 'function',
+    arguments: 'node, content, excludedAttributes',
+    description: 'A function to compose an HTML tag with it\'s attributes and content.',
+}"></api-table-details>
 <h3>Arguments</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'node',
 			type: 'type: HTMLNode-like, required',
@@ -25,8 +21,7 @@
 			type: 'type: string[], optional',
 			description: 'A list of attribute names to exclude from the HTML tag string.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Return</h3>
 <p>This function will return an HTML string representation that can be used to render the node, for example.</p>
 <p>The content is never parsed. Whatever the content you pass to it will be used as is.</p>
@@ -56,4 +51,4 @@ function Script(node) {
 
 module.exports.Script = Script;
 </code-snippet>
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>

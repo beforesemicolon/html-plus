@@ -1,23 +1,18 @@
-<include partial="api-table-details" data="{
-	name: 'ignore attribute',
-	details: {
-		name: 'ignore',
-		type: 'attribute',
-		value: 'executed; optional; Variable or property which value must be text or HTML markup.',
-		'related attributes': 'escape',
-		description: 'A attribute that will render the tag and content inside but does not compile the inner HTML and can escape it as well.',
-	}
-}"></include>
+<api-table-details name="ignore attribute" details="{
+	name: 'ignore',
+	type: 'attribute',
+	value: 'executed; optional; Variable or property which value must be text or HTML markup.',
+	'related attributes': 'escape',
+	description: 'A attribute that will render the tag and content inside but does not compile the inner HTML and can escape it as well.',
+}"></api-table-details>
 <h3>Related Attributes</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'escape',
 			type: 'type: boolean attribute',
 			description: 'A boolean attribute that signal whether to escape the HTML or not.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Usage Examples</h3>
 <p>Use it to wrap markup that contains special symbols that are special to HTML+ that you really want to show on the page</p>
 <code-snippet language="html">
@@ -52,4 +47,4 @@
 	to be rendered as is ans skip compiling time -->
 <div #ignore="$data.blog.post"></div>
 </code-snippet>
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>

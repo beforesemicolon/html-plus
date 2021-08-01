@@ -1,22 +1,17 @@
-<include partial="api-table-details" data="{
-	name: 'log tag',
-	details: {
-		name: 'log',
-		type: 'tag',
-		attributes: 'value',
-		description: 'A tag that will render to template and log to the console the value provided.',
-	}
-}"></include>
+<api-table-details name="log tag" details="{
+	name: 'log',
+	type: 'tag',
+	attributes: 'value',
+	description: 'A tag that will render to template and log to the console the value provided.',
+}"></api-table-details>
 <h3>Attributes</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'value',
 			type: 'type: attribute, executed',
 			description: 'A variable or attribute which value can be any javascript object or primitive.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Inner content</h3>
 <p>Anything placed inside the tag will be bind and used as the label for the log.</p>
 <h3>Usage Examples</h3>
@@ -37,3 +32,4 @@
 
 <log value="filteredList"></log>
 </code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

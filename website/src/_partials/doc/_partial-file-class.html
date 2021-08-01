@@ -1,27 +1,22 @@
-<include partial="api-table-details" data="{
-	name: 'PartialFile',
-	details: {
-		name: 'PartialFile',
-		type: 'class',
-		arguments: 'file absolute path, source directory, HTMLNode options',
-		description: 'A class representing a partial HTML file.',
-	}
-}"></include>
+<api-table-details name="PartialFile" details="{
+     name: 'PartialFile',
+     type: 'class',
+     arguments: 'file absolute path, source directory, HTMLNode options',
+     description: 'A class representing a partial HTML file.',
+}"></api-table-details>
 <h3>Constructor</h3>
 <p>The constructor takes a required absolute path to the file, an optional source directory absolute path and
    a <a href="/documentation/api-reference/html-node-class">HTMLNode option</a>.</p>
 <h3>Properties</h3>
 <p>Inherits all properties from <a href="/documentation/api-reference/file-class">File</a></p>
 <h3>Methods</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'render',
 			type: 'type: function',
 			description: 'A method that when called will return a string representation of HTML compiled.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Usage Examples</h3>
 <code-snippet language="js">
 const path = require("path");
@@ -31,4 +26,4 @@ const layout = new PartialFile(path.resolve(__dirname, '_layout.html'));
 
 console.log(`${layout.file} content is ${project.render()}`);
 </code-snippet>
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>

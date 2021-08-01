@@ -1,19 +1,15 @@
-<include partial="api-table-details" data="{
-	name: 'HTMLNode',
-	details: {
+<api-table-details name="HTMLNode" details="{
 		name: 'HTMLNode',
 		type: 'class',
 		arguments: 'HTML string, options',
 		properties: 'tagName, innerHTML, rawAttributes, attributes, context, type',
 		methods: 'setAttribute, removeAttribute, setContext, removeContext, clone, duplicate, childNodes, renderChildren, render, toString',
 		description: 'A class representing HTML node tree.',
-	}
-}"></include>
+	}"></api-table-details>
 <h3>Constructor</h3>
 <p>The constructor takes a required absolute path to the file and an optional source directory.</p>
 <h3>Properties</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'type',
 			type: 'type: string, readonly',
@@ -44,11 +40,9 @@
 			type: 'type: object, readonly',
 			description: 'Key-value pair object literal of the context data.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Methods</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'setAttribute',
 			type: 'type: function',
@@ -99,13 +93,9 @@
 			type: 'type: function',
 			description: 'Alias to the render function.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Options</h3>
-<include partial="api-table-details" data="{
-	name: 'HTML options',
-	heading: 'Options',
-	details: {
+<api-table-details name="HTML options" heading="Options" details="{
 		data: 'A Javascript object representing the data you want to pass to the markup. Can be referenced to as $data in the markup.',
 		context: 'A Javascript object literal representing the context data the markup can refer to by the keys.',
 		customTags: 'An array of valid function or class based tag.',
@@ -115,8 +105,7 @@
 		partialFiles: 'An array of <a href=\'/documentation/api-reference/partial-file-class\'>PartialFile</a> instance to be used by the markup especially if it contains a include tag.',
 		env: 'The environment, \'development\' or \'production\'.',
 		file: 'A <a href=\'/documentation/api-reference/file-class\'>File</a> instance.',
-	}
-}"></include>
+	}"></api-table-details>
 <h3>Usage Examples</h3>
 <code-snippet language="js">
 const path = require("path");
@@ -126,4 +115,4 @@ const title = new HTMLNode('<h2>{title}</h2>', {
 	context: {title: 'My title'}
 });
 </code-snippet>
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>

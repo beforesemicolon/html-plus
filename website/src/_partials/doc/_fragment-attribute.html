@@ -1,12 +1,9 @@
-<include partial="api-table-details" data="{
-	name: 'fragment attribute',
-	details: {
-		name: 'fragment',
-		type: 'boolean attribute',
-		'related-attributes': 'none',
-		description: 'An attribute version of the <a href=\'/documentation/api-reference/fragment-tag\'>fragment tag</a>.',
-	}
-}"></include>
+<api-table-details name="fragment attribute" details="{
+	name: 'fragment',
+	type: 'boolean attribute',
+	'related-attributes': 'none',
+	description: 'An attribute version of the <a href=\'/documentation/api-reference/fragment-tag\'>fragment tag</a>.',
+}"></api-table-details>
 <h3>Usage Examples</h3>
 <code-snippet language="html">
 <div #repeat="3" #fragment>
@@ -20,4 +17,4 @@
 	<p>{$data.description}</p>
 </div>
 </code-snippet>
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>

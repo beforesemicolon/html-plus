@@ -19,6 +19,7 @@ describe('bindData', () => {
   
   it('should return string with bind data', () => {
     expect(bindData('{sample}', {sample: 10})).toEqual('10');
+    expect(bindData('{sample}-{x}', {sample: 10, x: 90})).toEqual('10-90');
     expect(bindData('{{data: sample}}', {sample: 10})).toEqual('[object Object]');
     expect(bindData('{JSON.stringify({data: sample, test: 30})}', {sample: 10})).toEqual('{"data":10,"test":30}');
   });

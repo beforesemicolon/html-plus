@@ -1,6 +1,7 @@
 {
 	const searchField: HTMLInputElement | null = document.querySelector('.search-field');
 
+	console.log('-- searchField', searchField);
 	if (searchField) {
 		const docMenu: HTMLElement | null = document.querySelector('.doc-menu');
 		const aside: HTMLElement | null = document.querySelector('aside');

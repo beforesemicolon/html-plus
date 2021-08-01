@@ -1,18 +1,14 @@
-<include partial="api-table-details" data="{
+<api-table-details name="Attribute" details="{
 	name: 'Attribute',
-	details: {
-		name: 'Attribute',
-		type: 'class',
-		properties: 'execute, bind',
-		methods: 'process, render',
-		description: 'A class to extend in order to create custom HTML+ attributes',
-	}
-}"></include>
+	type: 'class',
+	properties: 'execute, bind',
+	methods: 'process, render',
+	description: 'A class to extend in order to create custom HTML+ attributes',
+}"></api-table-details>
 <h3>Constructor</h3>
 <p>The constructor takes no argument.</p>
 <h3>Properties</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'execute',
 			type: 'type: boolean, optional',
@@ -22,11 +18,9 @@
 			type: 'type: boolean, optional',
 			description: 'flags whether to bind the string value to another string value.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Methods</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'process',
 			type: 'arguments: raw attribute value',
@@ -36,8 +30,7 @@
 			type: 'arguments: processed attribute value, HTMLNode instance',
 			description: 'a function called on node render that must return the node or a new HTML markup string.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Usage Examples</h3>
 <p>This is how the native <strong>#if</strong> attribute is implemented.</p>
 <code-snippet language="js">
@@ -53,4 +46,4 @@ class If extends Attribute {
 
 module.exports.If = If;
 </code-snippet>
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>

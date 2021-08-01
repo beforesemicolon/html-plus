@@ -1,12 +1,9 @@
-<include partial="api-table-details" data="{
+<api-table-details name="engine" details="{
 	name: 'engine',
-	details: {
-		name: 'engine',
-		type: 'async function',
-		arguments: 'express app, pages directory, options',
-		description: 'A function that will setup the express engine and setup the routing of your application.',
-	}
-}"></include>
+	type: 'async function',
+	arguments: 'express app, pages directory, options',
+	description: 'A function that will setup the express engine and setup the routing of your application.',
+}"></api-table-details>
 <h3>Asynchronous function</h3>
 <p>The <strong>engine</strong> function is ASYNCHRONOUS which means that you can await on it before you start the server.</p>
 <code-snippet language="js">
@@ -35,8 +32,7 @@ call as the last thing before you call the <strong>listen</strong> method for th
 awaiting on the engine may throw an error if you get to the page before the engine is done processing your
 pages directory.</p>
 <h3>Arguments</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'express app',
 			type: 'type: object, required',
@@ -52,15 +48,13 @@ pages directory.</p>
 			type: 'type: object, optional',
 			description: 'Object with different options to be consumed by the engine. If not provided, the engine will try to find for the <strong>hp.config.js</strong> file on the project root directory.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Options</h3>
 <p>Options can be provided directly to the engine function as third argument or you can simply create a <strong>hp.config.js</strong>
 at the root directory and export(<em #ignore>using module.exports = {...}</em>) an object with the following properties.</p>
 <p>If you provide options both, by providing the <strong>hp.config.js</strong> file and engine options, these are deeply merged
    and the engine options will override the <strong>hp.config.js</strong> file where they match in properties.</p>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'staticData',
 			type: 'type: object',
@@ -106,8 +100,7 @@ at the root directory and export(<em #ignore>using module.exports = {...}</em>) 
 			type: 'type: object',
 			description: 'object of <a href=\'https://postcss.org/api/#processoptions\'>postCSS options</a> but only these are supported: <strong>plugins</strong>. It already uses <a href=\'https://github.com/postcss/postcss-import\'>atImport</a>, <a href=\'https://github.com/csstools/postcss-preset-env\'>postcssPresetEnv</a>, <a href=\'https://github.com/postcss/autoprefixer\'>autoprefixer</a>, <a href=\'https://purgecss.com/\'>purgeCSS</a>, <a href=\'https://github.com/cssnano/cssnano\'>cssnano</a> and <a href=\'https://www.npmjs.com/package/postcss-discard-comments\'>Discard Comments</a> plugins by default.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Return</h3>
 <p>The engine returns a <strong>Promise</strong>.</p>
 <h3>Usage Examples</h3>
@@ -159,4 +152,4 @@ engine(app, path.resolve(__dirname, './pages'), {
 	}
 });
 </code-snippet>
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>

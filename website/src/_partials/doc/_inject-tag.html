@@ -1,16 +1,12 @@
-<include partial="api-table-details" data="{
-	name: 'inject tag',
-	details: {
-		name: 'inject',
-		type: 'tag',
-		attributes: 'id, html',
-		'related attributes': 'inject-id',
-		description: 'A tag that is used as placeholder to inject HTML markup.',
-	}
-}"></include>
+<api-table-details name="inject tag" details="{
+	name: 'inject',
+	type: 'tag',
+	attributes: 'id, html',
+	'related attributes': 'inject-id',
+	description: 'A tag that is used as placeholder to inject HTML markup.',
+}"></api-table-details>
 <h3>Attributes</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'id',
 			type: 'type: attribute',
@@ -21,18 +17,15 @@
 			type: 'type: attribute, executed',
 			description: 'Attribute that takes variable or property which the values resolves to valid text or HTML content.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Related Attributes</h3>
-<include partial="api-description-list" data="{
-	descriptions: [
+<api-description-list descriptions="[
 		{
 			concept: 'inject-id',
 			type: 'type: attribute',
 			description: 'Attribute that can be added to any tag inside the <a href=\'/documentation/api-reference/include-tag\'>include tag</a> and must match the id attribute of any inject tag inside the partial template. Multiple tags can have it with the same value.'
 		},
-	]
-}"></include>
+	]"></api-description-list>
 <h3>Inner Content</h3>
 <p>Anything placed inside the tag will be used as default if no content or content resolves to empty string from the html attribute
 or the <a href="/documentation/api-reference/include-tag">include tag</a> content.</p>
@@ -78,4 +71,4 @@ with the only difference being that the markup is actually compiled.</p>
 <code-snippet language="html">
 <inject html="$data.blogPost.content"></inject>
 </code-snippet>
-<include partial="documentation-menu" data="{currentPage}"></include>
+<content-navigation currentPage="currentPage"></content-navigation>
