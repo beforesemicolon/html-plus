@@ -1,6 +1,6 @@
 # HTML+
 
-HTML Template Language
+HTML Template system to build websites
 
 ![license](https://img.shields.io/github/license/beforesemicolon/html-plus)
 ![npm](https://img.shields.io/npm/v/@beforesemicolon/html-plus)
@@ -8,7 +8,6 @@ HTML Template Language
 ![Mac Build](https://github.com/beforesemicolon/html-plus/actions/workflows/mac.yml/badge.svg)
 ![Linux Build](https://github.com/beforesemicolon/html-plus/actions/workflows/linux.yml/badge.svg)
 
-## Simply HTML and much more
 ```html
 <variable name="page" value="$data.pages.home"></variable>
 
@@ -18,16 +17,17 @@ HTML Template Language
     <link rel="stylesheet" href="./../node_modules/material/styles/theme.css" inject-id="style">
     
     <include partial="header"></include>
+    <include partial="banner"></include>
     
-    <section role="banner" class="wrapper">
-        <h2>{$data.site.description}</h2>
-        <p>{page.banner.description}</p>
-        <div class="doc-links">
-            <a #repeat="page.banner.links"
-               #attr="class, cta, $item.path === '/learn'"
-               href="{$item.path}" class="link-button">{$item.label}</a>
-        </div>
+    <section class="posts">
+        <a #repeat="posts as post" href="{post.link}">
+            <h2>{post.title}</h2>
+            <h2>{post.thumbnail}</h2>
+            <p>{post.description}</p>
+        </a>
     </section>
+    
+    <include partial="footer"></include>
     
     <!--  reference typescript files directly  -->
     <link rel="stylesheet" href="./home.ts" inject-id="script">

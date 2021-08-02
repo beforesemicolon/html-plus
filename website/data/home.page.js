@@ -55,7 +55,7 @@ module.exports = {
       {
         title: "Create your custom HTML tags and attributes",
         description: "You can create custom tags and attributes to handle a specific situation of your project.",
-        path: "/documentation/templating/custom-tags-and-attributes",
+        path: "/documentation/advanced-templating/custom-tags",
         partial: "custom-tag"
       },
       {

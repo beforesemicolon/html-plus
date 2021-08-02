@@ -1,0 +1,26 @@
+<p>To create pages you must first specify in which directory relative to the server you will be placing
+   your HTML pages when setting up the <strong>engine</strong>.</p>
+<code-snippet language="js">
+const {engine} = require('@beforesemicolon/html-plus');
+
+const app = express();
+
+engine(app, path.resolve(__dirname, './pages'));
+</code-snippet>
+<p>Once you have your pages directory, which you can name anything you want, you can start creating
+   HTML files which will be used as pages.</p>
+<p>As mentioned in before, the way you structure your pages directory files
+   is how the routes will be set. <strong>There are a few things you should know when doing so:</strong></p>
+<ul>
+	<li><strong>index.html</strong> corresponds to <em>"/"</em> path or the path of the directory
+        it is placed inside. Placing <em>index.html</em> at the root pages directory will match path "/" and
+        placing it in, for example, projects directory will match <em>"/projects"</em> path.</li>
+	<li>Any html file name that starts with <em>"underscore"</em> will be interpreted as a partial file. No path will match such files.
+	    Use this rule to <a href="/documentation/templating/partials-and-include">create partials</a> that you can include in your page files.</li>
+	<li>By default, <em>"/404"</em> will have a default minimal page. You can override this by simply creating
+	    a <em>404.html</em> file at the root pages directory.</li>
+	<li>Any html file inside the pages directory will override
+		<a href="/documentation/routes/route-pages">express custom routes</a> your create.</li>
+	<li>Every file will match a single route and can only be reused in <a href="/documentation/routes/route-pages">custom express route</a> you setup.</li>
+</ul>
+<content-navigation currentPage="currentPage"></content-navigation>

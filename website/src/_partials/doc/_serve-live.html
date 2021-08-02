@@ -1,0 +1,27 @@
+<p>The best part of building a website is get to see it live when you are done and <strong>HTML+</strong>
+makes the process easy by taking care of important decisions you have to make.</p>
+<p>The <a href="/documentation/api-reference/engine-function">engine</a> already takes care of your
+website while you are in developing it. It also takes care of your website when you are taking it live by:</p>
+<ul>
+	<li>Caching static page resources and content for quick page load;</li>
+	<li>Only serving resources needed by the website;</li>
+	<li>No requiring changes in configuration or a separate configuration for production.</li>
+	<li>Detecting page context data change and recompiling the page templates.</li>
+	<li>Supporting everything supported during development.</li>
+</ul>
+<h3>Use the environment value</h3>
+<p>The only thing you need to do when going from development mode to serving the website live in production is
+specify the production <strong>env</strong> for configuration. Everything else is taken care for you.</p>
+<code-snippet language="javascript">
+engine(app, path.resolve(__dirname, './pages'), {
+	env: 'production',
+	...
+});
+</code-snippet>
+<p>Our tests show page rendering speed increase by a significantly amount and the template page compilation is reliably fast
+to support live template rendering.</p>
+<h3>Data</h3>
+<p>It is very important to know that while live, if your <a href="/documentation/data/static-data">static data</a>
+   changes, the template will not update and the reason for that is because the data is <a href="">static</a>.</p>
+<p>To cause a page to be recompile you must make usage of <a href="/documentation/data/dynamic-data">dynamic context data</a>.</p>
+<content-navigation currentPage="currentPage"></content-navigation>

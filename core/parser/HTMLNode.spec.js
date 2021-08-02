@@ -130,14 +130,14 @@ describe('HTMLNode', () => {
     it('from class', () => {
       const node = new HTMLNode(htmlNode, {customTags: {'title': Title}});
   
-      return expect(node.render()).toEqual('<title type="small"><h5>My title</h5></title>');
+      return expect(node.render()).toEqual('<title><h5>My title</h5></title>');
     });
     
     it('from function', () => {
       htmlNode.setAttribute('type', 'm')
       const node = new HTMLNode(htmlNode, {customTags: {'title': title}});
 
-      return expect(node.render()).toEqual('<title type="m"><h4>My title</h4></title>');
+      return expect(node.render()).toEqual('<title><h4>My title</h4></title>');
     });
   });
   

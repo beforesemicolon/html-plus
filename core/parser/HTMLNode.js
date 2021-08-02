@@ -198,7 +198,7 @@ class HTMLNode {
       
       return this.#options.defaultTags[this.tagName]
         ? this.#tag.render()
-        : composeTagString(this, this.#tag.render(), Object.keys(this.#options.customAttributes));
+        : composeTagString({tagName: this.tagName, attributes: {}, _options: this.#options}, this.#tag.render(), Object.keys(this.#options.customAttributes));
     }
     
     try {

@@ -1,0 +1,34 @@
+<api-table-details name="importStyle" details="{
+	name: 'importStyle',
+	type: 'function',
+	arguments: 'css file absolute path',
+	description: 'A utility function that will import CSS file, including CSS preprocessor files and returns a promise that resolves to plain modern CSS.',
+}"></api-table-details>
+<h3>Arguments</h3>
+<api-description-list descriptions="[
+    {
+        concept: 'file absolute path',
+        type: 'type: string, required',
+        description: 'a absolute path to the file to import.'
+    },
+]"></api-description-list>
+<h3>Return</h3>
+<p>The function returns a promise that resolves to modern CSS text.</p>
+<h3>Usage Examples</h3>
+<p>This utility function was created to aid with <a href="/documentation/advanced-templating/custom-tags-style">custom tag style association</a>.
+It is also a great way to compile any CSS into a modern one for the browser.</p>
+<code-snippet language="js">
+const {importStyle} = require('@before-semicolon/html-plus');
+const path = require('path');
+
+class SearchField {
+	...
+
+	static get style() {
+		return importStyle(path.join(__dirname, './search-field.scss'))
+	};
+
+	...
+}
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

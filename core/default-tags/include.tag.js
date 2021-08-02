@@ -1,10 +1,12 @@
 const path = require('path');
 const {PartialFile} = require("../PartialFile");
+const {composeTagString} = require("../parser/compose-tag-string");
+const chalk = require("chalk");
 
 class Include {
   constructor(node, options) {
     const {file, partialFiles} = options;
-  
+    
     this.node = node;
     this.partial = null;
     let partialName = node.attributes['partial'];
@@ -33,6 +35,12 @@ class Include {
         const partialAbsolutePath = path.resolve(file.fileDirectoryPath, partialPath);
 
         this.partial = new PartialFile(partialAbsolutePath, file.srcDirectoryPath, tagInfo);
+      }
+  
+      if (!this.partial) {
+        console.warn(chalk.yellowBright(
+          `[HTML+] Partial "${partialName || partialPath}" not found.\n${chalk.greenBright(composeTagString(node, '...'))}`
+        ));
       }
     }
   }

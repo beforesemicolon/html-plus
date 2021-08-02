@@ -1,0 +1,24 @@
+<p>Partials can be super powerful when it comes to create specific component and the fact you can refer to them by
+name, you can include them with custom data everywhere you want.</p>
+<code-snippet language="html">
+<!-- _search-field.html -->
+<label class="search-field" aria-label="search field">
+	<input type="search" name="search" placeholder="{props.placeholder}" value="{props.value ?? ''}">
+</label>
+</code-snippet>
+<p>Than you can use it with the include tag</p>
+<code-snippet language="html">
+<!-- index.html -->
+<include name="search-field"
+         data="{props: {placeholder: 'Search...'}}"></include>
+</code-snippet>
+<h3>Use custom tags as much as possible first</h3>
+<p>Partials can be a great way to reuse layout markup either for the entire page or a section of it but for a small
+component level markup, consider using <a href="/documentation/api-reference/import-style-function">custom tags</a> since it is:</p>
+<ul>
+	<li>Faster to parse and load;</li>
+	<li>Easier to reuse by referencing the content by a tag name;</li>
+	<li>Easy to associate style with the markup;</li>
+	<li>Easier to do more complex markup related things like utilizing third party;</li>
+</ul>
+<content-navigation currentPage="currentPage"></content-navigation>

@@ -148,6 +148,11 @@ const data = {
             partial: 'custom-tags'
           },
           {
+            title: "Custom tags Style",
+            path: `${advTemplatingLink}/custom-tags-style`,
+            partial: 'custom-tags-style'
+          },
+          {
             title: "Custom attributes",
             path: `${advTemplatingLink}/custom-attributes`,
             partial: 'custom-attributes'
@@ -283,6 +288,11 @@ const data = {
             title: "#ignore",
             path: `${apiReferenceLink}/ignore-attribute`,
             partial: 'ignore-attribute',
+          },
+          {
+            title: "importStyle()",
+            path: `${apiReferenceLink}/import-style-function`,
+            partial: 'import-style-function',
           },
           {
             title: "<include/>",

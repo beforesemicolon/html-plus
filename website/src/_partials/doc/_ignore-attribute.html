@@ -1,0 +1,50 @@
+<api-table-details name="ignore attribute" details="{
+	name: 'ignore',
+	type: 'attribute',
+	value: 'executed; optional; Variable or property which value must be text or HTML markup.',
+	'related attributes': 'escape',
+	description: 'A attribute that will render the tag and content inside but does not compile the inner HTML and can escape it as well.',
+}"></api-table-details>
+<h3>Related Attributes</h3>
+<api-description-list descriptions="[
+		{
+			concept: 'escape',
+			type: 'type: boolean attribute',
+			description: 'A boolean attribute that signal whether to escape the HTML or not.'
+		},
+	]"></api-description-list>
+<h3>Usage Examples</h3>
+<p>Use it to wrap markup that contains special symbols that are special to HTML+ that you really want to show on the page</p>
+<code-snippet language="html">
+<!-- ignore since curly braces has special meaning
+ for HTML+ -->
+<pre #ignore>
+	<code>
+		const obj = {x: 10, y: 300};
+	</code>
+</pre>
+</code-snippet>
+<p>Use it to show HTML code on the page by escaping the HTML and not compiling it.</p>
+<code-snippet language="html">
+<!-- escape so the tag is shown to the user as code -->
+<fragment #ignore escape>
+	<p>This is a simple paragraph</p>
+</fragment>
+</code-snippet>
+<p>Use it to ignore parts of the page that has no HTML+ syntax, tags or attributes to skip compilation all together.</p>
+<code-snippet language="html">
+<!-- ignore tags with no inner HTML+ syntax to speed compilation -->
+<nav aria-label="Main Menu" #ignore>
+	<h2 hidden="">main navigation</h2>
+	<a href="/">Home</a>
+	<a href="/documentation">Documentation</a>
+	<a href="/learn">Learn</a>
+</nav>
+</code-snippet>
+<p>Render markup coming from data fetched that contains HTML that is not HTML+ that needs to be rendered like articles post for example.</p>
+<code-snippet language="html">
+<!-- ignore variable with plain HTML markup as value
+	to be rendered as is ans skip compiling time -->
+<div #ignore="$data.blog.post"></div>
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

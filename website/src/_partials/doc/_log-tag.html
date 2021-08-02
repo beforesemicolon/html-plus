@@ -1,0 +1,35 @@
+<api-table-details name="log tag" details="{
+	name: 'log',
+	type: 'tag',
+	attributes: 'value',
+	description: 'A tag that will render to template and log to the console the value provided.',
+}"></api-table-details>
+<h3>Attributes</h3>
+<api-description-list descriptions="[
+		{
+			concept: 'value',
+			type: 'type: attribute, executed',
+			description: 'A variable or attribute which value can be any javascript object or primitive.'
+		},
+	]"></api-description-list>
+<h3>Inner content</h3>
+<p>Anything placed inside the tag will be bind and used as the label for the log.</p>
+<h3>Usage Examples</h3>
+<p>Use the <strong>$context</strong> value to log the current context data at a specific point of the template.</p>
+<code-snippet language="html">
+<log value="$context"></log>
+</code-snippet>
+<p>Log full or partial part of the current data.</p>
+<code-snippet language="html">
+<log value="$data"></log>
+<log value="$data.list"></log>
+</code-snippet>
+<p>Log variable.</p>
+<code-snippet language="html">
+<variable
+	name="filteredList"
+	value="$data.list.filter(x => x.price > 10)"></variable>
+
+<log value="filteredList"></log>
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>
