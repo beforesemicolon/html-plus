@@ -1,4 +1,4 @@
-const {attrPattern} = require("./utils/regexPatterns");
+const {attrPattern, specificAttrPattern} = require("./utils/regexPatterns");
 const {Attr} = require("./Attr");
 
 class Attributes {
@@ -30,8 +30,7 @@ class Attributes {
   }
   
   getNamedItem(name) {
-    const pattern = new RegExp(`(#?${name})(?:\\s*=\\s*(?:"([^"]*)"|'([^']*)'|(\\S+)))?`, 'ig');
-    const attrMatch = this.#attributeString.match(pattern);
+    const attrMatch = this.#attributeString.match(specificAttrPattern(name));
     
     if (attrMatch) {
       let [name, value = null] = attrMatch[0].split('=');
