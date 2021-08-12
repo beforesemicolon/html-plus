@@ -1,16 +1,22 @@
 const {Text} = require('./Text');
 
+// class Comment extends Text {
+//   constructor(value) {
+//     super(value);
+//   }
+//
+//   get type() {
+//     return 'comment';
+//   }
+//
+//   toString() {
+//     return `<!-- ${this.value} -->`;
+//   }
+// }
+
 class Comment extends Text {
-  constructor(value) {
-    super(value);
-  }
-  
-  get type() {
-    return 'comment';
-  }
-  
   toString() {
-    return `<!-- ${this.value} -->`;
+    return `<!-- ${this.value.trim()} -->`;
   }
 }
 
