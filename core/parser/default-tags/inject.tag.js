@@ -1,4 +1,4 @@
-const {HTMLNode} = require("../parser/HTMLNode");
+const {HTMLNode} = require("../HTMLNode");
 
 class Inject{
   constructor(node, options) {

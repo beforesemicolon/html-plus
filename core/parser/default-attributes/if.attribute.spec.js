@@ -1,4 +1,4 @@
-const {transform} = require('./../transform');
+const {transform} = require('../../transform');
 
 describe('If Attribute', () => {
   it('should only process if attribute is preceded by #', async () => {

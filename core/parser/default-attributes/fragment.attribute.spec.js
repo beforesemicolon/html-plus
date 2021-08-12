@@ -1,4 +1,4 @@
-const {transform} = require('./../transform');
+const {transform} = require('../../transform');
 
 describe('Fragment Attribute', () => {
   it('should render children content only', async () => {

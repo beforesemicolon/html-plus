@@ -1,4 +1,4 @@
-const {transform} = require('./../transform');
+const {transform} = require('../../transform');
 
 describe('Script Tag', () => {
   it('should render content as is', async () => {

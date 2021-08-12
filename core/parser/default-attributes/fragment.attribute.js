@@ -1,4 +1,4 @@
-const {Attribute} = require("../Attribute");
+const {Attribute} = require("../../Attribute");
 
 class Fragment extends Attribute {
   render(_, node) {

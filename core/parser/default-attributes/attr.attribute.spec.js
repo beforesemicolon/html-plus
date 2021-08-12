@@ -1,4 +1,4 @@
-const {transform} = require('./../transform');
+const {transform} = require('../../transform');
 
 describe('Attr Attribute', () => {
   it('should set no attribute if no name', async () => {

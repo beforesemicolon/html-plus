@@ -1,4 +1,4 @@
-const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
+const {turnCamelOrPascalToKebabCasing} = require("../../utils/turn-camel-or-pascal-to-kebab-casing");
 const {Variable} = require("./variable.tag");
 const {Fragment} = require("./fragment.tag");
 const {Include} = require("./include.tag");
@@ -19,15 +19,23 @@ const defaultTags = [
   Ignore
 ];
 
-const defaultTagsName = defaultTags.map(attr => turnCamelOrPascalToKebabCasing(attr.name));
+const defaultTagsName = [];
+const defaultTagsMap = {};
 
-const defaultTagsMap = defaultTags.reduce((acc, tag) => {
+for (let tag of defaultTags) {
   const tagName = turnCamelOrPascalToKebabCasing(tag.name);
-  acc[tagName] = tag;
-  return acc;
-}, {});
+  defaultTagsMap[tagName] = tag;
+  defaultTagsName.push(tagName);
+}
 
 
 module.exports.defaultTags = defaultTags;
 module.exports.defaultTagsMap = defaultTagsMap;
 module.exports.defaultTagsName = defaultTagsName;
+module.exports.Style = Style;
+module.exports.Script = Script;
+module.exports.Variable = Variable;
+module.exports.Fragment = Fragment;
+module.exports.Include = Include;
+module.exports.Inject = Inject;
+module.exports.Log = Log;

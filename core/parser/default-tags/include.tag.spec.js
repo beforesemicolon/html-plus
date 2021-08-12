@@ -1,5 +1,5 @@
-const {PartialFile} = require("../PartialFile");
-const {transform} = require('./../transform');
+const {PartialFile} = require("../../PartialFile");
+const {transform} = require('../../transform');
 const cp = require('child_process');
 const path = require('path');
 const {promisify} = require('util');

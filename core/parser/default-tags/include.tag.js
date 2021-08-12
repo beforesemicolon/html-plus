@@ -1,6 +1,6 @@
 const path = require('path');
-const {PartialFile} = require("../PartialFile");
-const {composeTagString} = require("../parser/compose-tag-string");
+const {PartialFile} = require("../../PartialFile");
+const {composeTagString} = require("../compose-tag-string");
 const chalk = require("chalk");
 
 class Include {

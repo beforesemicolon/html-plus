@@ -1,4 +1,4 @@
-const {defaultAttributesMap} = require("../default-attributes");
+const {defaultAttributesMap} = require("./default-attributes");
 const {HTMLNode} = require("./HTMLNode");
 const {renderByAttribute} = require('./render-by-attribute');
 

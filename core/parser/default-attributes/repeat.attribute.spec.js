@@ -1,4 +1,4 @@
-const {transform} = require("./../transform");
+const {transform} = require("../../transform");
 
 describe('Repeat Attribute', () => {
   it('should process numeric value repeat', async () => {

@@ -2,8 +2,8 @@ const {transform} = require("../../transform");
 const {File} = require("../../File");
 const {collectAndUpdateNodeSourceLink} = require('./collect-and-update-node-source-link');
 const path = require('path');
-const {defaultTagsMap} = require("./../../default-tags");
-const {defaultAttributes} = require("./../../default-attributes");
+const {defaultTagsMap} = require("../../parser/default-tags");
+const {defaultAttributes} = require("../../parser/default-attributes");
 const {injectTagStylesToPage} = require("./../../engine/inject-tag-styles-to-page");
 const {collectPageTagsStyle} = require("./../../engine/collect-page-tags-style");
 

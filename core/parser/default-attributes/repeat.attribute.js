@@ -1,4 +1,4 @@
-const {Attribute} = require("../Attribute");
+const {Attribute} = require("../../Attribute");
 
 class Repeat extends Attribute {
   execute = true;

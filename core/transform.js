@@ -1,6 +1,6 @@
 const {HTMLNode} = require("./parser/HTMLNode");
-const {defaultAttributesMap} = require("./default-attributes");
-const {defaultTagsMap} = require("./default-tags");
+const {defaultAttributesMap} = require("./parser/default-attributes");
+const {defaultTagsMap} = require("./parser/default-tags");
 const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
 
 const defaultOptions = {

@@ -1,4 +1,4 @@
-const {Attribute} = require("../Attribute");
+const {Attribute} = require("../../Attribute");
 
 class Attr extends Attribute {
   execute = true;

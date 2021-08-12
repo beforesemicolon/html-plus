@@ -1,6 +1,6 @@
 const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
-const {defaultAttributesName} = require("../default-attributes");
+const {defaultAttributesName} = require("./default-attributes");
 
 function renderByAttribute(node, options) {
   const customAttrs = Array.from(

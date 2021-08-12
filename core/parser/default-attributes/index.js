@@ -1,4 +1,4 @@
-const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
+const {turnCamelOrPascalToKebabCasing} = require("../../utils/turn-camel-or-pascal-to-kebab-casing");
 const {If} = require('./if.attribute');
 const {Repeat} = require('./repeat.attribute');
 const {Fragment} = require('./fragment.attribute');
@@ -14,15 +14,21 @@ const defaultAttributes = [
   Fragment,
 ]
 
-const defaultAttributesName = defaultAttributes.map(attr => turnCamelOrPascalToKebabCasing(attr.name));
+const defaultAttributesName = [];
+const defaultAttributesMap = {}
 
-const defaultAttributesMap = defaultAttributes.reduce((acc, attribute) => {
+for (let attribute of defaultAttributes) {
   const attr = turnCamelOrPascalToKebabCasing(attribute.name);
-  acc[attr] = attribute;
-  return acc;
-}, {})
+  defaultAttributesMap[attr] = attribute;
+  defaultAttributesName.push(attr);
+}
 
 module.exports.defaultAttributesMap = defaultAttributesMap;
 module.exports.defaultAttributes = defaultAttributes;
 module.exports.defaultAttributesName = defaultAttributesName;
+module.exports.If = If;
+module.exports.Repeat = Repeat;
+module.exports.Attr = Attr;
+module.exports.Ignore = Ignore;
+module.exports.Fragment = Fragment;
 

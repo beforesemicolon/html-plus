@@ -1,5 +1,5 @@
-const selfClosingTags = require('./selfClosingTags.json');
-const attr = require("../default-attributes");
+const selfClosingTags = require('./utils/selfClosingTags.json');
+const attr = require("./default-attributes");
 
 function composeTagString(node, content = '', excludedAttributes = []) {
   if (!node || typeof node !== 'object') {

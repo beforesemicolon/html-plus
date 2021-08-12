@@ -1,4 +1,4 @@
-const {transform} = require('./../transform');
+const {transform} = require('../../transform');
 
 describe('Ignore Attribute', () => {
   describe('should not bind data', () => {
