@@ -24,8 +24,8 @@ const {Node} = require('./Node');
 // }
 
 class Text extends Node {
-  constructor(value, parentNode) {
-    super(parentNode);
+  constructor(value) {
+    super();
     this.value = value;
   }
   

@@ -9,6 +9,7 @@
 const {Text} = require('./Text');
 const {Comment} = require('./Comment');
 const {Node} = require('./Node');
+const {Attributes} = require('./Attributes');
 
 const {attrPattern, selfClosingPattern, tagPattern} = require('./utils/regexPatterns');
 
@@ -252,13 +253,12 @@ const {attrPattern, selfClosingPattern, tagPattern} = require('./utils/regexPatt
 class HTMLNode extends Node {
   #tagName;
   #attributes = null;
-  #attributeString = '';
   #childNodes = [];
   
-  constructor(tagName = null, attributeString = '', parentNode = null) {
-    super(parentNode);
+  constructor(tagName = null, attributeString = '') {
+    super();
     this.#tagName = tagName;
-    this.#attributeString = attributeString;
+    this.#attributes = new Attributes(attributeString);
   }
   
   get tagName() {
@@ -266,14 +266,6 @@ class HTMLNode extends Node {
   }
   
   get attributes() {
-    if (!this.#attributes) {
-      this.#attributes = {};
-      let match;
-      while ((match = attrPattern.exec(this.#attributeString))) {
-        this.#attributes[match[1]] = match[2] || match[3] || match[4] || null;
-      }
-    }
-    
     return this.#attributes;
   }
   
@@ -297,6 +289,7 @@ class HTMLNode extends Node {
   appendChild(node) {
     if (node instanceof HTMLNode || node instanceof Text || node instanceof Comment) {
       this.#childNodes.push(node)
+      node.parentNode = this;
     }
   }
   
@@ -305,17 +298,9 @@ class HTMLNode extends Node {
       return this.childNodes.join('');
     }
     
-    let tag = `<${this.tagName} `;
+    let tag = `<${this.tagName} ${this.#attributes}`.trim();
     
-    tag += this.attributes
-      ? Object.entries(this.attributes || {})
-        .map(([key, val]) => {
-          return val ? `${key}="${val}"` : key;
-        })
-        .join(' ')
-      : '';
-    
-    if (selfClosingPattern.test(this.tagName)) {
+    if (this.isSelfClosing) {
       tag = tag.trim() + '/>'
     } else {
       tag = tag.trim() + `>${this.childNodes.join('')}</${this.tagName}>`;
@@ -342,13 +327,13 @@ function parseHTMLString(markup, callback = null) {
     if (lastIndex !== match.index) {
       const text = new Text(markup.slice(lastIndex, match.index))
       callback(text);
-      parentNode.appendChild(text, parentNode);
+      parentNode.appendChild(text);
     }
     
     lastIndex = tagPattern.lastIndex;
     
     if (comment) {
-      const com = new Comment(comment, parentNode);
+      const com = new Comment(comment);
       callback(com);
       parentNode.appendChild(com);
       continue;
@@ -358,14 +343,15 @@ function parseHTMLString(markup, callback = null) {
     const isClosedTag = stack[stack.length - 1].tagName === tagName;
     
     if (isSelfClosing) {
-      const node = new HTMLNode(tagName, attributes, parentNode);
+      const node = new HTMLNode(tagName, attributes);
+      node.isSelfClosing = isSelfClosing;
       callback(node);
       parentNode.appendChild(node);
     } else if (isClosedTag) {
       callback(stack[stack.length - 1]);
       stack.pop();
     } else if (!closeOrBang) {
-      const node = new HTMLNode(tagName, attributes, parentNode);
+      const node = new HTMLNode(tagName, attributes);
       parentNode.appendChild(node);
       stack.push(node)
     }
@@ -383,4 +369,5 @@ function parseHTMLString(markup, callback = null) {
 
 module.exports.parseHTMLString = parseHTMLString;
 module.exports.HTMLNode = HTMLNode;
+module.exports.Attributes = Attributes;
 
