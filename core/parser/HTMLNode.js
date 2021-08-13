@@ -10,8 +10,9 @@ const {Text} = require('./Text');
 const {Comment} = require('./Comment');
 const {Node} = require('./Node');
 const {Attributes} = require('./Attributes');
+const {Attr} = require('./Attr');
 
-const {attrPattern, selfClosingPattern, tagPattern} = require('./utils/regexPatterns');
+const {attrPattern, selfClosingPattern, tagPattern, specificAttrPattern} = require('./utils/regexPatterns');
 
 // const defaultOptions = {
 //   env: 'development',
@@ -253,6 +254,7 @@ const {attrPattern, selfClosingPattern, tagPattern} = require('./utils/regexPatt
 class HTMLNode extends Node {
   #tagName;
   #attributes = null;
+  #textContent = '';
   #childNodes = [];
   
   constructor(tagName = null, attributeString = '') {
@@ -286,6 +288,60 @@ class HTMLNode extends Node {
     this.#childNodes = parseHTMLString(value).childNodes;
   }
   
+  get textContent() {
+    return this.#textContent;
+  }
+  
+  set textContent(value) {
+    this.#textContent = value.replace(tagPattern, '');
+    const content = new Text(this.#textContent);
+    content.parentNode = this;
+    this.#childNodes = [content];
+  }
+  
+  hasAttributes() {
+    return this.attributes.length > 0;
+  }
+  
+  hasAttribute(name) {
+    return this.attributes.toString().match(specificAttrPattern(name)) !== null;
+  }
+  
+  setAttribute(name, value = null) {
+    if (typeof name === 'string') {
+      const attr = value ? `${name}="${value}"` : name;
+      this.#attributes = new Attributes(`${this.attributes} ${attr}`)
+    }
+  }
+  
+  setAttributeNode(attr) {
+    if (attr instanceof Attr) {
+      this.setAttribute(attr.name, attr.value);
+    }
+  }
+  
+  getAttributeNames() {
+    return [...this.attributes].map(attr => attr.name);
+  }
+  
+  getAttribute(name) {
+    return this.getAttributeNode(name).value
+  }
+  
+  getAttributeNode(name) {
+    return this.attributes.getNamedItem(name)
+  }
+  
+  removeAttribute(name) {
+    this.#attributes = new Attributes(this.attributes.toString().replace(specificAttrPattern(name), ''))
+  }
+  
+  removeAttributeNode(attr) {
+    if (attr instanceof Attr) {
+      this.removeAttribute(attr.name)
+    }
+  }
+  
   appendChild(node) {
     if (node instanceof HTMLNode || node instanceof Text || node instanceof Comment) {
       this.#childNodes.push(node)
@@ -298,9 +354,10 @@ class HTMLNode extends Node {
       return this.childNodes.join('');
     }
     
+    const isSelfClosing = selfClosingPattern.test(this.tagName);
     let tag = `<${this.tagName} ${this.#attributes}`.trim();
     
-    if (this.isSelfClosing) {
+    if (isSelfClosing) {
       tag = tag.trim() + '/>'
     } else {
       tag = tag.trim() + `>${this.childNodes.join('')}</${this.tagName}>`;
@@ -344,7 +401,6 @@ function parseHTMLString(markup, callback = null) {
     
     if (isSelfClosing) {
       const node = new HTMLNode(tagName, attributes);
-      node.isSelfClosing = isSelfClosing;
       callback(node);
       parentNode.appendChild(node);
     } else if (isClosedTag) {

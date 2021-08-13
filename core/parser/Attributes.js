@@ -19,14 +19,18 @@ class Attributes {
   }
   
   get length() {
-    let match;
-    let count = 0;
-    
-    while ((match = attrPattern.exec(this.#attributeString))) {
-      count += 1;
+    if (this.#attributeString.trim().length) {
+      let match;
+      let count = 0;
+  
+      while ((match = attrPattern.exec(this.#attributeString))) {
+        count += 1;
+      }
+  
+      return count;
     }
     
-    return count;
+    return 0;
   }
   
   getNamedItem(name) {
