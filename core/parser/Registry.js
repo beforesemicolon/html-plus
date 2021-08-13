@@ -2,7 +2,7 @@ class Registry {
   #registry = {};
   
   define(name, value) {
-    if (!this.#registry.hasOwnProperty(name)) {
+    if (!this.isRegistered(name)) {
       this.#registry[name] = value;
     }
   }
