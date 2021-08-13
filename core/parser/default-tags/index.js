@@ -1,4 +1,5 @@
 const {turnCamelOrPascalToKebabCasing} = require("../../utils/turn-camel-or-pascal-to-kebab-casing");
+const {customTagsRegistry} = require("./CustomTagsRegistry");
 const {Variable} = require("./variable.tag");
 const {Fragment} = require("./fragment.tag");
 const {Include} = require("./include.tag");
@@ -26,9 +27,11 @@ for (let tag of defaultTags) {
   const tagName = turnCamelOrPascalToKebabCasing(tag.name);
   defaultTagsMap[tagName] = tag;
   defaultTagsName.push(tagName);
+  customTagsRegistry.define(tagName, tag);
 }
 
 
+module.exports.customTagsRegistry = customTagsRegistry;
 module.exports.defaultTags = defaultTags;
 module.exports.defaultTagsMap = defaultTagsMap;
 module.exports.defaultTagsName = defaultTagsName;
