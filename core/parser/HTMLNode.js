@@ -372,10 +372,10 @@ class HTMLNode extends Node {
     }
     
     const isSelfClosing = selfClosingPattern.test(this.tagName);
-    let tag = `<${this.tagName} ${this.#attributes}`.trim();
+    let tag = `<${/doctype/i.test(this.tagName) ? '!' : ''}${this.tagName} ${this.#attributes}`.trim();
     
     if (isSelfClosing) {
-      tag = tag.trim() + '/>'
+      tag = tag.trim() + '>'
     } else {
       tag = tag.trim() + `>${this.childNodes.join('')}</${this.tagName}>`;
     }
@@ -388,9 +388,7 @@ function isValidNode(node) {
   return node instanceof HTMLNode || node instanceof Text || node instanceof Comment;
 }
 
-function parseHTMLString(markup, callback = null) {
-  callback = typeof callback === 'function' ? callback : (() => null);
-  
+function parseHTMLString(markup) {
   const root = new HTMLNode();
   const stack = [root];
   let match;
@@ -403,17 +401,13 @@ function parseHTMLString(markup, callback = null) {
     
     // grab in between text
     if (lastIndex !== match.index) {
-      const text = new Text(markup.slice(lastIndex, match.index))
-      callback(text);
-      parentNode.appendChild(text);
+      parentNode.appendChild(new Text(markup.slice(lastIndex, match.index)));
     }
     
     lastIndex = tagPattern.lastIndex;
     
     if (comment) {
-      const com = new Comment(comment);
-      callback(com);
-      parentNode.appendChild(com);
+      parentNode.appendChild(new Comment(comment));
       continue;
     }
     
@@ -421,11 +415,8 @@ function parseHTMLString(markup, callback = null) {
     const isClosedTag = stack[stack.length - 1].tagName === tagName;
     
     if (isSelfClosing) {
-      const node = new HTMLNode(tagName, attributes);
-      callback(node);
-      parentNode.appendChild(node);
+      parentNode.appendChild(new HTMLNode(tagName, attributes));
     } else if (isClosedTag) {
-      callback(stack[stack.length - 1]);
       stack.pop();
     } else if (!closeOrBang) {
       const node = new HTMLNode(tagName, attributes);
@@ -436,9 +427,7 @@ function parseHTMLString(markup, callback = null) {
   
   // grab ending text
   if (lastIndex < markup.length) {
-    const text = new Text(markup.slice(lastIndex));
-    callback(text);
-    root.appendChild(text, root);
+    root.appendChild(new Text(markup.slice(lastIndex)));
   }
   
   return root;

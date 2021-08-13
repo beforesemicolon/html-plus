@@ -8,7 +8,7 @@ describe('HTMLNode', () => {
     it('self closing tag', () => {
       const meta = new HTMLNode('meta', 'http-equiv="X-UA-Compatible" content="ie=edge"');
       
-      expect(meta.toString()).toBe('<meta http-equiv="X-UA-Compatible" content="ie=edge"/>')
+      expect(meta.toString()).toBe('<meta http-equiv="X-UA-Compatible" content="ie=edge">')
     });
     
     it('open closed tag', () => {
@@ -96,15 +96,15 @@ describe('HTMLNode', () => {
       title.appendChild('')
       title.appendChild(null)
   
-      expect(title.toString()).toBe('<h2><!-- secondary title -->main title<hr/></h2>');
+      expect(title.toString()).toBe('<h2><!-- secondary title -->main title<hr></h2>');
       
       title.removeChild(com);
   
-      expect(title.toString()).toBe('<h2>main title<hr/></h2>');
+      expect(title.toString()).toBe('<h2>main title<hr></h2>');
   
       title.removeChild(txt);
   
-      expect(title.toString()).toBe('<h2><hr/></h2>');
+      expect(title.toString()).toBe('<h2><hr></h2>');
   
       title.removeChild(hr);
   
@@ -163,18 +163,18 @@ describe('parseHTMLString', () => {
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <!-- logo -->
         <h1>Page</h1>
         
         <script src="app.js" type="module"></script>
     </body>
     </html>
-  `;
+    `;
   
-  describe('should parse node', () => {})
-  
-  describe('should parse text', () => {})
-  
-  describe('should parse comment', () => {})
-  
-  describe('should call callback on every node', () => {})
+  it('should parse content and keep all white space intact', () => {
+    const root = parseHTMLString(basicPageMarkup);
+    
+    expect(root.tagName).toEqual(null);
+    expect(root.toString()).toEqual(basicPageMarkup);
+  });
 })
