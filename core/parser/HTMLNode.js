@@ -11,7 +11,6 @@ const {Comment} = require('./Comment');
 const {Node} = require('./Node');
 const {Attributes} = require('./Attributes');
 const {Attr} = require('./Attr');
-
 const {attrPattern, selfClosingPattern, tagPattern, specificAttrPattern} = require('./utils/regexPatterns');
 
 // const defaultOptions = {
@@ -267,6 +266,10 @@ class HTMLNode extends Node {
     return this.#tagName;
   }
   
+  get nodeName() {
+    return this.#tagName;
+  }
+  
   get attributes() {
     return this.#attributes;
   }
@@ -280,12 +283,14 @@ class HTMLNode extends Node {
   }
   
   get innerHTML() {
-    // to string the childNodes
     return this.#childNodes.join('');
   }
   
   set innerHTML(value) {
-    this.#childNodes = parseHTMLString(value).childNodes;
+    this.#childNodes = parseHTMLString(value).childNodes.map(node => {
+      node.parentNode = this;
+      return node;
+    });
   }
   
   get textContent() {
@@ -343,9 +348,21 @@ class HTMLNode extends Node {
   }
   
   appendChild(node) {
-    if (node instanceof HTMLNode || node instanceof Text || node instanceof Comment) {
+    if (isValidNode(node)) {
       this.#childNodes.push(node)
       node.parentNode = this;
+    }
+  }
+  
+  removeChild(node) {
+    if (isValidNode(node)) {
+      this.#childNodes.splice(this.#childNodes.indexOf(node), 1);
+    }
+  }
+  
+  replaceChild(newNode, oldNode) {
+    if (isValidNode(newNode) && isValidNode(oldNode)) {
+      this.#childNodes.splice(this.#childNodes.indexOf(oldNode), 1, newNode);
     }
   }
   
@@ -365,6 +382,10 @@ class HTMLNode extends Node {
     
     return tag;
   }
+}
+
+function isValidNode(node) {
+  return node instanceof HTMLNode || node instanceof Text || node instanceof Comment;
 }
 
 function parseHTMLString(markup, callback = null) {

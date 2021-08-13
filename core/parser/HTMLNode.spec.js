@@ -1,5 +1,7 @@
 const {HTMLNode, parseHTMLString} = require('./HTMLNode');
 const {Attr} = require('./Attr');
+const {Text} = require('./Text');
+const {Comment} = require('./Comment');
 
 describe('HTMLNode', () => {
   describe('should render', () => {
@@ -76,13 +78,77 @@ describe('HTMLNode', () => {
     });
   })
   
-  describe('children', () => {})
+  describe('children', () => {
+    let title;
+    
+    beforeEach(() => {
+      title = new HTMLNode('h2');
+    })
+    
+    it('should append and remove child', () => {
+      const com = new Comment('secondary title');
+      const txt = new Text('main title');
+      const hr = new HTMLNode('hr');
+  
+      title.appendChild(com)
+      title.appendChild(txt)
+      title.appendChild(hr)
+      title.appendChild('')
+      title.appendChild(null)
+  
+      expect(title.toString()).toBe('<h2><!-- secondary title -->main title<hr/></h2>');
+      
+      title.removeChild(com);
+  
+      expect(title.toString()).toBe('<h2>main title<hr/></h2>');
+  
+      title.removeChild(txt);
+  
+      expect(title.toString()).toBe('<h2><hr/></h2>');
+  
+      title.removeChild(hr);
+  
+      expect(title.toString()).toBe('<h2></h2>');
+      
+    });
+  
+    it('should replace child', () => {
+      const txt = new Text('main title');
+      
+      title.appendChild(txt);
+  
+      expect(title.toString()).toBe('<h2>main title</h2>');
+  
+      title.replaceChild(new Text('replacement title'), txt);
+  
+      expect(title.toString()).toBe('<h2>replacement title</h2>');
+    });
+  
+    it('should set/get text content', () => {
+      title.textContent = 'main title';
+  
+      expect(title.textContent).toBe('main title');
+      expect(title.toString()).toBe('<h2>main title</h2>');
+      expect(title.childNodes.length).toBe(1);
+  
+      title.textContent = '<span>wrapper title</span>';
+  
+      expect(title.textContent).toBe('wrapper title');
+      expect(title.toString()).toBe('<h2>wrapper title</h2>');
+      expect(title.childNodes.length).toBe(1);
+    });
+    
+    it('should set inner html', () => {
+      title.innerHTML = 'main <span>title</span>';
+  
+      expect(title.innerHTML).toBe('main <span>title</span>');
+      expect(title.toString()).toBe('<h2>main <span>title</span></h2>');
+      expect(title.childNodes.length).toBe(2);
+      expect(title.children.length).toBe(1);
+    });
+  })
   
   describe('toString/parse', () => {})
-  
-  describe('innerHTML', () => {})
-  
-  describe('content', () => {})
 })
 
 describe('parseHTMLString', () => {
