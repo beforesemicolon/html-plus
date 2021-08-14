@@ -175,6 +175,14 @@ describe('parseHTMLString', () => {
     const root = parseHTMLString(basicPageMarkup);
     
     expect(root.tagName).toEqual(null);
-    expect(root.toString()).toEqual(basicPageMarkup);
+    expect(root.toString()).toEqual('');
+  });
+  
+  it('should set node context', () => {
+    const root = parseHTMLString(basicPageMarkup, {sample: 10});
+    const title = root.children[1].children[0].children[3];
+  
+    expect(root.tagName).toEqual(null);
+    expect(title.tagName).toBe('title')
   });
 })

@@ -1,11 +1,3 @@
-// const {handleError} = require("./handle-error");
-// const {renderByAttribute} = require("./render-by-attribute");
-// const {createCustomTag} = require("./create-custom-tag");
-// const {replaceSpecialCharactersInHTML} = require("./utils/replace-special-characters-in-HTML");
-// const {TextNode, CommentNode, parse} = require("node-html-parser");
-// const {composeTagString} = require("./compose-tag-string");
-// const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
-// const {processNodeAttributes} = require("./utils/process-node-attributes");
 const {Text} = require('./Text');
 const {Comment} = require('./Comment');
 const {Node} = require('./Node');
@@ -252,7 +244,7 @@ const {attrPattern, selfClosingPattern, tagPattern, specificAttrPattern} = requi
 
 class HTMLNode extends Node {
   #tagName;
-  #attributes = null;
+  #attributes;
   #textContent = '';
   #childNodes = [];
   
@@ -279,7 +271,9 @@ class HTMLNode extends Node {
   }
   
   get children() {
-    return this.#childNodes.filter(node => node instanceof HTMLNode);
+    return this.#childNodes.filter(node => {
+      return node instanceof HTMLNode;
+    });
   }
   
   get innerHTML() {
@@ -388,14 +382,15 @@ function isValidNode(node) {
   return node instanceof HTMLNode || node instanceof Text || node instanceof Comment;
 }
 
-function parseHTMLString(markup) {
+function parseHTMLString(markup, data = {}) {
   const root = new HTMLNode();
+  root.context = data;
   const stack = [root];
   let match;
   let lastIndex = 0;
   
   while ((match = tagPattern.exec(markup)) !== null) {
-    const [tag, comment, closeOrBang, tagName, attributes] = match;
+    const [tag, comment, closeOrBang, tagName, attributes, selfCloseSlash] = match;
     
     const parentNode = stack[stack.length - 1] || null;
     
@@ -418,7 +413,7 @@ function parseHTMLString(markup) {
       parentNode.appendChild(new HTMLNode(tagName, attributes));
     } else if (isClosedTag) {
       stack.pop();
-    } else if (!closeOrBang) {
+    } else {
       const node = new HTMLNode(tagName, attributes);
       parentNode.appendChild(node);
       stack.push(node)
