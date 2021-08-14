@@ -1,5 +1,7 @@
+const {html} = require("../html");
+
 function Fragment(node) {
-  return () => node.renderChildren();
+  return () => html(node.innerHTML);
 }
 
 module.exports.Fragment = Fragment;

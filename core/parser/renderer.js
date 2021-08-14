@@ -2,6 +2,7 @@ const {Text} = require('./Text');
 const {Comment} = require('./Comment');
 const {selfClosingPattern} = require("./utils/regexPatterns");
 const {customAttributesRegistry} = require("./default-attributes/CustomAttributesRegistry");
+const {customTagsRegistry} = require("./default-tags/CustomTagsRegistry");
 const {defaultAttributesName} = require("./default-attributes");
 const {bindData} = require("../utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
@@ -35,7 +36,13 @@ function renderer(root) {
     
     if (typeof attributeNode === 'string') {
       return attributeNode;
-    } else if (!attributeNode || node === attributeNode) {
+    }
+    
+    if (!attributeNode || node === attributeNode) {
+      if (customTagsRegistry.isRegistered(node.tagName)) {
+        return renderTag(node);
+      }
+      
       for (let attribute of node.attributes) {
         node.setAttribute(attribute.name, bindData(attribute.value, node.context))
       }
@@ -54,6 +61,33 @@ function renderer(root) {
     
     return render(attributeNode);
   })(root)
+}
+
+function renderTag(node) {
+  const tag = customTagsRegistry.get(node.tagName);
+  let instance;
+  
+  if (tag.toString().startsWith('class')) {
+    instance = new tag(node)
+  } else {
+    instance = tag(node);
+  }
+  
+  let result;
+  
+  if (typeof instance === 'function') {
+    result = instance();
+  }
+  
+  if (typeof instance.render === 'function') {
+    result = instance.render();
+  }
+  
+  if (result?.constructor?.name === 'Render') {
+    result = renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
+  }
+  
+  return result || '';
 }
 
 function renderByAttribute(node, attrName) {
