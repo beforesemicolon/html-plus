@@ -1,10 +1,6 @@
-const {HTMLNode} = require("../HTMLNode");
-
 class Variable {
   constructor(node) {
-    const {attributes} = node;
-    
-    const name = attributes.name;
+    const name = node.getAttribute('name');
     let value = '';
     
     if (!name) {
@@ -15,19 +11,22 @@ class Variable {
       throw new Error(`Invalid variable name "${name}"`);
     }
     
-    if (attributes.hasOwnProperty('value')) {
-      value = attributes.value;
+    if (node.hasAttribute('value')) {
+      value = node.getAttribute('value');
     } else {
-      const content = node.childNodes();
-      
-      if (content.some(node => node instanceof HTMLNode)) {
+      if (node.children.length) {
         throw new Error(`Variable children cannot be HTML tags`);
       }
       
-      value = content.toString();
+      value = node.textContent;
     }
-    
+  
     node.setContext(name, value);
+    
+    // propagate the context to all nodes that come after
+    for (let i = node.parentNode.childNodes.indexOf(node) + 1; i < node.parentNode.childNodes.length; i++) {
+      node.parentNode.childNodes[i].setContext(name, value);
+    }
   }
   
   static customAttributes = {

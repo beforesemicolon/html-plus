@@ -1,15 +1,11 @@
 function Ignore(node) {
   return () => {
-    let content = (node.attributes.hasOwnProperty('value')
-      ? `${node.innerHTML}${node.attributes.value}`
-      : node.innerHTML);
+    let content = `${node.innerHTML}${node.getAttribute('value') || ''}`
     
-    if (node.attributes.hasOwnProperty('escape')) {
+    if (node.hasAttribute('escape')) {
       content = content
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
-      
-      node.removeAttribute('escape');
     }
     
     return content;

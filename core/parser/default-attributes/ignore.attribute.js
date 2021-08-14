@@ -4,9 +4,7 @@ class Ignore extends Attribute {
   execute = true;
   
   render(value, node) {
-    let content = value
-      ? `${node.innerHTML}${value}`
-      : node.innerHTML;
+    let content = `${node.innerHTML}${value || ''}`
     
     if (node.hasAttribute('escape')) {
       content = content

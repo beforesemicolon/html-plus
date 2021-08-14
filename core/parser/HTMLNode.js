@@ -76,7 +76,7 @@ class HTMLNode extends Node {
       const sibs = this.parentNode.childNodes
       return sibs[sibs.indexOf(this) - 1] || null;
     }
-  
+    
     return null;
   }
   
@@ -85,7 +85,7 @@ class HTMLNode extends Node {
       const sibs = this.parentNode.children
       return sibs[sibs.indexOf(this) - 1] || null;
     }
-  
+    
     return null;
   }
   
@@ -103,7 +103,7 @@ class HTMLNode extends Node {
       const sibs = this.parentNode.children
       return sibs[sibs.indexOf(this) + 1] || null;
     }
-  
+    
     return null;
   }
   
@@ -117,6 +117,10 @@ class HTMLNode extends Node {
   
   setAttribute(name, value = null) {
     if (typeof name === 'string') {
+      if (this._customAttributes && this._customAttributes.hasOwnProperty(name)) {
+        this._customAttributes.set(name, value);
+      }
+      
       const currAttr = this.getAttribute(name);
       
       if (currAttr) {
@@ -139,14 +143,26 @@ class HTMLNode extends Node {
   }
   
   getAttribute(name) {
+    if (this._customAttributes && this._customAttributes.has(name)) {
+        return this._customAttributes.get(name);
+    }
+
     return this.getAttributeNode(name)?.value ?? null;
   }
   
   getAttributeNode(name) {
+    if (this._customAttributes && this._customAttributes.has(name)) {
+      return new Attr(name, this._customAttributes.get(name));
+    }
+    
     return this.attributes.getNamedItem(name)
   }
   
   removeAttribute(name) {
+    if (this._customAttributes && this._customAttributes.has(name)) {
+      this._customAttributes.delete(name);
+    }
+    
     this.#attributes = new Attributes(this.attributes.toString().replace(specificAttrPattern(name), ''))
   }
   

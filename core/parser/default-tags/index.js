@@ -5,12 +5,8 @@ const {Include} = require("./include.tag");
 const {Inject} = require("./inject.tag");
 const {Log} = require("./log.tag");
 const {Ignore} = require("./ignore.tag");
-const {Style} = require("./style.tag");
-const {Script} = require("./script.tag");
 
 const defaultTags = [
-  Style,
-  Script,
   Variable,
   Fragment,
   Include,
@@ -32,8 +28,6 @@ for (let tag of defaultTags) {
 module.exports.defaultTags = defaultTags;
 module.exports.defaultTagsMap = defaultTagsMap;
 module.exports.defaultTagsName = defaultTagsName;
-module.exports.Style = Style;
-module.exports.Script = Script;
 module.exports.Variable = Variable;
 module.exports.Fragment = Fragment;
 module.exports.Include = Include;

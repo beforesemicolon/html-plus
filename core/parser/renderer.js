@@ -3,6 +3,7 @@ const {Comment} = require('./Comment');
 const {selfClosingPattern} = require("./utils/regexPatterns");
 const {customAttributesRegistry} = require("./default-attributes/CustomAttributesRegistry");
 const {customTagsRegistry} = require("./default-tags/CustomTagsRegistry");
+const {defaultTagsMap} = require("./default-tags");
 const {defaultAttributesName} = require("./default-attributes");
 const {bindData} = require("../utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
@@ -15,7 +16,10 @@ function renderer(root) {
     }
     
     if (node instanceof Text) {
-      node.value = bindData(node.value, node.context)
+      if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
+        node.value = bindData(node.value, node.context)
+      }
+      
       return node.toString();
     }
     
@@ -65,6 +69,21 @@ function renderer(root) {
 
 function renderTag(node) {
   const tag = customTagsRegistry.get(node.tagName);
+  const customAttributes = new Map();
+  
+  for (let name in tag.customAttributes) {
+    if (tag.customAttributes.hasOwnProperty(name) && node.hasAttribute(name)) {
+      customAttributes.set(
+        name,
+        processCustomAttributeValue(tag.customAttributes[name], node.getAttribute(name), node.context)
+      );
+    }
+  }
+  
+  if (customAttributes.size) {
+    node._customAttributes = customAttributes;
+  }
+  
   let instance;
   
   if (tag.toString().startsWith('class')) {
@@ -87,7 +106,12 @@ function renderTag(node) {
     result = renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
   }
   
-  return result || '';
+  if (defaultTagsMap[node.tagName]) {
+    return result || '';
+  }
+  
+  // render the tag when it is a custom user tag
+  return `<${node.tagName}>${result || ''}</${node.tagName}>`
 }
 
 function renderByAttribute(node, attrName) {

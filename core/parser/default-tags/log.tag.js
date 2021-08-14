@@ -1,12 +1,12 @@
 const chalk = require("chalk");
 
-function Log(node, options) {
-  let value = node.attributes.value;
+function Log(node) {
+  let value = node.getAttribute('value');
   
   if (node.context.hasOwnProperty(value)) {
     value = node.context[value];
-  } else if(options.data.hasOwnProperty(value)) {
-    value = options.data[value];
+  } else if(node.context.$data.hasOwnProperty(value)) {
+    value = node.context.$data[value];
   } else if(value === '$context') {
     value = node.context;
   } else {
@@ -14,7 +14,7 @@ function Log(node, options) {
   }
   
   return () => {
-    const msg = (node.renderChildren());
+    const msg = (node.innerHTML);
     let result = ''
     
     try {
