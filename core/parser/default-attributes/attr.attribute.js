@@ -67,8 +67,8 @@ class Attr extends Attribute {
           case 'style':
           case 'content':
           case 'accept':
-            if (node.attributes.hasOwnProperty(name)) {
-              node.setAttribute(name, `${node.attributes[name]}${this.getDelimiter(name)} ${value}`.trim());
+            if (node.hasAttribute(name)) {
+              node.setAttribute(name, `${node.getAttribute(name)}${this.getDelimiter(name)} ${value}`.trim());
             } else {
               node.setAttribute(name, value);
             }

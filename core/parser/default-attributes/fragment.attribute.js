@@ -1,8 +1,9 @@
 const {Attribute} = require("../../Attribute");
+const {html} = require("../html");
 
 class Fragment extends Attribute {
   render(_, node) {
-    return node.renderChildren();
+    return html(node.innerHTML);
   }
 }
 

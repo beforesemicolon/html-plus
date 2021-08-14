@@ -1,4 +1,3 @@
-const {composeTagString} = require("../compose-tag-string");
 const {Attribute} = require("../../Attribute");
 
 class Ignore extends Attribute {
@@ -9,7 +8,7 @@ class Ignore extends Attribute {
       ? `${node.innerHTML}${value}`
       : node.innerHTML;
     
-    if (node.attributes.hasOwnProperty('escape')) {
+    if (node.hasAttribute('escape')) {
       content = content
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
@@ -19,7 +18,7 @@ class Ignore extends Attribute {
   
     node.removeAttribute('fragment');
     
-    return composeTagString(node, content);
+    return node.outerHTML;
   }
 }
 
