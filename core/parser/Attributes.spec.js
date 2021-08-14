@@ -33,4 +33,19 @@ describe('Attributes', () => {
     expect(attributes.getNamedItem('download').value).toEqual(null);
     expect(attributes.getNamedItem('href').value).toEqual('sample/path');
   });
+  
+  it('should remove repeated attribute', () => {
+    const attr = new Attributes('class="one" class="two"');
+    const cls = attr.getNamedItem('class');
+    const fn = jest.fn();
+    
+    [...attr].forEach(fn);
+  
+    expect(attr.length).toBe(1);
+    expect(cls.value).toBe('one');
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(attr.toString()).toBe('class="one"');
+  
+    fn.mockRestore();
+  });
 });

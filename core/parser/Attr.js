@@ -6,8 +6,8 @@ class Attr {
   #isSpecial;
   
   constructor(name, value = null) {
-    this.#name = name.replace(/^[^a-z]*/i, '');
-    this.#value = value;
+    this.#name = name.replace(/^[^a-z]*/i, '').toLowerCase();
+    this.#value = (value || '').trim() || null;
     this.#isSpecial = customAttributesRegistry.isRegistered(this.#name);
   }
   

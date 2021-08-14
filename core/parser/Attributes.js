@@ -1,52 +1,40 @@
-const {attrPattern, specificAttrPattern} = require("./utils/regexPatterns");
+const {attrPattern} = require("./utils/regexPatterns");
 const {Attr} = require("./Attr");
 
 class Attributes {
-  #attributeString;
+  #attributeString = '';
+  #map = new Map();
   
   constructor(attributeString = '') {
-    this.#attributeString = attributeString.trim();
+    let match = '';
+    const iteratedAttributes = new Set();
+  
+    // remove duplicated attributes
+    while ((match = attrPattern.exec(attributeString))) {
+      if (!iteratedAttributes.has(match[1])) {
+        let value = match[2] || match[3] || match[4];
+        let name = match[1];
+
+        this.#attributeString += (this.#map.size ? ' ' : '') + (value ? `${name}="${value}"` : name);
+        const attr = new Attr(name, value);
+        this.#map.set(attr.name, attr);
+        iteratedAttributes.add(name);
+      }
+    }
     
     this[Symbol.iterator] = function* () {
-      let match;
-      
-      while ((match = attrPattern.exec(attributeString))) {
-        let value = match[2] || match[3] || match[4];
-        
-        yield new Attr(match[1], value || null)
+      for (let attr of this.#map.values()) {
+        yield attr
       }
     }
   }
   
   get length() {
-    if (this.#attributeString.trim().length) {
-      let match;
-      let count = 0;
-  
-      while ((match = attrPattern.exec(this.#attributeString))) {
-        count += 1;
-      }
-  
-      return count;
-    }
-    
-    return 0;
+    return this.#map.size;
   }
   
   getNamedItem(name) {
-    const attrMatch = this.#attributeString.match(specificAttrPattern(name));
-    
-    if (attrMatch) {
-      let [name, value = null] = attrMatch[0].split('=');
-      
-      if (value) {
-        value = value.slice(1, -1);
-      }
-      
-      return new Attr(name, value);
-    }
-    
-    return null;
+    return this.#map.get(name) || null;
   }
   
   toString() {

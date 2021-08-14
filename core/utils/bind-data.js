@@ -2,10 +2,9 @@ const {executeCode} = require("./execute-code");
 const {extractExecutableSnippetFromString} = require("./extract-executable-snippet-from-string");
 
 function bindData(str, data = {}) {
-  str = str.replace(/\s+$/g, '\n');
-  
   if (str.trim() && str.includes('{')) {
-    const execs = extractExecutableSnippetFromString(str);
+    const execs = extractExecutableSnippetFromString(str.trim());
+
     if (execs.length) {
       for (let m of execs) {
         const res = executeCode(`(() => (${m.executable}))()`, data);

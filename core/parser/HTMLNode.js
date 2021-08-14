@@ -308,8 +308,14 @@ class HTMLNode extends Node {
   
   setAttribute(name, value = null) {
     if (typeof name === 'string') {
-      const attr = value ? `${name}="${value}"` : name;
-      this.#attributes = new Attributes(`${this.attributes} ${attr}`)
+      const currAttr = this.getAttribute(name);
+      
+      if (currAttr) {
+        this.#attributes = this.attributes.toString().replace(currAttr, value)
+      } else {
+        const attr = value ? `${name}="${value}"` : name;
+        this.#attributes = new Attributes(`${this.attributes} ${attr}`)
+      }
     }
   }
   
@@ -406,10 +412,9 @@ function parseHTMLString(markup, data = {}) {
       continue;
     }
     
-    const isSelfClosing = selfClosingPattern.test(tagName);
     const isClosedTag = stack[stack.length - 1].tagName === tagName;
     
-    if (isSelfClosing) {
+    if (selfCloseSlash || selfClosingPattern.test(tagName)) {
       parentNode.appendChild(new HTMLNode(tagName, attributes));
     } else if (isClosedTag) {
       stack.pop();
