@@ -1,4 +1,6 @@
 const {Attribute} = require("../../Attribute");
+const {HTMLNode} = require("./../HTMLNode");
+const {customAttributesRegistry} = require("./CustomAttributesRegistry");
 
 class Repeat extends Attribute {
   execute = true;
@@ -20,17 +22,16 @@ class Repeat extends Attribute {
   }
   
   render(value, node) {
-    let result = '';
+    const repeatedNodes = [];
     
     if (typeof value === "number") {
       for (let i = 0; i < value; i++) {
-        const nodeCopy = node.duplicate({
-          $index: i,
-          $key: i,
-          $item: i + 1,
-        });
+        const nodeCopy = node.cloneNode(true);
+        nodeCopy.setContext('$index', i);
+        nodeCopy.setContext('$key', i);
+        nodeCopy.setContext('$item', i + 1);
         
-        result += nodeCopy.render();
+        repeatedNodes.push(nodeCopy);
       }
     } else if (value && typeof value === 'object') {
       const list = /Set|Map/.test(value.toString())
@@ -41,18 +42,31 @@ class Repeat extends Attribute {
       
       for (let i = 0; i < list.length; i++) {
         const [key, data] = list[i];
-        const nodeCopy = node.duplicate({
-          $index: i,
-          $key: key,
-          [`${this.itemName}`]: data,
-        });
+        const nodeCopy = node.cloneNode(true);
+        nodeCopy.setContext('$index', i);
+        nodeCopy.setContext('$key', key);
+        nodeCopy.setContext(`${this.itemName}`, data);
         
-        result += nodeCopy.render();
+        repeatedNodes.push(nodeCopy);
       }
     }
     
-    return result || node;
+    if (repeatedNodes.length) {
+      const frag = new HTMLNode();
+      frag.context = node.selfContext;
+      node.parentNode.replaceChild(frag, node);
+      
+      repeatedNodes.forEach(n => {
+        frag.appendChild(n);
+      });
+      
+      return frag;
+    }
+    
+    return node;
   }
 }
+
+customAttributesRegistry.define('repeat', Repeat);
 
 module.exports.Repeat = Repeat;

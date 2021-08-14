@@ -1,4 +1,4 @@
-const {customAttributesRegistry} = require('./default-attributes');
+const {customAttributesRegistry} = require('./default-attributes/CustomAttributesRegistry');
 
 class Attr {
   #name;
@@ -20,11 +20,8 @@ class Attr {
   }
   
   toString() {
-    if (this.#isSpecial) {
-        return '';
-    }
-    
-    return this.value ? `${this.name}="${this.value}"` : this.name;
+    return (this.#isSpecial ? '#' : '') +
+      (this.value ? `${this.name}="${this.value}"` : this.name);
   }
 }
 

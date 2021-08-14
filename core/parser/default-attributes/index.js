@@ -1,5 +1,4 @@
 const {turnCamelOrPascalToKebabCasing} = require("../../utils/turn-camel-or-pascal-to-kebab-casing");
-const {customAttributesRegistry} = require('./CustomAttributesRegistry');
 const {If} = require('./if.attribute');
 const {Repeat} = require('./repeat.attribute');
 const {Fragment} = require('./fragment.attribute');
@@ -22,10 +21,8 @@ for (let attribute of defaultAttributes) {
   const attr = turnCamelOrPascalToKebabCasing(attribute.name);
   defaultAttributesMap[attr] = attribute;
   defaultAttributesName.push(attr);
-  customAttributesRegistry.define(attr, attribute);
 }
 
-module.exports.customAttributesRegistry = customAttributesRegistry;
 module.exports.defaultAttributesMap = defaultAttributesMap;
 module.exports.defaultAttributes = defaultAttributes;
 module.exports.defaultAttributesName = defaultAttributesName;

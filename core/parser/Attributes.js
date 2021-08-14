@@ -12,16 +12,14 @@ class Attributes {
     // remove duplicated attributes
     while ((match = attrPattern.exec(attributeString))) {
       if (!iteratedAttributes.has(match[1])) {
-        let value = match[2] || match[3] || match[4];
-        let name = match[1];
-
-        this.#attributeString += (this.#map.size ? ' ' : '') + (value ? `${name}="${value}"` : name);
-        const attr = new Attr(name, value);
+        const attr = new Attr(match[1], match[2] || match[3] || match[4] || null);
+  
+        this.#attributeString += attr + ' ';
         this.#map.set(attr.name, attr);
-        iteratedAttributes.add(name);
+        iteratedAttributes.add(attr.name);
       }
     }
-    
+  
     this[Symbol.iterator] = function* () {
       for (let attr of this.#map.values()) {
         yield attr
@@ -38,7 +36,7 @@ class Attributes {
   }
   
   toString() {
-    return this.#attributeString;
+    return this.#attributeString.trim();
   }
 }
 

@@ -16,9 +16,19 @@ class Node {
     return {...this.#parentNode?.context, ...this.#context};
   }
   
+  get selfContext() {
+    return this.#context;
+  }
+  
   set context(value) {
     if (value.toString() === '[object Object]') {
       this.#context = value;
+    }
+  }
+  
+  setContext(name, value) {
+    if (typeof name === 'string') {
+      this.#context[name] = value;
     }
   }
 }
