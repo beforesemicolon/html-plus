@@ -3,250 +3,14 @@ const {Comment} = require('./Comment');
 const {Node} = require('./Node');
 const {Attributes} = require('./Attributes');
 const {Attr} = require('./Attr');
-const {attrPattern, selfClosingPattern, tagPattern, specificAttrPattern} = require('./utils/regexPatterns');
-
-// const defaultOptions = {
-//   env: 'development',
-//   data: {},
-//   context: {},
-//   rootNode: null,
-//   customTags: {},
-//   defaultTags: {},
-//   customAttributes: {},
-//   file: null,
-//   onBeforeRender() {
-//   },
-//   partialFiles: [],
-// };
-//
-// class HTMLNode {
-//   #node = null;
-//   #tag = null;
-//   #options = {};
-//
-//   constructor(htmlString, options) {
-//     options = {...defaultOptions, ...options}
-//     this.#node = typeof htmlString === 'string'
-//       ? parse(replaceSpecialCharactersInHTML(htmlString), {
-//         comment: true
-//       })
-//       : htmlString;
-//     this.#node.context = {...this.#node.context, ...options.context};
-//     this.#options = options;
-//     this.#tag = options.defaultTags[this.#node.rawTagName] || options.customTags[this.#node.rawTagName];
-//     this.attributes = this.#node.attributes;
-//
-//     this.#node.getContext = () => {
-//       return {...this.#node.parentNode?.getContext(), ...(this.#node.context ?? {})};
-//     }
-//
-//     // need to process custom tag early so any context that is set
-//     // is kept and used to update the nodes before it gets to rendering
-//     if (this.#tag) {
-//       try {
-//         this.attributes = processNodeAttributes(
-//           this.#node.attributes,
-//           this.#tag.customAttributes,
-//           {$data: this.#options.data, ...this.context}
-//         );
-//
-//         this.#tag = createCustomTag(this.#tag, this.#node, this, this.#options);
-//       } catch (e) {
-//         handleError(e, this.#node, this.#options);
-//       }
-//     }
-//   }
-//
-//   get type() {
-//     return 'node';
-//   }
-//
-//   get tagName() {
-//     return this.#node.rawTagName
-//   }
-//
-//   get context() {
-//     return this.#node.getContext();
-//   }
-//
-//   get innerHTML() {
-//     return undoSpecialCharactersInHTML(this.#node.innerHTML);
-//   }
-//
-//   get rawAttributes() {
-//     return this.#node.rawAttrs;
-//   }
-//
-//   get _options() {
-//     return this.#options;
-//   }
-//
-//   clone() {
-//     const outerHTML = this.tagName
-//       ? composeTagString(this, this.#node.innerHTML)
-//       : `<fragment>${this.#node.outerHTML}</fragment>`;
-//     const clonedNode = (parse(outerHTML, {
-//       comment: true
-//     })).childNodes[0];
-//
-//     clonedNode.context = {...this.#node.context};
-//     clonedNode.parentNode.getContext = () => ({})
-//
-//     return new HTMLNode(clonedNode, this.#options);
-//   }
-//
-//   duplicate(context = {}) {
-//     const outerHTML = this.tagName
-//       ? composeTagString(this, this.#node.innerHTML)
-//       : `<fragment>${this.#node.outerHTML}</fragment>`;
-//     const clonedNode = parse(outerHTML, {
-//       comment: true
-//     }).childNodes[0];
-//
-//     clonedNode.context = {...this.#node.context, ...context};
-//     clonedNode.parentNode = this.#node.parentNode;
-//
-//     if (clonedNode.parentNode) {
-//       const index = clonedNode.parentNode.childNodes.indexOf(this.#node);
-//
-//       if (index >= 0) {
-//         this.#node.parentNode.childNodes.splice(index, 0, clonedNode)
-//       } else {
-//         this.#node.parentNode.appendChild(clonedNode)
-//       }
-//     }
-//
-//     return new HTMLNode(clonedNode, this.#options);
-//   }
-//
-//   setAttribute(key, value) {
-//     if (typeof key === 'string' && typeof value === 'string') {
-//       this.#node.setAttribute(key, value);
-//       const processAttrs = processNodeAttributes(
-//         {[`${key}`]: value},
-//         this.#tag ? this.#tag.customAttributes : {},
-//         {$data: this.#options.data, ...this.context}
-//       );
-//
-//       this.attributes[key] = processAttrs[key];
-//     }
-//   }
-//
-//   removeAttribute(key) {
-//     if (typeof key === 'string') {
-//       this.#node.removeAttribute(key);
-//       delete this.attributes[key];
-//     }
-//   }
-//
-//   setContext(key, value = null) {
-//     if (typeof key === 'string') {
-//       this.#node.context[key] = value
-//     }
-//   }
-//
-//   removeContext(key) {
-//     if (typeof key === 'string') {
-//       delete this.#node.context[key];
-//     }
-//   }
-//
-//   #childNodes(data = {}) {
-//     return this.#node.childNodes.map(childNode => {
-//       if (childNode instanceof TextNode) {
-//         return new Text(childNode.rawText, {
-//           $data: this.#options.data,
-//           ...this.context,
-//           ...childNode.context,
-//           ...data
-//         });
-//       }
-//
-//       if (childNode instanceof CommentNode) {
-//         return new Comment(childNode.rawText);
-//       }
-//
-//       return new HTMLNode(childNode, this.#options);
-//     })
-//   }
-//
-//   childNodes(data) {
-//     return this.#childNodes(data);
-//   }
-//
-//   renderChildren(data = {}) {
-//     const renderList = this.#childNodes(data);
-//     return renderList.join('');
-//   }
-//
-//   #render() {
-//     let result = '';
-//     if (this.#node.rawAttrs.length && /\s?#[a-zA-Z][a-zA-Z-]+/g.test(this.#node.rawAttrs)) {
-//       result = renderByAttribute(this, this.#options);
-//
-//       if (typeof result === 'string') {
-//         return result
-//       }
-//     }
-//
-//     if (this.#tag) {
-//       this.#onBeforeRender();
-//
-//       return this.#options.defaultTags[this.tagName]
-//         ? this.#tag.render()
-//         : composeTagString({tagName: this.tagName, attributes: {}, _options: this.#options}, this.#tag.render(), Object.keys(this.#options.customAttributes));
-//     }
-//
-//     try {
-//       this.attributes = processNodeAttributes(
-//         this.#node.attributes,
-//         {},
-//         {$data: this.#options.data, ...this.context}
-//       );
-//     } catch (e) {
-//       handleError(e, this.#node, this.#options);
-//     }
-//
-//     this.#onBeforeRender();
-//
-//     return (this.tagName
-//         ? composeTagString(this, this.renderChildren(), Object.keys(this.#options.customAttributes))
-//         : this.renderChildren()
-//     ).trim();
-//   }
-//
-//   #onBeforeRender() {
-//     if (typeof this.#options.onBeforeRender === 'function') {
-//       try {
-//         this.#options.onBeforeRender(this, this.#options.file);
-//       } catch (e) {
-//         console.error('Error in before rendering callback', e);
-//       }
-//     }
-//   }
-//
-//   render() {
-//     try {
-//       return this.#render();
-//     } catch (e) {
-//       handleError(e, this.#node, this.#options);
-//     }
-//   }
-//
-//   toString() {
-//     try {
-//       return this.#render();
-//     } catch (e) {
-//       handleError(e, this.#node, this.#options);
-//     }
-//   }
-// }
+const {selfClosingPattern, tagPattern, specificAttrPattern} = require('./utils/regexPatterns');
 
 class HTMLNode extends Node {
   #tagName;
   #attributes;
   #textContent = '';
   #childNodes = [];
+  #children = [];
   
   constructor(tagName = null, attributeString = '') {
     super();
@@ -271,9 +35,7 @@ class HTMLNode extends Node {
   }
   
   get children() {
-    return this.#childNodes.filter(node => {
-      return node instanceof HTMLNode;
-    });
+    return this.#children;
   }
   
   get innerHTML() {
@@ -281,10 +43,20 @@ class HTMLNode extends Node {
   }
   
   set innerHTML(value) {
+    this.#children = [];
     this.#childNodes = parseHTMLString(value).childNodes.map(node => {
       node.parentNode = this;
+      
+      if (node instanceof HTMLNode) {
+        this.#children.push(node)
+      }
+      
       return node;
     });
+  }
+  
+  get outerHTML() {
+    return this.toString();
   }
   
   get textContent() {
@@ -296,6 +68,43 @@ class HTMLNode extends Node {
     const content = new Text(this.#textContent);
     content.parentNode = this;
     this.#childNodes = [content];
+    this.#children = [];
+  }
+  
+  get prevSibling() {
+    if (this.parentNode) {
+      const sibs = this.parentNode.childNodes
+      return sibs[sibs.indexOf(this) - 1] || null;
+    }
+  
+    return null;
+  }
+  
+  get prevElementSibling() {
+    if (this.parentNode) {
+      const sibs = this.parentNode.children
+      return sibs[sibs.indexOf(this) - 1] || null;
+    }
+  
+    return null;
+  }
+  
+  get nextSibling() {
+    if (this.parentNode) {
+      const sibs = this.parentNode.childNodes
+      return sibs[sibs.indexOf(this) + 1] || null;
+    }
+    
+    return null;
+  }
+  
+  get nextElementSibling() {
+    if (this.parentNode) {
+      const sibs = this.parentNode.children
+      return sibs[sibs.indexOf(this) + 1] || null;
+    }
+  
+    return null;
   }
   
   hasAttributes() {
@@ -303,7 +112,7 @@ class HTMLNode extends Node {
   }
   
   hasAttribute(name) {
-    return this.attributes.toString().match(specificAttrPattern(name)) !== null;
+    return this.attributes.getNamedItem(name) !== null;
   }
   
   setAttribute(name, value = null) {
@@ -311,7 +120,7 @@ class HTMLNode extends Node {
       const currAttr = this.getAttribute(name);
       
       if (currAttr) {
-        this.#attributes = this.attributes.toString().replace(currAttr, value)
+        this.#attributes = new Attributes(this.attributes.toString().replace(currAttr, value))
       } else {
         const attr = value ? `${name}="${value}"` : name;
         this.#attributes = new Attributes(`${this.attributes} ${attr}`)
@@ -330,7 +139,7 @@ class HTMLNode extends Node {
   }
   
   getAttribute(name) {
-    return this.getAttributeNode(name).value
+    return this.getAttributeNode(name)?.value ?? null;
   }
   
   getAttributeNode(name) {
@@ -349,7 +158,12 @@ class HTMLNode extends Node {
   
   appendChild(node) {
     if (isValidNode(node)) {
-      this.#childNodes.push(node)
+      this.#childNodes.push(node);
+      
+      if (node instanceof HTMLNode) {
+        this.#children.push(node);
+      }
+      
       node.parentNode = this;
     }
   }
@@ -357,12 +171,142 @@ class HTMLNode extends Node {
   removeChild(node) {
     if (isValidNode(node)) {
       this.#childNodes.splice(this.#childNodes.indexOf(node), 1);
+      
+      if (node instanceof HTMLNode) {
+        this.#children.splice(this.#children.indexOf(node), 1);
+      }
+      
+      node.parentNode = null;
+    }
+  }
+  
+  remove() {
+    if (this.parentNode) {
+      this.parentNode.removeChild(this);
     }
   }
   
   replaceChild(newNode, oldNode) {
     if (isValidNode(newNode) && isValidNode(oldNode)) {
       this.#childNodes.splice(this.#childNodes.indexOf(oldNode), 1, newNode);
+      
+      if (newNode instanceof HTMLNode) {
+        this.#children.splice(this.#children.indexOf(oldNode), 1, newNode);
+      }
+      
+      newNode.parentNode = this;
+      oldNode.parentNode = null;
+    }
+  }
+  
+  cloneNode(deep = false) {
+    const cloneNode = new HTMLNode(this.tagName, this.attributes.toString());
+    cloneNode.context = {...this.selfContext};
+    
+    if (deep) {
+      this.childNodes.forEach(child => {
+        child.context = {...this.selfContext};
+        
+        if (child instanceof HTMLNode) {
+          cloneNode.appendChild(child.cloneNode(deep))
+        } else if (child instanceof Text) {
+          cloneNode.appendChild(new Text(child.value))
+        } else {
+          cloneNode.appendChild(new Comment(child.value))
+        }
+      });
+    }
+    
+    return cloneNode;
+  }
+  
+  before(node) {
+    if (isValidNode(node) && this.parentNode) {
+      this.parentNode.insertBefore(node, this);
+    }
+  }
+  
+  after(node) {
+    if (isValidNode(node) && this.parentNode) {
+      this.parentNode.insertBefore(node, this.nextSibling);
+    }
+  }
+  
+  insertBefore(newNode, refNode) {
+    if (isValidNode(newNode) && isValidNode(refNode)) {
+      this.#childNodes.splice(this.#childNodes.indexOf(refNode), 0, newNode);
+      
+      if (newNode instanceof HTMLNode) {
+        this.#children.splice(this.#children.indexOf(refNode), 0, newNode);
+      }
+      
+      newNode.parentNode = this;
+    }
+  }
+  
+  insertAdjacentElement(position, node) {
+    if (node instanceof HTMLNode) {
+      switch (position) {
+        case 'beforebegin':
+          this.before(node);
+          break;
+        case 'afterbegin':
+          this.#childNodes.splice(0, 0, node);
+          this.#children.splice(0, 0, node);
+          break;
+        case 'beforeend':
+          this.appendChild(node);
+          break;
+        case 'afterend':
+          this.after(node);
+          break;
+      }
+    }
+  }
+  
+  insertAdjacentText(position, value) {
+    if (typeof value === "string") {
+      const node = new Text(value);
+      
+      switch (position) {
+        case 'beforebegin':
+          this.before(node);
+          break;
+        case 'afterbegin':
+          this.#childNodes.splice(0, 0, node);
+          break;
+        case 'beforeend':
+          this.appendChild(node);
+          break;
+        case 'afterend':
+          this.after(node);
+          break;
+      }
+    }
+  }
+  
+  insertAdjacentHTML(position, value) {
+    if (typeof value === "string") {
+      parseHTMLString(value).childNodes.forEach(node => {
+        switch (position) {
+          case 'beforebegin':
+            this.before(node);
+            break;
+          case 'afterbegin':
+            this.#childNodes.splice(0, 0, node);
+            
+            if (node instanceof HTMLNode) {
+              this.#children.splice(0, 0, node);
+            }
+            break;
+          case 'beforeend':
+            this.appendChild(node);
+            break;
+          case 'afterend':
+            this.after(node);
+            break;
+        }
+      });
     }
   }
   
