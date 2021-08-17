@@ -54,7 +54,7 @@ class Include {
   
   render() {
     return this.partial
-      ? html(this.partial.toString(), {...this.node.context, ...this.data})
+      ? this.partial.render({...this.node.context, ...this.data})
       : '';
   }
 }

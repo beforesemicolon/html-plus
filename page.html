@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<include partial="head" data="{title: 'My page'}"></include>
+<include partial="head" data="{title: 'My page'}">
+	<link rel="stylesheet" href="style.css" inject-id="style">
+	<style>
+		body {
+			background: #900;
+		}
+	</style>
+</include>
 <body>
+
+	<inject html="'<h1>Title</h1>'"></inject>
 
 	<variable name="x" value="100"></variable>
 	<ul #attr="class, main-nav, sample > 0">

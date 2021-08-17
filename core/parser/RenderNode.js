@@ -1,7 +1,8 @@
 class RenderNode {
-  constructor(htmlString, context) {
+  constructor(htmlString = '', context = {}, file = null) {
     this.htmlString = htmlString;
     this.context = context;
+    this.file = file;
   }
 }
 

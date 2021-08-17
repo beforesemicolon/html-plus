@@ -1,6 +1,7 @@
 const path = require('path');
 const {required} = require("../utils/required");
 const {File} = require("./File");
+const {RenderNode} = require("./RenderNode");
 
 class PartialFile extends File {
   constructor(fileAbsolutePath = required('fileAbsolutePath'), srcDirectoryPath = '') {
@@ -15,8 +16,11 @@ class PartialFile extends File {
     }
     
     super(fileAbsolutePath, srcDirectoryPath);
-    
     this.load();
+  }
+  
+  render(data = {}) {
+    return new RenderNode(this.content, data, this);
   }
 }
 

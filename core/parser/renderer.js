@@ -114,6 +114,8 @@ function renderTag(node, metadata) {
   if (result instanceof RenderNode) {
     result = renderer({
       ...metadata,
+      file: result.file || metadata.file,
+      rootNode: node,
       content: result.htmlString,
       context: {...node.context, ...result.context}
     });
@@ -151,6 +153,8 @@ function renderByAttribute(node, attrName, metadata) {
   if (result instanceof RenderNode) {
     return renderer({
       ...metadata,
+      file: result.file || metadata.file,
+      rootNode: node,
       content: result.htmlString,
       context: {...node.context, ...result.context}
     });

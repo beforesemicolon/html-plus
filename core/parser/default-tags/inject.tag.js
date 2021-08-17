@@ -1,42 +1,35 @@
-const {Element} = require("../Element");
+const {html} = require("../html");
 
 class Inject{
   constructor(node, options) {
-    const {rootNode} = options;
-    const html = node.attributes['html'];
     this.content = null;
     this.node = node;
     
-    if (html) {
-      this.content = [new Element(html, options)]
-    } else if (rootNode) {
-      const childNodes = rootNode.childNodes();
-  
-      if (childNodes.length) {
-        const injectId = node.attributes['id'];
+    const {rootNode} = options;
+    const markup = node.getAttribute('html');
     
+    if (markup) {
+      this.content = markup
+    } else if (rootNode) {
+      if (rootNode.childNodes.length) {
+        const injectId = node.getAttribute('id');
+
         if (injectId) {
-          const content = childNodes.filter(childNode => {
-            const include = childNode.attributes && childNode.attributes['inject-id'] === injectId
-        
+          this.content = rootNode.children.filter(childNode => {
+            const include = childNode.getAttribute('inject-id') === injectId
+
             if (include) {
               childNode.removeAttribute('inject-id');
               childNode.setContext('$$included', true);
             }
-        
+
             return include;
-          });
-      
-          if (content.length) {
-            this.content = content;
-          }
+          }).join('');
         } else {
-          this.content = childNodes.filter(childNode => {
-            return !(childNode instanceof Element) || (
-              childNode.attributes['inject-id'] === undefined &&
-              (childNode.context && !childNode?.context['$$included'])
-            );
-          });
+          this.content = rootNode.childNodes.filter(childNode => {
+            return childNode.nodeValue !== null ||
+              (!childNode.hasAttribute('inject-id') && !childNode.context['$$included']);
+          }).join('');
         }
       }
     }
@@ -48,8 +41,10 @@ class Inject{
   
   render() {
     return this.content
-      ? this.content.join('') || this.node.childNodes().join()
-      : this.node.childNodes().join();
+      ? html(this.content)
+      : this.node.childNodes.length
+        ? html(this.node.innerHTML)
+        : '';
   }
 }
 
