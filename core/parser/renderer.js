@@ -10,68 +10,68 @@ const {bindData} = require("../utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
 const {parseHTMLString, Element} = require("./Element");
 
-function renderer(fileDetails) {
-  const root = parseHTMLString(fileDetails.file.toString(), fileDetails.context);
+function renderer(dt) {
+  const root = parseHTMLString(dt.content || dt.file.toString(), dt.context);
   const defaultAttributesPattern = new RegExp(`#(${defaultAttributesName.join('|')})`, 'ig');
   
   return (function render(node) {
     if (node instanceof Comment) {
       return node.toString();
     }
-    
+
     if (node instanceof Text) {
       if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
         node.textContent = bindData(node.textContent, node.context)
       }
-      
+
       return node.toString();
     }
-    
+
     if (node.tagName === null) {
       return node.childNodes.map(render).join('');
     }
-    
+
     let attributeNode = null;
     const matchedCustomAttributes = node.attributes.toString().match(defaultAttributesPattern);
-    
+
     if (matchedCustomAttributes) {
       if (matchedCustomAttributes.includes('#if')) {
-        attributeNode = renderByAttribute(node, '#if');
+        attributeNode = renderByAttribute(node, '#if', dt);
       } else if (matchedCustomAttributes.includes('#repeat')) {
-        attributeNode = renderByAttribute(node, '#repeat');
+        attributeNode = renderByAttribute(node, '#repeat', dt);
       } else {
         for (let attrName of matchedCustomAttributes) {
-          attributeNode = renderByAttribute(node, attrName);
+          attributeNode = renderByAttribute(node, attrName, dt);
           break;
         }
       }
     }
-    
+
     if (typeof attributeNode === 'string') {
       return attributeNode;
     }
-    
+
     if (!attributeNode || node === attributeNode) {
       if (customTagsRegistry.isRegistered(node.tagName)) {
-        return renderTag(node, fileDetails);
+        return renderTag(node, dt);
       }
-      
+
       for (let attribute of node.attributes) {
         node.setAttribute(attribute.name, bindData(attribute.value, node.context))
       }
-      
+
       const isSelfClosing = selfClosingPattern.test(node.tagName);
       let tag = `<${/doctype/i.test(node.tagName) ? '!' : ''}${node.tagName} ${node.attributes}`.trim();
-      
+
       if (isSelfClosing) {
         tag = tag.trim() + '>'
       } else {
         tag = tag.trim() + `>${node.childNodes.map(render).join('')}</${node.tagName}>`;
       }
-      
+
       return tag;
     }
-    
+
     return render(attributeNode);
   })(root)
 }
@@ -112,7 +112,11 @@ function renderTag(node, metadata) {
   }
   
   if (result instanceof RenderNode) {
-    result = renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
+    result = renderer({
+      ...metadata,
+      content: result.htmlString,
+      context: {...node.context, ...result.context}
+    });
   }
   
   if (defaultTagsMap[node.tagName]) {
@@ -123,7 +127,7 @@ function renderTag(node, metadata) {
   return `<${node.tagName}>${result || ''}</${node.tagName}>`
 }
 
-function renderByAttribute(node, attrName) {
+function renderByAttribute(node, attrName, metadata) {
   const attr = customAttributesRegistry.get(attrName.slice(1));
   const handler = new attr(node);
   let val = node.getAttribute(attrName);
@@ -145,7 +149,11 @@ function renderByAttribute(node, attrName) {
   }
   
   if (result instanceof RenderNode) {
-    return renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
+    return renderer({
+      ...metadata,
+      content: result.htmlString,
+      context: {...node.context, ...result.context}
+    });
   }
   
   return node;

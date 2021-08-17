@@ -1,4 +1,4 @@
-const {CustomAttribute} = require("./CustomCustomAttribute");
+const {CustomAttribute} = require("./parser/default-attributes/CustomAttribute");
 const {transform} = require('./transform');
 
 describe('transform', () => {
