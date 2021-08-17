@@ -1,5 +1,5 @@
 const {transform} = require("../../transform");
-const {File} = require("../../File");
+const {File} = require("../../parser/File");
 const {collectAndUpdateNodeSourceLink} = require('./collect-and-update-node-source-link');
 const path = require('path');
 const {defaultTagsMap} = require("../../parser/default-tags");

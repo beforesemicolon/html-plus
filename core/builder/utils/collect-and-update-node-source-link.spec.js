@@ -1,5 +1,5 @@
 const {HTMLNode} = require("../../parser/HTMLNode");
-const {File} = require("../../File");
+const {File} = require("../../parser/File");
 const path = require('path');
 const {collectAndUpdateNodeSourceLink} = require('./collect-and-update-node-source-link');
 

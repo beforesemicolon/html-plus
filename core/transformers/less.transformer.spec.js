@@ -1,5 +1,5 @@
 const {lessTransformer} = require('./less.transformer');
-const {File} = require('../File');
+const {File} = require('../parser/File');
 const path = require('path');
 const cp = require('child_process');
 const {promisify} = require('util');

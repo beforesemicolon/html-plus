@@ -1,5 +1,5 @@
 const {processPage} = require('./process-page');
-const {File} = require('./../../File');
+const {File} = require('../../parser/File');
 const path = require('path');
 const {writeFile, rm} = require('fs/promises');
 

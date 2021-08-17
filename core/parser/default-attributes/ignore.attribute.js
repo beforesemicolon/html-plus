@@ -1,6 +1,6 @@
-const {Attribute} = require("../../Attribute");
+const {CustomAttribute} = require("./CustomAttribute");
 
-class Ignore extends Attribute {
+class Ignore extends CustomAttribute {
   execute = true;
   
   render(value, node) {

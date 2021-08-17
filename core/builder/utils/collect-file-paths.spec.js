@@ -1,7 +1,7 @@
 const {collectFilePaths} = require('./collect-file-paths');
 const {writeFile, rm} = require('fs/promises');
 const path = require('path');
-const {PartialFile} = require("../../PartialFile");
+const {PartialFile} = require("../../parser/PartialFile");
 
 describe('collectFilePaths', () => {
   let pages;

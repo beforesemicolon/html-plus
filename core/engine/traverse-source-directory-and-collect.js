@@ -1,4 +1,4 @@
-const {PartialFile} = require("../PartialFile");
+const {PartialFile} = require("../parser/PartialFile");
 const path = require('path');
 
 function traverseSourceDirectoryAndCollect(pagesDirectoryPath, partials, pagesRoutes) {

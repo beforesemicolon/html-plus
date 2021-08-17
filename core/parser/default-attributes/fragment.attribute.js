@@ -1,7 +1,7 @@
-const {Attribute} = require("../../Attribute");
+const {CustomAttribute} = require("./CustomAttribute");
 const {html} = require("../html");
 
-class Fragment extends Attribute {
+class Fragment extends CustomAttribute {
   render(_, node) {
     return html(node.innerHTML);
   }

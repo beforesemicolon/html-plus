@@ -1,4 +1,4 @@
-const {Attribute} = require("./Attribute");
+const {CustomAttribute} = require("./CustomCustomAttribute");
 const {transform} = require('./transform');
 
 describe('transform', () => {
@@ -65,9 +65,9 @@ describe('transform', () => {
           return '<p>tag</p>'
         }
       }
-      class Cls extends Attribute {
+      class Cls extends CustomAttribute {
         render(val, node) {
-          node.setAttribute('class', val)
+          node.setCustomAttribute('class', val)
           return node;
         }
       }
@@ -78,7 +78,7 @@ describe('transform', () => {
           content: '<tag></tag><p #cls="paragraph">attr</p>'
         },
         customTags: [Tag],
-        customAttributes: [Cls],
+        customCustomAttributes: [Cls],
       }))
         .resolves.toEqual('<tag><p>tag</p></tag><p class="paragraph">attr</p>')
     });

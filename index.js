@@ -1,15 +1,14 @@
 const {importStyle} = require("./core/utils/import-style");
-const {Attribute} = require('./core/Attribute');
+const {CustomAttribute} = require('./core/parser/default-attributes/CustomAttribute');
 const {engine} = require("./core/engine");
 const {build} = require("./core/builder");
-const {File} = require('./core/File');
-const {composeTagString} = require('./core/parser/compose-tag-string');
+const {File} = require('./core/parser/File');
 const {Element} = require('./core/parser/Element');
 const {Text} = require('./core/parser/Text');
 const {Comment} = require('./core/parser/Comment');
-const {PartialFile} = require('./core/PartialFile');
+const {PartialFile} = require('./core/parser/PartialFile');
 
-module.exports.Attribute = Attribute;
+module.exports.CustomAttribute = CustomAttribute;
 module.exports.File = File;
 module.exports.PartialFile = PartialFile;
 module.exports.Element = Element;
@@ -17,5 +16,4 @@ module.exports.Text = Text;
 module.exports.Comment = Comment;
 module.exports.engine = engine;
 module.exports.build = build;
-module.exports.composeTagString = composeTagString;
 module.exports.importStyle = importStyle;

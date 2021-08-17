@@ -2,7 +2,7 @@ const {cssTransformer} = require('./css.transformer');
 const path = require('path');
 const cp = require('child_process');
 const {promisify} = require('util');
-const {File} = require('../File');
+const {File} = require('../parser/File');
 const data = require('./test-data');
 
 const exec = promisify(cp.exec);

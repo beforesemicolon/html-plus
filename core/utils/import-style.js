@@ -1,6 +1,6 @@
 const path = require('path');
 const {transformFile} = require("../transformers");
-const {File} = require("../File");
+const {File} = require("../parser/File");
 
 const styleExtensions = new Set([
   '.scss',

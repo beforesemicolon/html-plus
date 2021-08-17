@@ -1,5 +1,5 @@
-<api-table-details name="Attribute" details="{
-	name: 'Attribute',
+<api-table-details name="CustomAttribute" details="{
+	name: 'CustomAttribute',
 	type: 'class',
 	properties: 'execute, bind',
 	methods: 'process, render',
@@ -34,9 +34,9 @@
 <h3>Usage Examples</h3>
 <p>This is how the native <strong>#if</strong> attribute is implemented.</p>
 <code-snippet language="js">
-const {Attribute} = require("@beforesemicolon/html-plus");
+const {CustomAttribute} = require("@beforesemicolon/html-plus");
 
-class If extends Attribute {
+class If extends CustomAttribute {
 	execute = true;
 
 	render(condition, node) {

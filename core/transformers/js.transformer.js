@@ -1,7 +1,7 @@
 const esbuild = require('esbuild');
 const path = require('path');
 const {readFileContent} = require("../utils/readFileContent");
-const {File} = require("../File");
+const {File} = require("../parser/File");
 
 const defaultOptions = {
   env: 'development',

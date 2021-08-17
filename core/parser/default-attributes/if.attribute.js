@@ -1,6 +1,6 @@
-const {Attribute} = require("../../Attribute");
+const {CustomAttribute} = require("./CustomAttribute");
 
-class If extends Attribute {
+class If extends CustomAttribute {
   execute = true;
   
   render(condition, node) {
