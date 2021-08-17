@@ -76,7 +76,7 @@ function renderer(dt) {
   })(root)
 }
 
-function renderTag(node, metadata) {
+function renderTag(node, {context, content, ...metadata}) {
   const tag = customTagsRegistry.get(node.tagName);
   const customAttributes = new Map();
   
@@ -129,7 +129,7 @@ function renderTag(node, metadata) {
   return `<${node.tagName}>${result || ''}</${node.tagName}>`
 }
 
-function renderByAttribute(node, attrName, metadata) {
+function renderByAttribute(node, attrName, {context, content, ...metadata}) {
   const attr = customAttributesRegistry.get(attrName.slice(1));
   const handler = new attr(node);
   let val = node.getAttribute(attrName);
