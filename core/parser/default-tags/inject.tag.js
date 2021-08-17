@@ -1,4 +1,4 @@
-const {HTMLNode} = require("../HTMLNode");
+const {Element} = require("../Element");
 
 class Inject{
   constructor(node, options) {
@@ -8,7 +8,7 @@ class Inject{
     this.node = node;
     
     if (html) {
-      this.content = [new HTMLNode(html, options)]
+      this.content = [new Element(html, options)]
     } else if (rootNode) {
       const childNodes = rootNode.childNodes();
   
@@ -32,7 +32,7 @@ class Inject{
           }
         } else {
           this.content = childNodes.filter(childNode => {
-            return !(childNode instanceof HTMLNode) || (
+            return !(childNode instanceof Element) || (
               childNode.attributes['inject-id'] === undefined &&
               (childNode.context && !childNode?.context['$$included'])
             );

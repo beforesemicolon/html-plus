@@ -2,7 +2,7 @@ const path = require('path');
 const {parse} = require('node-html-parser');
 const {required} = require("./utils/required");
 const {replaceSpecialCharactersInHTML} = require("./parser/utils/replace-special-characters-in-HTML");
-const {HTMLNode} = require("./parser/HTMLNode");
+const {Element} = require("./parser/Element");
 const {File} = require("./File");
 
 class PartialFile extends File {
@@ -29,7 +29,7 @@ class PartialFile extends File {
       comment: true
     });
     parsedHTML.context = contextData;
-    const partialNode = new HTMLNode(parsedHTML, this.options);
+    const partialNode = new Element(parsedHTML, this.options);
     return partialNode.render()
   }
   

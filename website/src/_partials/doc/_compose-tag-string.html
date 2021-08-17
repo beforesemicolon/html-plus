@@ -8,8 +8,8 @@
 <api-description-list descriptions="[
     {
         concept: 'node',
-        type: 'type: HTMLNode-like, required',
-        description: 'a HTMLNode instance or HTMLNode-like object to compose as tag string.'
+        type: 'type: Element-like, required',
+        description: 'a Element instance or Element-like object to compose as tag string.'
     },
     {
         concept: 'content',
@@ -27,10 +27,10 @@
 <p>The content is never parsed. Whatever the content you pass to it will be used as is.</p>
 <h3>Usage Examples</h3>
 <code-snippet language="js">
-const {composeTagString, HTMLNode} = require("@beforesemicolon/html-plus");
+const {composeTagString, Element} = require("@beforesemicolon/html-plus");
 
-const node1 = new HTMLNode('<h3>some title</h3>');
-const node2 = new HTMLNode('<h3 style="display: block;">some title</h3>');
+const node1 = new Element('<h3>some title</h3>');
+const node2 = new Element('<h3 style="display: block;">some title</h3>');
 
 composeTagString(node, 'different content');
 // returns "<h3>different content</h3>"

@@ -7,9 +7,11 @@ const {defaultTagsMap} = require("./default-tags");
 const {defaultAttributesName} = require("./default-attributes");
 const {bindData} = require("../utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
-const {parseHTMLString, HTMLNode} = require("./HTMLNode");
+const {parseHTMLString, Element} = require("./Element");
 
 function renderer(root) {
+  const defaultAttributesPattern = new RegExp(`#(${defaultAttributesName.join('|')})`, 'ig');
+  
   return (function render(node) {
     if (node instanceof Comment) {
       return node.toString();
@@ -17,7 +19,7 @@ function renderer(root) {
     
     if (node instanceof Text) {
       if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
-        node.value = bindData(node.value, node.context)
+        node.textContent = bindData(node.textContent, node.context)
       }
       
       return node.toString();
@@ -28,10 +30,15 @@ function renderer(root) {
     }
     
     let attributeNode = null;
+    const matchedCustomAttributes = node.attributes.toString().match(defaultAttributesPattern);
     
-    if (new RegExp(`#${defaultAttributesName.join('|')}`, 'ig').test(node.attributes.toString())) {
-      for (let attrName of defaultAttributesName) {
-        if (node.hasAttribute(attrName)) {
+    if (matchedCustomAttributes) {
+      if (matchedCustomAttributes.includes('#if')) {
+        attributeNode = renderByAttribute(node, '#if');
+      } else if (matchedCustomAttributes.includes('#repeat')) {
+        attributeNode = renderByAttribute(node, '#repeat');
+      } else {
+        for (let attrName of matchedCustomAttributes) {
           attributeNode = renderByAttribute(node, attrName);
           break;
         }
@@ -106,6 +113,8 @@ function renderTag(node) {
     result = renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
   }
   
+  console.log('-- renderTag', node.tagName);
+  
   if (defaultTagsMap[node.tagName]) {
     return result || '';
   }
@@ -115,7 +124,7 @@ function renderTag(node) {
 }
 
 function renderByAttribute(node, attrName) {
-  const attr = customAttributesRegistry.get(attrName);
+  const attr = customAttributesRegistry.get(attrName.slice(1));
   const handler = new attr(node);
   let val = node.getAttribute(attrName);
   
@@ -131,12 +140,12 @@ function renderByAttribute(node, attrName) {
     return '';
   }
   
-  if (result?.constructor?.name === 'Render') {
-    result = renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
+  if (typeof result === 'string' || result instanceof Element) {
+    return result;
   }
   
-  if (typeof result === 'string' || result instanceof HTMLNode) {
-    return result;
+  if (result?.constructor?.name === 'Render') {
+    result = renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
   }
   
   return node;

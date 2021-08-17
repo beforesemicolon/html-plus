@@ -1,5 +1,6 @@
 const {Attribute} = require("../../Attribute");
-const {HTMLNode} = require("./../HTMLNode");
+const {Element} = require("./../Element");
+const {Text} = require("./../Text");
 const {customAttributesRegistry} = require("./CustomAttributesRegistry");
 
 class Repeat extends Attribute {
@@ -52,7 +53,7 @@ class Repeat extends Attribute {
     }
     
     if (repeatedNodes.length) {
-      const frag = new HTMLNode();
+      const frag = new Element();
       frag.context = node.selfContext;
       node.parentNode.replaceChild(frag, node);
       

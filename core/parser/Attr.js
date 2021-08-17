@@ -6,9 +6,8 @@ class Attr {
   #isSpecial;
   
   constructor(name, value = null) {
-    this.#name = name.replace(/^[^a-z]*/i, '').toLowerCase();
+    this.#name = name.toLowerCase();
     this.#value = (value || '').trim() || null;
-    this.#isSpecial = customAttributesRegistry.isRegistered(this.#name);
   }
   
   get name() {
@@ -20,8 +19,7 @@ class Attr {
   }
   
   toString() {
-    return (this.#isSpecial ? '#' : '') +
-      (this.value ? `${this.name}="${this.value}"` : this.name);
+    return (this.value ? `${this.name}="${this.value}"` : this.name);
   }
 }
 

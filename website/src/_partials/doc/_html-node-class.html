@@ -1,5 +1,5 @@
-<api-table-details name="HTMLNode" details="{
-		name: 'HTMLNode',
+<api-table-details name="Element" details="{
+		name: 'Element',
 		type: 'class',
 		arguments: 'HTML string, options',
 		properties: 'tagName, innerHTML, rawAttributes, attributes, context, type',
@@ -76,7 +76,7 @@
 		{
 			concept: 'childNodes',
 			type: 'type: function',
-			description: 'A function that takes an optional data context data object and returns a list of child nodes -- HTMLNode, <a href=\'/documentation/api-reference/text-class\'>Text</a> and <a href=\'/documentation/api-reference/comment-class\'>Comment</a>.'
+			description: 'A function that takes an optional data context data object and returns a list of child nodes -- Element, <a href=\'/documentation/api-reference/text-class\'>Text</a> and <a href=\'/documentation/api-reference/comment-class\'>Comment</a>.'
 		},
 		{
 			concept: 'renderChildren',
@@ -100,8 +100,8 @@
 		context: 'A Javascript object literal representing the context data the markup can refer to by the keys.',
 		customTags: 'An array of valid function or class based tag.',
 		customAttributes: 'An array of valid <a href=\'/documentation/api-reference/attribute-class\'>Attribute</a> based custom attribute.',
-		rootNode: 'An <a href=\'/documentation/api-reference/html-node-class\'>HTMLNode</a> instance normally used by partial file to grab content.',
-		onTraverse: 'A function that is called on render for every HTMLNode with the node itself and the <a href=\'/documentation/api-reference/file-class\'>File</a> instance.',
+		rootNode: 'An <a href=\'/documentation/api-reference/html-node-class\'>Element</a> instance normally used by partial file to grab content.',
+		onTraverse: 'A function that is called on render for every Element with the node itself and the <a href=\'/documentation/api-reference/file-class\'>File</a> instance.',
 		partialFiles: 'An array of <a href=\'/documentation/api-reference/partial-file-class\'>PartialFile</a> instance to be used by the markup especially if it contains a include tag.',
 		env: 'The environment, \'development\' or \'production\'.',
 		file: 'A <a href=\'/documentation/api-reference/file-class\'>File</a> instance.',
@@ -109,9 +109,9 @@
 <h3>Usage Examples</h3>
 <code-snippet language="js">
 const path = require("path");
-const {HTMLNode} = require("@beforesemicolon/html-plus");
+const {Element} = require("@beforesemicolon/html-plus");
 
-const title = new HTMLNode('<h2>{title}</h2>', {
+const title = new Element('<h2>{title}</h2>', {
 	context: {title: 'My title'}
 });
 </code-snippet>

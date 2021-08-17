@@ -5,11 +5,9 @@ const {Attributes} = require('./Attributes');
 const {Attr} = require('./Attr');
 const {selfClosingPattern, tagPattern, specificAttrPattern} = require('./utils/regexPatterns');
 
-class HTMLNode extends Node {
+class Element extends Node {
   #tagName;
   #attributes;
-  #textContent = '';
-  #childNodes = [];
   #children = [];
   
   constructor(tagName = null, attributeString = '') {
@@ -22,77 +20,51 @@ class HTMLNode extends Node {
     return this.#tagName;
   }
   
-  get nodeName() {
-    return this.#tagName;
-  }
-  
   get attributes() {
     return this.#attributes;
   }
   
-  get childNodes() {
-    return Object.freeze([...this.#childNodes]);
-  }
-  
   get children() {
-    return this.#children;
+    return [...this.#children];
   }
   
   get innerHTML() {
-    return this.#childNodes.join('');
+    return this.childNodes.join('');
   }
   
   set innerHTML(value) {
     this.#children = [];
-    this.#childNodes = parseHTMLString(value).childNodes.map(node => {
-      node.parentNode = this;
-      
-      if (node instanceof HTMLNode) {
-        this.#children.push(node)
-      }
-      
-      return node;
-    });
+    
+    for (let childNode of this.childNodes) {
+      this.removeChild(childNode);
+    }
+    
+    parseHTMLString(value).childNodes.forEach(node => this.appendChild(node));
+  }
+  
+  set textContent(value) {
+    super.textContent = value.replace(tagPattern, '');
+    this.#children = [];
+    
+    for (let childNode of this.childNodes) {
+      this.removeChild(childNode);
+    }
+    
+    this.appendChild(new Text(super.textContent))
+  }
+  
+  get textContent() {
+    return super.textContent;
   }
   
   get outerHTML() {
     return this.toString();
   }
   
-  get textContent() {
-    return this.#textContent;
-  }
-  
-  set textContent(value) {
-    this.#textContent = value.replace(tagPattern, '');
-    const content = new Text(this.#textContent);
-    content.parentNode = this;
-    this.#childNodes = [content];
-    this.#children = [];
-  }
-  
-  get prevSibling() {
-    if (this.parentNode) {
-      const sibs = this.parentNode.childNodes
-      return sibs[sibs.indexOf(this) - 1] || null;
-    }
-    
-    return null;
-  }
-  
   get prevElementSibling() {
     if (this.parentNode) {
       const sibs = this.parentNode.children
       return sibs[sibs.indexOf(this) - 1] || null;
-    }
-    
-    return null;
-  }
-  
-  get nextSibling() {
-    if (this.parentNode) {
-      const sibs = this.parentNode.childNodes
-      return sibs[sibs.indexOf(this) + 1] || null;
     }
     
     return null;
@@ -144,9 +116,9 @@ class HTMLNode extends Node {
   
   getAttribute(name) {
     if (this._customAttributes && this._customAttributes.has(name)) {
-        return this._customAttributes.get(name);
+      return this._customAttributes.get(name);
     }
-
+    
     return this.getAttributeNode(name)?.value ?? null;
   }
   
@@ -174,25 +146,21 @@ class HTMLNode extends Node {
   
   appendChild(node) {
     if (isValidNode(node)) {
-      this.#childNodes.push(node);
+      super.appendChild(node);
       
-      if (node instanceof HTMLNode) {
+      if (node instanceof Element) {
         this.#children.push(node);
       }
-      
-      node.parentNode = this;
     }
   }
   
   removeChild(node) {
     if (isValidNode(node)) {
-      this.#childNodes.splice(this.#childNodes.indexOf(node), 1);
+      super.removeChild(node);
       
-      if (node instanceof HTMLNode) {
+      if (node instanceof Element) {
         this.#children.splice(this.#children.indexOf(node), 1);
       }
-      
-      node.parentNode = null;
     }
   }
   
@@ -204,32 +172,22 @@ class HTMLNode extends Node {
   
   replaceChild(newNode, oldNode) {
     if (isValidNode(newNode) && isValidNode(oldNode)) {
-      this.#childNodes.splice(this.#childNodes.indexOf(oldNode), 1, newNode);
+      super.replaceChild(newNode, oldNode);
       
-      if (newNode instanceof HTMLNode) {
+      if (newNode instanceof Element) {
         this.#children.splice(this.#children.indexOf(oldNode), 1, newNode);
       }
-      
-      newNode.parentNode = this;
-      oldNode.parentNode = null;
     }
   }
   
   cloneNode(deep = false) {
-    const cloneNode = new HTMLNode(this.tagName, this.attributes.toString());
+    const cloneNode = new Element(this.tagName, this.attributes.toString());
     cloneNode.context = {...this.selfContext};
     
     if (deep) {
       this.childNodes.forEach(child => {
         child.context = {...this.selfContext};
-        
-        if (child instanceof HTMLNode) {
-          cloneNode.appendChild(child.cloneNode(deep))
-        } else if (child instanceof Text) {
-          cloneNode.appendChild(new Text(child.value))
-        } else {
-          cloneNode.appendChild(new Comment(child.value))
-        }
+        cloneNode.appendChild(child.cloneNode(deep))
       });
     }
     
@@ -244,85 +202,61 @@ class HTMLNode extends Node {
   
   after(node) {
     if (isValidNode(node) && this.parentNode) {
-      this.parentNode.insertBefore(node, this.nextSibling);
+      if (this.nextSibling) {
+        this.parentNode.insertBefore(node, this.nextSibling);
+      } else {
+        this.parentNode.appendChild(node);
+      }
     }
   }
   
   insertBefore(newNode, refNode) {
     if (isValidNode(newNode) && isValidNode(refNode)) {
-      this.#childNodes.splice(this.#childNodes.indexOf(refNode), 0, newNode);
+      super.insertBefore(newNode, refNode)
       
-      if (newNode instanceof HTMLNode) {
+      if (newNode instanceof Element) {
         this.#children.splice(this.#children.indexOf(refNode), 0, newNode);
       }
-      
-      newNode.parentNode = this;
+    }
+  }
+  
+  #insert(position, node) {
+    switch (position) {
+      case 'beforebegin':
+        this.before(node);
+        break;
+      case 'afterbegin':
+        if (this.firstChild) {
+          this.insertBefore(node, this.firstChild);
+        } else {
+          this.appendChild(node);
+        }
+        break;
+      case 'beforeend':
+        this.appendChild(node);
+        break;
+      case 'afterend':
+        this.after(node);
+        break;
     }
   }
   
   insertAdjacentElement(position, node) {
-    if (node instanceof HTMLNode) {
-      switch (position) {
-        case 'beforebegin':
-          this.before(node);
-          break;
-        case 'afterbegin':
-          this.#childNodes.splice(0, 0, node);
-          this.#children.splice(0, 0, node);
-          break;
-        case 'beforeend':
-          this.appendChild(node);
-          break;
-        case 'afterend':
-          this.after(node);
-          break;
-      }
+    if (node instanceof Element) {
+      this.#insert(position, node);
     }
   }
   
   insertAdjacentText(position, value) {
     if (typeof value === "string") {
       const node = new Text(value);
-      
-      switch (position) {
-        case 'beforebegin':
-          this.before(node);
-          break;
-        case 'afterbegin':
-          this.#childNodes.splice(0, 0, node);
-          break;
-        case 'beforeend':
-          this.appendChild(node);
-          break;
-        case 'afterend':
-          this.after(node);
-          break;
-      }
+      this.#insert(position, node);
     }
   }
   
   insertAdjacentHTML(position, value) {
     if (typeof value === "string") {
-      parseHTMLString(value).childNodes.forEach(node => {
-        switch (position) {
-          case 'beforebegin':
-            this.before(node);
-            break;
-          case 'afterbegin':
-            this.#childNodes.splice(0, 0, node);
-            
-            if (node instanceof HTMLNode) {
-              this.#children.splice(0, 0, node);
-            }
-            break;
-          case 'beforeend':
-            this.appendChild(node);
-            break;
-          case 'afterend':
-            this.after(node);
-            break;
-        }
-      });
+      parseHTMLString(value).childNodes.forEach(node => this.#insert(position, node));
     }
   }
   
@@ -345,11 +279,11 @@ class HTMLNode extends Node {
 }
 
 function isValidNode(node) {
-  return node instanceof HTMLNode || node instanceof Text || node instanceof Comment;
+  return node && (node instanceof Element || node instanceof Text || node instanceof Comment);
 }
 
 function parseHTMLString(markup, data = {}) {
-  const root = new HTMLNode();
+  const root = new Element();
   root.context = data;
   const stack = [root];
   let match;
@@ -375,11 +309,11 @@ function parseHTMLString(markup, data = {}) {
     const isClosedTag = stack[stack.length - 1].tagName === tagName;
     
     if (selfCloseSlash || selfClosingPattern.test(tagName)) {
-      parentNode.appendChild(new HTMLNode(tagName, attributes));
+      parentNode.appendChild(new Element(tagName, attributes));
     } else if (isClosedTag) {
       stack.pop();
     } else {
-      const node = new HTMLNode(tagName, attributes);
+      const node = new Element(tagName, attributes);
       parentNode.appendChild(node);
       stack.push(node)
     }
@@ -394,6 +328,5 @@ function parseHTMLString(markup, data = {}) {
 }
 
 module.exports.parseHTMLString = parseHTMLString;
-module.exports.HTMLNode = HTMLNode;
-module.exports.Attributes = Attributes;
+module.exports.Element = Element;
 

@@ -1,4 +1,4 @@
-const {HTMLNode} = require("./parser/HTMLNode");
+const {Element} = require("./parser/Element");
 const {defaultAttributesMap} = require("./parser/default-attributes");
 const {defaultTagsMap} = require("./parser/default-tags");
 const {turnCamelOrPascalToKebabCasing} = require("./utils/turn-camel-or-pascal-to-kebab-casing");
@@ -43,7 +43,7 @@ async function transform(content, options = defaultOptions) {
     return acc;
   }, {});
   
-  const node = new HTMLNode(content, {
+  const node = new Element(content, {
     ...options,
     customTags: {...customTagsMap, ...defaultTagsMap},
     customAttributes: {...customAttributesMap, ...defaultAttributesMap},
