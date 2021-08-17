@@ -1,7 +1,6 @@
 const path = require('path');
 const {parse} = require('node-html-parser');
 const {required} = require("./utils/required");
-const {replaceSpecialCharactersInHTML} = require("./parser/utils/replace-special-characters-in-HTML");
 const {Element} = require("./parser/Element");
 const {File} = require("./File");
 
@@ -25,7 +24,7 @@ class PartialFile extends File {
   }
   
   render(contextData = {}) {
-    const parsedHTML = parse(replaceSpecialCharactersInHTML(this.content), {
+    const parsedHTML = parse(this.content, {
       comment: true
     });
     parsedHTML.context = contextData;

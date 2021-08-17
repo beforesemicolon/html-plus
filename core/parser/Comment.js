@@ -4,7 +4,6 @@ class Comment extends Node {
   constructor(value) {
     super();
     super.textContent = value;
-    console.log('-- com', value);
   }
   
   get nodeName() {

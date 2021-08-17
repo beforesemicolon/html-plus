@@ -1,6 +1,5 @@
 const path = require('path');
 const {PartialFile} = require("../../PartialFile");
-const {composeTagString} = require("../compose-tag-string");
 const chalk = require("chalk");
 
 class Include {
@@ -37,8 +36,11 @@ class Include {
       }
   
       if (!this.partial) {
+        const cloneNode = node.cloneNode();
+        cloneNode.textContent = '...';
+        
         console.warn(chalk.yellowBright(
-          `[HTML+] Partial "${partialName || partialPath}" not found.\n${chalk.greenBright(composeTagString(node, '...'))}`
+          `[HTML+] Partial "${partialName || partialPath}" not found.\n${chalk.greenBright(cloneNode.outerHTML)}`
         ));
       }
     }

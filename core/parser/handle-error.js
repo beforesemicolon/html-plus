@@ -1,5 +1,4 @@
 const chalk = require("chalk");
-const {undoSpecialCharactersInHTML} = require("./utils/undo-special-characters-in-HTML");
 
 function escapeRegex(string) {
   return string.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -8,8 +7,8 @@ function escapeRegex(string) {
 function handleError(e, node = {}, options = {}) {
   let error = e.message;
   
-  if (node.type === 'text' || node.type === 'comment') {
-    throw new Error(`${error} <=> ${node.value}`);
+  if (node.nodeName === '#text' || node.nodeName === '#comment') {
+    throw new Error(`${error} <=> ${node.nodeValue}`);
   }
   
   if (error && error.startsWith('Error: ')) {
@@ -27,7 +26,7 @@ function handleError(e, node = {}, options = {}) {
   
   throw new Error(
     'Error: ' + chalk.redBright(errMsg) + fileInfo +
-    `\nMarkup: ${chalk.green(undoSpecialCharactersInHTML(nodeString))}`
+    `\nMarkup: ${chalk.green(nodeString)}`
   );
 }
 

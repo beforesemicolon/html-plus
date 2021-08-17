@@ -1,12 +1,7 @@
-class Render {
-  constructor(htmlString, context) {
-    this.htmlString = htmlString;
-    this.context = context;
-  }
-}
+const {RenderNode} = require("./RenderNode");
 
 function html(htmlString, context = {}) {
-  return new Render(htmlString, context)
+  return new RenderNode(htmlString, context)
 }
 
 module.exports.html = html;

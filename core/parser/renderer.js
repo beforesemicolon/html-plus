@@ -1,5 +1,6 @@
 const {Text} = require('./Text');
 const {Comment} = require('./Comment');
+const {RenderNode} = require('./RenderNode');
 const {selfClosingPattern} = require("./utils/regexPatterns");
 const {customAttributesRegistry} = require("./default-attributes/CustomAttributesRegistry");
 const {customTagsRegistry} = require("./default-tags/CustomTagsRegistry");
@@ -109,11 +110,9 @@ function renderTag(node) {
     result = instance.render();
   }
   
-  if (result?.constructor?.name === 'Render') {
+  if (result instanceof RenderNode) {
     result = renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
   }
-  
-  console.log('-- renderTag', node.tagName);
   
   if (defaultTagsMap[node.tagName]) {
     return result || '';
@@ -144,8 +143,8 @@ function renderByAttribute(node, attrName) {
     return result;
   }
   
-  if (result?.constructor?.name === 'Render') {
-    result = renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
+  if (result instanceof RenderNode) {
+    return renderer(parseHTMLString(result.htmlString, {...node.context, ...result.context}));
   }
   
   return node;
