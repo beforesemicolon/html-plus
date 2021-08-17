@@ -1,4 +1,4 @@
-class Attribute {
+class CustomAttribute {
   bind = false;
   execute = false;
   
@@ -11,4 +11,4 @@ class Attribute {
   }
 }
 
-module.exports.Attribute = Attribute;
+module.exports.CustomAttribute = CustomAttribute;

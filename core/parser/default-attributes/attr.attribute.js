@@ -1,6 +1,6 @@
-const {Attribute} = require("../../Attribute");
+const {CustomAttribute} = require("./CustomAttribute");
 
-class Attr extends Attribute {
+class Attr extends CustomAttribute {
   execute = true;
   names = [];
   values = [];

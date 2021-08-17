@@ -1,20 +1,22 @@
 const path = require('path');
-const {PartialFile} = require("../../PartialFile");
+const {PartialFile} = require("../PartialFile");
 const chalk = require("chalk");
+const {html} = require("../html");
 
 class Include {
   constructor(node, options) {
+    this.data = node.getAttribute('data');
+    
+    if (this.data && this.data.toString() !== '[object Object]') {
+      throw new Error('The "<include>" tag "data" attribute value must be a normal object literal')
+    }
+    
     const {file, partialFiles} = options;
     
     this.node = node;
     this.partial = null;
-    let partialName = node.attributes['partial'];
-    let partialPath = node.attributes['partial-path'];
-    this.data = {...node.context, ...node.attributes['data']};
-    
-    if (this.data && typeof this.data !== 'object') {
-      throw new Error('The "<include>" tag "data" attribute value must be a normal object literal')
-    }
+    let partialName = node.getAttribute('partial');
+    let partialPath = node.getAttribute('partial-path');
     
     if (partialName || partialPath) {
       if (partialFiles.length ) {
@@ -32,7 +34,7 @@ class Include {
       if (!this.partial && partialPath) {
         const partialAbsolutePath = path.resolve(file.fileDirectoryPath, partialPath);
 
-        this.partial = new PartialFile(partialAbsolutePath, file.srcDirectoryPath, tagInfo);
+        this.partial = new PartialFile(partialAbsolutePath, file.srcDirectoryPath);
       }
   
       if (!this.partial) {
@@ -52,7 +54,7 @@ class Include {
   
   render() {
     return this.partial
-      ? this.partial.render(this.data)
+      ? html(this.partial.toString(), {...this.node.context, ...this.data})
       : '';
   }
 }

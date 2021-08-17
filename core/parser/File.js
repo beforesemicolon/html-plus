@@ -1,6 +1,6 @@
 const path = require('path');
-const {required} = require("./utils/required");
-const {readFileContent} = require("./utils/readFileContent");
+const {required} = require("../utils/required");
+const {readFileContent} = require("../utils/readFileContent");
 
 class File {
   resources = [];

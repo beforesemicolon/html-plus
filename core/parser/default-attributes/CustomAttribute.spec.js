@@ -1,8 +1,8 @@
-const {Attribute} = require('./Attribute');
+const {CustomAttribute} = require('./CustomAttribute');
 
-describe('Attribute', () => {
+describe('CustomAttribute', () => {
   it('should create', () => {
-    const attr = new Attribute();
+    const attr = new CustomAttribute();
     
     expect(attr.execute).toBe(false);
     expect(attr.bind).toBe(false);

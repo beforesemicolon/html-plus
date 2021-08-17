@@ -10,7 +10,8 @@ const {bindData} = require("../utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
 const {parseHTMLString, Element} = require("./Element");
 
-function renderer(root) {
+function renderer(fileDetails) {
+  const root = parseHTMLString(fileDetails.file.toString(), fileDetails.context);
   const defaultAttributesPattern = new RegExp(`#(${defaultAttributesName.join('|')})`, 'ig');
   
   return (function render(node) {
@@ -52,7 +53,7 @@ function renderer(root) {
     
     if (!attributeNode || node === attributeNode) {
       if (customTagsRegistry.isRegistered(node.tagName)) {
-        return renderTag(node);
+        return renderTag(node, fileDetails);
       }
       
       for (let attribute of node.attributes) {
@@ -75,7 +76,7 @@ function renderer(root) {
   })(root)
 }
 
-function renderTag(node) {
+function renderTag(node, metadata) {
   const tag = customTagsRegistry.get(node.tagName);
   const customAttributes = new Map();
   
@@ -95,9 +96,9 @@ function renderTag(node) {
   let instance;
   
   if (tag.toString().startsWith('class')) {
-    instance = new tag(node)
+    instance = new tag(node, metadata)
   } else {
-    instance = tag(node);
+    instance = tag(node, metadata);
   }
   
   let result;

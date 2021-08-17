@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<include partial="head"></include>
+<body>
+
+	<variable name="x" value="100"></variable>
+	<ul #attr="class, main-nav, sample > 0">
+		<li #repeat="['home', 'about', 'contact']" class="{$item}-page menu-nav-item">{$item}</li>
+	</ul>
+	<!-- main content -->
+	<main #if="x > 10"></main>
+	{x + 3}
+	<fragment #repeat="3">
+		<h2>[{$item}] Lorem ipsum dolor sit amet.</h2>
+		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi, ut.</p>
+	</fragment>
+
+	<!--  <log value="$context"></log>-->
+
+	<ignore>
+		<p>{noValue}</p>
+	</ignore>
+
+	<script>
+      console.log('sample', {x: 10})
+	</script>
+</body>
+</html>

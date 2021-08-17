@@ -1,5 +1,5 @@
 const {cacheService} = require("../CacheService");
-const {File} = require("../File");
+const {File} = require("../parser/File");
 const {transform} = require('../transformers');
 
 async function getPageProcessedLinkedResource(resourcePath, pagesDirectoryPath, options) {

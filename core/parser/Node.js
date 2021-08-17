@@ -1,5 +1,3 @@
-const {tagPattern} = require("./utils/regexPatterns");
-
 class Node {
   #parentNode = null;
   #childNodes = [];
@@ -79,6 +77,10 @@ class Node {
     }
     
     return null;
+  }
+  
+  getRootNode() {
+    return this.parentNode ? this.parentNode.getRootNode() : this;
   }
   
   setContext(name, value) {
