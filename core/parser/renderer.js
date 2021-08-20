@@ -10,12 +10,23 @@ const {bindData} = require("../utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
 const {parseHTMLString, Element} = require("./Element");
 
-function renderer(dt) {
+const defaultOptions = {
+  onRender() {},
+  file: null,
+  partialFiles: [],
+  rootNode: null,
+  content: '',
+  context: {}
+}
+
+function renderer(dt = defaultOptions) {
+  dt = {...defaultOptions, ...dt};
   const root = parseHTMLString(dt.content || dt.file.toString(), dt.context);
   const defaultAttributesPattern = new RegExp(`#(${defaultAttributesName.join('|')})`, 'ig');
   
   return (function render(node) {
     if (node instanceof Comment) {
+      dt.onRender(node);
       return node.toString();
     }
 
@@ -23,7 +34,8 @@ function renderer(dt) {
       if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
         node.textContent = bindData(node.textContent, node.context)
       }
-
+  
+      dt.onRender(node);
       return node.toString();
     }
 
@@ -59,6 +71,8 @@ function renderer(dt) {
       for (let attribute of node.attributes) {
         node.setAttribute(attribute.name, bindData(attribute.value, node.context))
       }
+  
+      dt.onRender(node);
 
       const isSelfClosing = selfClosingPattern.test(node.tagName);
       let tag = `<${/doctype/i.test(node.tagName) ? '!' : ''}${node.tagName} ${node.attributes}`.trim();
@@ -76,7 +90,8 @@ function renderer(dt) {
   })(root)
 }
 
-function renderTag(node, {context, content, ...metadata}) {
+function renderTag(node, metadata) {
+  const {context, content, onRender, ...tagOpt} = metadata
   const tag = customTagsRegistry.get(node.tagName);
   const customAttributes = new Map();
   
@@ -96,9 +111,9 @@ function renderTag(node, {context, content, ...metadata}) {
   let instance;
   
   if (tag.toString().startsWith('class')) {
-    instance = new tag(node, metadata)
+    instance = new tag(node, tagOpt)
   } else {
-    instance = tag(node, metadata);
+    instance = tag(node, tagOpt);
   }
   
   let result;
