@@ -3,7 +3,7 @@ const {Node} = require('./Node');
 class Comment extends Node {
   constructor(value) {
     super();
-    super.textContent = value;
+    super.textContent = value.trim();
   }
   
   get nodeName() {
@@ -28,7 +28,7 @@ class Comment extends Node {
   }
   
   toString() {
-    return `<!-- ${this.nodeValue} -->`;
+    return `<!-- ${this.textContent} -->`;
   }
   
   appendChild() {}
@@ -37,8 +37,8 @@ class Comment extends Node {
   
   insertBefore() {}
   
-  cloneNode(deep = false) {
-    return new Comment(deep ? this.nodeValue : '');
+  cloneNode() {
+    return new Comment(this.textContent);
   }
 
 }
