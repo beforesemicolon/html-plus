@@ -1,10 +1,11 @@
 const {PartialFile} = require("../PartialFile");
-const {transform} = require('../../transform');
-const cp = require('child_process');
+const {render} = require('../render');
 const path = require('path');
-const {promisify} = require('util');
-
-const exec = promisify(cp.exec);
+const {writeFile, unlink} = require('fs/promises');
+const {defaultAttributesMap} = require("../default-attributes");
+const {customAttributesRegistry} = require("../default-attributes/CustomAttributesRegistry");
+const {defaultTagsMap} = require("../default-tags");
+const {customTagsRegistry} = require("../default-tags/CustomTagsRegistry");
 
 describe('Include Tag', () => {
   const nestedPartialAbsPath = `${path.resolve(__dirname)}/_inc-nested-partial.html`;
@@ -13,54 +14,65 @@ describe('Include Tag', () => {
   let nestedPartialFile;
   
   beforeAll(async () => {
-    await exec(`echo '<div>{title}</div>' >> ${partialAbsPath}`);
-    await exec(`echo '<div>Nested: {title}</div>' >> ${nestedPartialAbsPath}`);
+    await writeFile(partialAbsPath, '<div>{title}</div>', 'utf-8');
+    await writeFile(nestedPartialAbsPath, '<div>Nested: {title}</div>', 'utf-8');
     partialFile = new PartialFile(partialAbsPath, __dirname);
     nestedPartialFile = new PartialFile(nestedPartialAbsPath, __dirname);
+    
+    for (let key in defaultAttributesMap) {
+      customAttributesRegistry.define(key, defaultAttributesMap[key])
+    }
+  
+    for (let key in defaultTagsMap) {
+      customTagsRegistry.define(key, defaultTagsMap[key])
+    }
   })
   
   afterAll(async () => {
-    await exec(`rm ${partialAbsPath}`);
-    await exec(`rm ${nestedPartialAbsPath}`);
+    await unlink(partialAbsPath);
+    await unlink(nestedPartialAbsPath);
   });
   
-  it('should include partial with partial attribute', async () => {
+  it('should include partial with partial attribute', () => {
     const str = '<include partial="inc-partial" data="{title: \'include partial\'}"></include>'
 
-    await expect(transform(str, {
+    expect(render( {
+      content: str,
       partialFiles: [partialFile]
-    })).resolves.toEqual('<div>include partial</div>');
+    })).toEqual('<div>include partial</div>');
   });
 
-  it('should include partial with partialPath attribute', async () => {
+  it('should include partial with partialPath attribute', () => {
     const str = '<include partial-path="_inc-partial.html" data="{title: \'include partial\'}"></include>'
 
-    await expect(transform(str, {
+    expect(render( {
+      content: str,
       partialFiles: [partialFile],
       file: {fileDirectoryPath: __dirname}
-    })).resolves.toEqual('<div>include partial</div>');
+    })).toEqual('<div>include partial</div>');
   });
   
-  it('should allow for nested includes', async () => {
+  it('should allow for nested includes', () => {
     partialFile.content = '<include partial-path="_inc-nested-partial.html"></include>'
     const str = '<include partial-path="_inc-partial.html" data="{title: \'include partial\'}"></include>'
     
-    await expect(transform(str, {
+    expect(render( {
+      content: str,
       partialFiles: [partialFile, nestedPartialFile],
       file: {fileDirectoryPath: __dirname}
-    })).resolves.toEqual('<div>Nested: include partial</div>');
+    })).toEqual('<div>Nested: include partial</div>');
   });
 
-  it('should render blank if no partial info is provided', async () => {
+  it('should render blank if no partial info is provided', () => {
     const str = '<include></include>'
 
-    await expect(transform(str)).resolves.toEqual('');
+    expect(render(str)).toEqual('');
   });
 
-  it('should fail if non object literal data attribute value is provided', async () => {
+  it('should fail if non object literal data attribute value is provided', () => {
     const str = '<include data="sample"></include>'
     
-    await expect(transform(str))
-      .rejects.toThrowError('Failed to process attribute "data": sample is not defined');
+    expect(() => render(str))
+      .toThrowError('sample is not defined');
   });
 });

@@ -5,7 +5,7 @@ function Log(node) {
   
   if (node.context.hasOwnProperty(value)) {
     value = node.context[value];
-  } else if(node.context.$data.hasOwnProperty(value)) {
+  } else if(node.context.$data?.hasOwnProperty(value)) {
     value = node.context.$data[value];
   } else if(value === '$context') {
     value = node.context;

@@ -24,7 +24,6 @@ for (let tag of defaultTags) {
   defaultTagsName.push(tagName);
 }
 
-
 module.exports.defaultTags = defaultTags;
 module.exports.defaultTagsMap = defaultTagsMap;
 module.exports.defaultTagsName = defaultTagsName;

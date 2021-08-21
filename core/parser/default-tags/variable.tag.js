@@ -1,3 +1,5 @@
+const {bindData} = require("../utils/bind-data");
+
 class Variable {
   constructor(node) {
     const name = node.getAttribute('name');
@@ -18,9 +20,9 @@ class Variable {
         throw new Error(`Variable children cannot be HTML tags`);
       }
       
-      value = node.textContent;
+      value = bindData(node.innerHTML, node.context);
     }
-  
+    
     node.setContext(name, value);
     
     // propagate the context to all nodes that come after

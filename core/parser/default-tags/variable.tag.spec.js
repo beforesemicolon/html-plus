@@ -1,95 +1,109 @@
-const {transform} = require('../../transform');
+const {render} = require('../render');
+const {defaultAttributesMap} = require("../default-attributes");
+const {customAttributesRegistry} = require("../default-attributes/CustomAttributesRegistry");
+const {defaultTagsMap} = require("../default-tags");
+const {customTagsRegistry} = require("../default-tags/CustomTagsRegistry");
 
 describe('Variable Tag', () => {
+  beforeAll(() => {
+    for (let key in defaultAttributesMap) {
+      customAttributesRegistry.define(key, defaultAttributesMap[key])
+    }
+    
+    for (let key in defaultTagsMap) {
+      customTagsRegistry.define(key, defaultTagsMap[key])
+    }
+  })
+  
   describe('should create context data', () => {
-    it('using name and value attributes ', async () => {
+    it('using name and value attributes ', () => {
       const str = '<variable name="test" value="20"></variable><b>{test}</b>';
 
-      await expect(transform(str)).resolves.toEqual('<b>20</b>');
+      expect(render(str)).toEqual('<b>20</b>');
     });
   
-    it('using name attribute and children text', async () => {
+    it('using name attribute and simple text', () => {
       const str = '<variable name="test">20</variable><b>{test}</b>';
   
-      await expect(transform(str)).resolves.toEqual('<b>20</b>');
+      expect(render(str)).toEqual('<b>20</b>');
     });
   
-    it('using name attribute and children text', async () => {
+    it('using name attribute and object content', () => {
       const str = '<variable name="docs">{{page1: "Page 1", page2: "Page 2"}}</variable>{docs}';
     
-      await expect(transform(str)).resolves.toEqual('[object Object]');
+      expect(render(str)).toEqual('[object Object]');
     });
   
-    it('for all sibling nodes after', async () => {
+    it('for all sibling nodes after', () => {
       const str = '<variable name="title">Super Title</variable>' +
         '<div><p>{title}</p></div>'
       ;
     
-      await expect(transform(str)).resolves.toEqual('<div><p>Super Title</p></div>');
+      expect(render(str)).toEqual('<div><p>Super Title</p></div>');
     });
   
-    it('handle complex value logic', async () => {
-      const str = '<variable name="item" value="$data.list.find((item, i) => i === 2)"></variable>{item.name}';
+    it('handle complex value logic', () => {
     
-      await expect(transform(str, {
-        data: {
+      expect(render({
+        content: '<variable name="item" value="list.find((item, i) => i === 2)"></variable>{item.name}',
+        context: {
           list: [{name: 'a'}, {name: 'b'}, {name: 'c'}]
         }
-      })).resolves.toEqual('c');
+      })).toEqual('c');
     });
   
-    it('overriding data', async () => {
-      const str = '<variable name="sample" value="`transformed`"></variable>{sample}';
+    it('overriding data', () => {
+      const str = '<variable name="sample" value="`rendered`"></variable>{sample}';
     
-      await expect(transform(str, {
-        data: {
-          sample: 'transform'
+      expect(render(str, {
+        context: {
+          sample: 'render'
         }
-      })).resolves.toEqual('transformed');
+      })).toEqual('rendered');
     });
   
-    it('overriding other variable', async () => {
-      const str = '<variable name="sample" value="\'transformed\'"></variable>{sample}' +
-        '<div><variable name="sample" value="\'transformed again\'"></variable>{sample}</div>'
+    it('overriding other variable', () => {
+      const str = '<variable name="sample" value="\'rendered\'"></variable>{sample}' +
+        '<div><variable name="sample" value="\'rendered again\'"></variable>{sample}</div>'
       ;
     
-      await expect(transform(str, {
-        data: {
-          sample: 'transform'
+      expect(render(str, {
+        context: {
+          sample: 'render'
         }
-      })).resolves.toEqual('transformed<div>transformed again</div>');
+      })).toEqual('rendered<div>rendered again</div>');
     });
   });
   
   describe('should throw an error', () => {
-    it('when access data outside the scope', async () => {
+    it('when access data outside the scope', () => {
       const str = '{test}<variable name="test" value="20"></variable>';
   
-      await expect(transform(str)).rejects.toThrowError('test is not defined');
+      expect(() => render(str)).toThrowError('test is not defined');
     });
   
-    it('if name not provided', async () => {
+    it('if name not provided', () => {
       const str = '<variable></variable>';
       
-      await expect(transform(str)).rejects.toThrowError('Variable must have a name');
+      expect(() => render(str)).toThrowError('Variable must have a name');
     });
   
-    it('if provided name is empty', async () => {
+    it('if provided name is empty', () => {
       const str = '<variable name=""></variable>';
     
-      await expect(transform(str)).rejects.toThrowError('Variable must have a name');
+      expect(() => render(str)).toThrowError('Variable must have a name');
     });
     
-    it('if provided name is invalid', async () => {
+    it('if provided name is invalid', () => {
       const str = '<variable name="09dd"></variable>';
   
-      await expect(transform(str)).rejects.toThrowError('Invalid variable name "09dd"');
+      expect(() => render(str)).toThrowError('Invalid variable name "09dd"');
     });
     
-    it('if children is a html tag', async () => {
+    it('if children is a html tag', () => {
       const str = '<variable name="test"><b>20</b></variable>';
       
-      await expect(transform(str)).rejects.toThrowError('Variable children cannot be HTML tags');
+      expect(() => render(str)).toThrowError('Variable children cannot be HTML tags');
     });
   });
   
