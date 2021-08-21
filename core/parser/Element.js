@@ -3,7 +3,7 @@ const {Comment} = require('./Comment');
 const {Node} = require('./Node');
 const {Attributes} = require('./Attributes');
 const {Attr} = require('./Attr');
-const {selfClosingPattern, tagPattern, specificAttrPattern} = require('./utils/regexPatterns');
+const {selfClosingPattern, tagCommentPattern, specificAttrPattern} = require('./utils/regexPatterns');
 
 class Element extends Node {
   #tagName;
@@ -43,7 +43,7 @@ class Element extends Node {
   }
   
   set textContent(value) {
-    super.textContent = value.replace(tagPattern, '');
+    super.textContent = value.replace(tagCommentPattern, '');
     this.#children = [];
     
     for (let childNode of this.childNodes) {
@@ -54,7 +54,7 @@ class Element extends Node {
   }
   
   get textContent() {
-    return super.textContent;
+    return this.childNodes.join('').replace(tagCommentPattern, '');
   }
   
   get outerHTML() {
@@ -289,8 +289,8 @@ function parseHTMLString(markup, data = {}) {
   let match;
   let lastIndex = 0;
   
-  while ((match = tagPattern.exec(markup)) !== null) {
-    const [tag, comment, closeOrBang, tagName, attributes, selfCloseSlash] = match;
+  while ((match = tagCommentPattern.exec(markup)) !== null) {
+    const [fullMatch, comment, closeOrBangSymbol, tagName, attributes, selfCloseSlash] = match;
     
     const parentNode = stack[stack.length - 1] || null;
     
@@ -299,20 +299,18 @@ function parseHTMLString(markup, data = {}) {
       parentNode.appendChild(new Text(markup.slice(lastIndex, match.index)));
     }
     
-    lastIndex = tagPattern.lastIndex;
+    lastIndex = tagCommentPattern.lastIndex;
     
     if (comment) {
       parentNode.appendChild(new Comment(comment));
       continue;
     }
     
-    const isClosedTag = stack[stack.length - 1].tagName === tagName;
-    
-    if (selfCloseSlash || selfClosingPattern.test(tagName)) {
+    if (closeOrBangSymbol === '!' || selfCloseSlash || selfClosingPattern.test(tagName)) {
       parentNode.appendChild(new Element(tagName, attributes));
-    } else if (isClosedTag) {
+    } else if (closeOrBangSymbol === '/' && stack[stack.length - 1].tagName === tagName) {
       stack.pop();
-    } else {
+    } else if(!closeOrBangSymbol) {
       const node = new Element(tagName, attributes);
       parentNode.appendChild(node);
       stack.push(node)
