@@ -1,5 +1,4 @@
 class CustomAttribute {
-  bind = false;
   execute = false;
   
   process(value) {

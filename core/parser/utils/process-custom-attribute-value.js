@@ -6,12 +6,10 @@ function processCustomAttributeValue(attr, val, data) {
     val = attr.process(val);
   }
   
-  if (attr.bind) {
-    val = bindData(val, data);
-  }
-  
   if (attr.execute) {
     val = executeCode(`(() => (${val}))()`, data);
+  } else {
+    val = bindData(val, data);
   }
   
   return val;

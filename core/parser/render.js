@@ -49,16 +49,16 @@ function render(dt = defaultOptions) {
         dt.onRender(node);
         return node.toString();
       }
-  
+      
       if (node instanceof Text) {
         if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
           node.textContent = bindData(node.textContent, node.context)
         }
-    
+        
         dt.onRender(node);
         return node.toString();
       }
-  
+      
       if (node.tagName === null) {
         return node.childNodes.map(renderNode).join('');
       }
@@ -68,26 +68,26 @@ function render(dt = defaultOptions) {
       if (customAttr) {
         return renderByAttribute(node, customAttr, dt);
       }
-  
+      
       if (customTagsRegistry.isRegistered(node.tagName)) {
         return renderTag(node, dt);
       }
-  
+      
       for (let attribute of node.attributes) {
         node.setAttribute(attribute.name, bindData(attribute.value, node.context))
       }
-  
+      
       dt.onRender(node);
-  
+      
       const isSelfClosing = selfClosingPattern.test(node.tagName);
       let tag = `<${/doctype/i.test(node.tagName) ? '!' : ''}${node.tagName} ${node.attributes}`.trim();
-  
+      
       if (isSelfClosing) {
         tag = tag.trim() + '>'
       } else {
         tag = tag.trim() + `>${node.childNodes.map(renderNode).join('')}</${node.tagName}>`;
       }
-  
+      
       return tag;
     } catch (e) {
       handleError(e, node, dt.file);
@@ -100,12 +100,13 @@ function renderTag(node, metadata) {
   const tag = customTagsRegistry.get(node.tagName);
   const customAttributes = new Map();
   
-  for (let name in tag.customAttributes) {
-    if (tag.customAttributes.hasOwnProperty(name) && node.hasAttribute(name)) {
-      customAttributes.set(
-        name,
-        processCustomAttributeValue(tag.customAttributes[name], node.getAttribute(name), node.context)
+  for (let attribute of node.attributes) {
+    if (tag.customAttributes && tag.customAttributes.hasOwnProperty(attribute.name)) {
+      customAttributes.set(attribute.name,
+        processCustomAttributeValue(tag.customAttributes[attribute.name], attribute.value, node.context)
       );
+    } else {
+      node.setAttribute(attribute.name, bindData(attribute.value, node.context))
     }
   }
   
@@ -158,7 +159,6 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
   if (val) {
     val = processCustomAttributeValue(handler, val, node.context);
   }
-  
   
   node.removeAttribute(attrName);
   
