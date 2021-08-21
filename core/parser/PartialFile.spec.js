@@ -1,9 +1,7 @@
-const cp = require('child_process');
 const path = require('path');
+const {writeFile, unlink} = require('fs/promises');
 const {PartialFile} = require('./PartialFile');
-const {promisify} = require('util');
-
-const exec = promisify(cp.exec);
+const {RenderNode} = require("./RenderNode");
 
 describe('PartialFile', () => {
   it('should throw error if partial name does not start with underscore', () => {
@@ -23,28 +21,37 @@ describe('PartialFile', () => {
   
   describe('on real file', () => {
     const filePath = path.join(__dirname, '_partial.html');
-  
-    beforeAll(async () => {
-      await exec(`echo "<h2>{title}</h2>" >> ${filePath}`);
-    })
-  
-    afterAll(async () => {
-      await exec(`rm "${filePath}"`);
-    })
-  
-    it('should create a partial file', () => {
-      const partial = new PartialFile(filePath);
+    let partial;
     
-      expect(partial.content).toEqual('<h2>{title}</h2>\n');
+    beforeAll(async () => {
+      await writeFile(filePath, '<h2>{title}</h2>', 'utf-8');
+      partial = new PartialFile(filePath);
+    })
+    
+    afterAll(async () => {
+      await unlink(filePath);
+    })
+    
+    it('should create a partial file', () => {
+      expect(partial.content).toEqual('<h2>{title}</h2>');
     });
-  
+    
     it('should render partial content', () => {
-      const partial = new PartialFile(filePath);
-  
-     return expect(partial.render({title: 'My partial'}))
-       .toEqual('<h2>My partial</h2>')
+      const renderNode = partial.render({title: 'My partial'});
+      
+      expect(renderNode).toBeInstanceOf(RenderNode);
+      expect(renderNode)
+        .toEqual({
+          "context": {
+            "title": "My partial"
+          },
+          "file": {
+            "resources": []
+          },
+          "htmlString": "<h2>{title}</h2>"
+        })
     });
   });
   
- 
+  
 });
