@@ -1,4 +1,4 @@
-async function injectTagStylesToPage(html, styles) {
+function injectTagStylesToPage(html, styles) {
   const endOfHeadPattern = /<\/head>/gm;
   
   return html.replace(endOfHeadPattern, m => {

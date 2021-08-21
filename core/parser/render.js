@@ -16,6 +16,7 @@ const defaultOptions = {
   },
   file: null,
   node: null,
+  nodeFile: null,
   partialFiles: [],
   rootNode: null,
   content: '',
@@ -27,7 +28,7 @@ function render(dt = defaultOptions) {
     dt = {content: dt};
   }
   
-  dt = {...defaultOptions, ...dt};
+  dt = {...defaultOptions, ...dt, nodeFile: dt.nodeFile || dt.file};
   
   let root;
   
@@ -46,7 +47,7 @@ function render(dt = defaultOptions) {
   return (function renderNode(node) {
     try {
       if (node instanceof Comment) {
-        dt.onRender(node);
+        dt.onRender(node, dt.file);
         return node.toString();
       }
       
@@ -55,7 +56,7 @@ function render(dt = defaultOptions) {
           node.textContent = bindData(node.textContent, node.context)
         }
         
-        dt.onRender(node);
+        dt.onRender(node, dt.file);
         return node.toString();
       }
       
@@ -77,7 +78,7 @@ function render(dt = defaultOptions) {
         node.setAttribute(attribute.name, bindData(attribute.value, node.context))
       }
       
-      dt.onRender(node);
+      dt.onRender(node, dt.file);
       
       const isSelfClosing = selfClosingPattern.test(node.tagName);
       let tag = `<${/doctype/i.test(node.tagName) ? '!' : ''}${node.tagName} ${node.attributes}`.trim();
@@ -90,7 +91,7 @@ function render(dt = defaultOptions) {
       
       return tag;
     } catch (e) {
-      handleError(e, node, dt.file);
+      handleError(e, node, dt.nodeFile);
     }
   })(root)
 }
@@ -114,6 +115,8 @@ function renderTag(node, metadata) {
     node._customAttributes = customAttributes;
   }
   
+  metadata.onRender(node, metadata.file);
+  
   let instance;
   
   if (tag.toString().startsWith('class')) {
@@ -136,7 +139,7 @@ function renderTag(node, metadata) {
     result = render({
       ...metadata,
       node: null,
-      file: result.file || metadata.file,
+      nodeFile: result.file,
       rootNode: node,
       content: result.htmlString,
       context: {...node.context, ...result.context}
@@ -176,7 +179,7 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
     return render({
       ...metadata,
       node: null,
-      file: result.file || metadata.file,
+      nodeFile: result.file,
       rootNode: node,
       content: result.htmlString,
       context: {...node.context, ...result.context}
