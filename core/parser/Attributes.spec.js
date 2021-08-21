@@ -10,7 +10,7 @@ describe('Attributes', () => {
   
   it('should be iterable', () => {
     const testCases = [
-      ['if', 'shouldShow'],
+      ['#if', 'shouldShow'],
       ['href', 'sample/path'],
       ['download', null],
     ];
@@ -29,7 +29,7 @@ describe('Attributes', () => {
   });
   
   it('should get attribute by name', () => {
-    expect(attributes.getNamedItem('if')).toBeInstanceOf(Attr);
+    expect(attributes.getNamedItem('#if')).toBeInstanceOf(Attr);
     expect(attributes.getNamedItem('download').value).toEqual(null);
     expect(attributes.getNamedItem('href').value).toEqual('sample/path');
   });
@@ -47,5 +47,11 @@ describe('Attributes', () => {
     expect(attr.toString()).toBe('class="one"');
   
     fn.mockRestore();
+  });
+  
+  it('should not render special attributes', () => {
+    const attr = new Attributes('class="one" #if="logic" #repeat="3" id="sample"');
+  
+    expect(attr.toString()).toBe('class="one" #if="logic" #repeat="3" id="sample"');
   });
 });

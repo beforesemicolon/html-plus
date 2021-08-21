@@ -6,87 +6,87 @@ const {customAttributesRegistry} = require("./default-attributes/CustomAttribute
 const {customTagsRegistry} = require("./default-tags/CustomTagsRegistry");
 const {defaultTagsMap} = require("./default-tags");
 const {defaultAttributesName} = require("./default-attributes");
-const {bindData} = require("../utils/bind-data");
+const {bindData} = require("./utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
 const {parseHTMLString, Element} = require("./Element");
 
 const defaultOptions = {
-  onRender() {},
+  onRender() {
+  },
   file: null,
+  node: null,
   partialFiles: [],
   rootNode: null,
   content: '',
   context: {}
 }
 
-function renderer(dt = defaultOptions) {
-  dt = {...defaultOptions, ...dt};
-  const root = parseHTMLString(dt.content || dt.file.toString(), dt.context);
-  const defaultAttributesPattern = new RegExp(`#(${defaultAttributesName.join('|')})`, 'ig');
+function render(dt = defaultOptions) {
+  if (typeof dt === 'string') {
+    dt = {content: dt};
+  }
   
-  return (function render(node) {
+  dt = {...defaultOptions, ...dt};
+  
+  let root;
+  
+  if (dt.node && dt.node instanceof Element) {
+    root = dt.node;
+  } else {
+    let content = (dt.content || dt.file?.toString()) ?? '';
+    
+    if (!content) {
+        return '';
+    }
+    
+    root = parseHTMLString(content, dt.context);
+  }
+  
+  return (function renderNode(node) {
     if (node instanceof Comment) {
       dt.onRender(node);
       return node.toString();
     }
-
+    
     if (node instanceof Text) {
       if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
         node.textContent = bindData(node.textContent, node.context)
       }
-  
+      
       dt.onRender(node);
       return node.toString();
     }
-
+    
     if (node.tagName === null) {
-      return node.childNodes.map(render).join('');
+      return node.childNodes.map(renderNode).join('');
     }
-
-    let attributeNode = null;
-    const matchedCustomAttributes = node.attributes.toString().match(defaultAttributesPattern);
-
-    if (matchedCustomAttributes) {
-      if (matchedCustomAttributes.includes('#if')) {
-        attributeNode = renderByAttribute(node, '#if', dt);
-      } else if (matchedCustomAttributes.includes('#repeat')) {
-        attributeNode = renderByAttribute(node, '#repeat', dt);
-      } else {
-        for (let attrName of matchedCustomAttributes) {
-          attributeNode = renderByAttribute(node, attrName, dt);
-          break;
-        }
+    
+    for (let attr of defaultAttributesName) {
+      if (node.hasAttribute(`#${attr}`)) {
+        return renderByAttribute(node, `#${attr}`, dt);
       }
     }
-
-    if (typeof attributeNode === 'string') {
-      return attributeNode;
+    
+    if (customTagsRegistry.isRegistered(node.tagName)) {
+      return renderTag(node, dt);
     }
-
-    if (!attributeNode || node === attributeNode) {
-      if (customTagsRegistry.isRegistered(node.tagName)) {
-        return renderTag(node, dt);
-      }
-
-      for (let attribute of node.attributes) {
-        node.setAttribute(attribute.name, bindData(attribute.value, node.context))
-      }
-  
-      dt.onRender(node);
-
-      const isSelfClosing = selfClosingPattern.test(node.tagName);
-      let tag = `<${/doctype/i.test(node.tagName) ? '!' : ''}${node.tagName} ${node.attributes}`.trim();
-
-      if (isSelfClosing) {
-        tag = tag.trim() + '>'
-      } else {
-        tag = tag.trim() + `>${node.childNodes.map(render).join('')}</${node.tagName}>`;
-      }
-
-      return tag;
+    
+    for (let attribute of node.attributes) {
+      node.setAttribute(attribute.name, bindData(attribute.value, node.context))
     }
-
-    return render(attributeNode);
+    
+    dt.onRender(node);
+    
+    const isSelfClosing = selfClosingPattern.test(node.tagName);
+    let tag = `<${/doctype/i.test(node.tagName) ? '!' : ''}${node.tagName} ${node.attributes}`.trim();
+    
+    if (isSelfClosing) {
+      tag = tag.trim() + '>'
+    } else {
+      tag = tag.trim() + `>${node.childNodes.map(renderNode).join('')}</${node.tagName}>`;
+    }
+    
+    return tag;
   })(root)
 }
 
@@ -127,8 +127,9 @@ function renderTag(node, metadata) {
   }
   
   if (result instanceof RenderNode) {
-    result = renderer({
+    result = render({
       ...metadata,
+      node: null,
       file: result.file || metadata.file,
       rootNode: node,
       content: result.htmlString,
@@ -153,6 +154,7 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
     val = processCustomAttributeValue(handler, val, node.context);
   }
   
+  
   node.removeAttribute(attrName);
   
   let result = handler.render(val, node);
@@ -161,13 +163,14 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
     return '';
   }
   
-  if (typeof result === 'string' || result instanceof Element) {
+  if (typeof result === 'string') {
     return result;
   }
   
   if (result instanceof RenderNode) {
-    return renderer({
+    return render({
       ...metadata,
+      node: null,
       file: result.file || metadata.file,
       rootNode: node,
       content: result.htmlString,
@@ -175,7 +178,7 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
     });
   }
   
-  return node;
+  return render({...metadata, node: result});
 }
 
-module.exports.renderer = renderer;
+module.exports.render = render;

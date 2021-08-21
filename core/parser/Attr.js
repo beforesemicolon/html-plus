@@ -1,13 +1,10 @@
-const {customAttributesRegistry} = require('./default-attributes/CustomAttributesRegistry');
-
 class Attr {
   #name;
   #value;
-  #isSpecial;
   
   constructor(name, value = null) {
     this.#name = name.toLowerCase();
-    this.#value = (value || '').trim() || null;
+    this.#value = value;
   }
   
   get name() {
@@ -19,7 +16,9 @@ class Attr {
   }
   
   toString() {
-    return (this.value ? `${this.name}="${this.value}"` : this.name);
+    // if the value is null is because the value was explicitly left out
+    // otherwise it can contain value or be an empty string
+    return (this.value === null ? this.name : `${this.name}="${this.value}"`);
   }
 }
 

@@ -9,10 +9,16 @@ class Attributes {
     let match = '';
     const iteratedAttributes = new Set();
   
-    // remove duplicated attributes
+    // manually collect attributes to remove duplicated attributes
     while ((match = attrPattern.exec(attributeString))) {
       if (!iteratedAttributes.has(match[1])) {
-        const attr = new Attr(match[1], match[2] || match[3] || match[4] || null);
+        const name = match[1];
+        const val = match[2] || match[3] || match[4] || (
+          // check if the value was explicitly left our is just empty
+          new RegExp(`^\\s*${name}\\s*=`).test(match[0]) ? '' : null
+        );
+        
+        const attr = new Attr(name, val);
   
         this.#attributeString += attr + ' ';
         this.#map.set(attr.name, attr);
