@@ -6,7 +6,7 @@ const {isNumber} = require('util');
 function processNodeAttributes(attributes = {}, customAttributes = {}, data = {}) {
   
   for (const attrName in attributes) {
-    if (attributes.hasOwnProperty(attrName)) {
+    if (attributes.hasOwnProperty(attrName) && !attrName.startsWith('on')) {
       let val = (undoSpecialCharactersInHTML(attributes[attrName])).trim();
 
       if (val) {
