@@ -4,7 +4,7 @@ class Ignore extends CustomAttribute {
   execute = true;
   
   render(value, node) {
-    let content = `${node.innerHTML}${value || ''}`
+    let content = `${node.innerHTML}${value || ''}`;
     
     if (node.hasAttribute('escape')) {
       content = content
@@ -13,10 +13,11 @@ class Ignore extends CustomAttribute {
       
       node.removeAttribute('escape');
     }
-  
-    node.removeAttribute('fragment');
     
-    return node.outerHTML;
+    const clone = node.cloneNode();
+    clone.innerHTML = content;
+  
+    return clone.outerHTML;
   }
 }
 

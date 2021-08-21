@@ -1,33 +1,47 @@
-const {transform} = require('../../transform');
+const {render} = require('../render');
+const {defaultAttributesMap} = require("../default-attributes");
+const {customAttributesRegistry} = require("../default-attributes/CustomAttributesRegistry");
+const {defaultTagsMap} = require("../default-tags");
+const {customTagsRegistry} = require("../default-tags/CustomTagsRegistry");
 
 describe('Fragment Attribute', () => {
-  it('should render children content only', async () => {
+  beforeAll(() => {
+    for (let key in defaultAttributesMap) {
+      customAttributesRegistry.define(key, defaultAttributesMap[key])
+    }
+    
+    for (let key in defaultTagsMap) {
+      customTagsRegistry.define(key, defaultTagsMap[key])
+    }
+  })
+  
+  it('should render children content only', () => {
     const str = '<div #fragment><b>child text</b></div>'
     
-    await expect(transform(str)).resolves.toEqual('<b>child text</b>');
+    expect(render(str)).toEqual('<b>child text</b>');
   });
   
-  it('should render empty if no children', async () => {
+  it('should render empty if no children', () => {
     const str = '<div #fragment></div>'
     
-    await expect(transform(str)).resolves.toEqual('');
+    expect(render(str)).toEqual('');
   });
   
   describe('should work with other attributes', () => {
-    it('repeat', async () => {
-      await expect(transform('<b #fragment #repeat="3">{$item}</b>')).resolves.toEqual('123');
+    it('repeat', () => {
+      expect(render('<b #fragment #repeat="3">{$item}</b>')).toEqual('123');
     });
     
-    it('attr', async () => {
-      await expect(transform('<b #attr="class, cls, true" #fragment>item</b>')).resolves.toEqual('item');
+    it('attr', () => {
+      expect(render('<b #attr="class, cls, true" #fragment>item</b>')).toEqual('item');
     });
     
-    it('if', async () => {
-      await expect(transform('<b #if="true" #fragment>item</b>')).resolves.toEqual('item');
+    it('if', () => {
+      expect(render('<b #if="true" #fragment>item</b>')).toEqual('item');
     });
     
-    it('ignore', async () => {
-      await expect(transform('<b #ignore #fragment>{item}</b>')).resolves.toEqual('<b>{item}</b>');
+    it('ignore', () => {
+      expect(() => render('<b #ignore #fragment>{item}</b>')).toThrowError('item is not defined');
     });
   });
 });

@@ -1,52 +1,65 @@
-const {transform} = require('../../transform');
+const {render} = require('../render');
+const {defaultAttributesMap} = require("../default-attributes");
+const {customAttributesRegistry} = require("../default-attributes/CustomAttributesRegistry");
+const {defaultTagsMap} = require("../default-tags");
+const {customTagsRegistry} = require("../default-tags/CustomTagsRegistry");
 
 describe('Ignore Attribute', () => {
+  beforeAll(() => {
+    for (let key in defaultAttributesMap) {
+      customAttributesRegistry.define(key, defaultAttributesMap[key])
+    }
+    
+    for (let key in defaultTagsMap) {
+      customTagsRegistry.define(key, defaultTagsMap[key])
+    }
+  })
+  
   describe('should not bind data', () => {
-    it('when no value', async () => {
+    it('when no value', () => {
       const str = '<div #ignore><b>{sample}</b></div>'
   
-      await expect(transform(str)).resolves.toEqual('<div><b>{sample}</b></div>');
+      expect(render(str)).toEqual('<div><b>{sample}</b></div>');
     });
   
-    it('with value', async () => {
-      const str = '<div #ignore="$data.content"><b>{sample}</b></div>'
-    
-      await expect(transform(str, {
-        data: {
+    it('with value', () => {
+      expect(render({
+        content: '<div #ignore="content"><b>{sample}</b></div>',
+        context: {
           content: '<p>Sample</p>'
         }
-      })).resolves.toEqual('<div><b>{sample}</b><p>Sample</p></div>');
+      })).toEqual('<div><b>{sample}</b><p>Sample</p></div>');
     });
   });
   
-  it('should escape html', async () => {
-    const str = '<div #ignore escape><b>{sample}</b></div>'
+  it('should escape html', () => {
     
-    await expect(transform(str, {
-      data: {
+    expect(render({
+      content: '<div #ignore escape><b>{sample}</b></div>',
+      context: {
         content: '<p>Sample</p>'
       }
-    })).resolves.toEqual('<div>&lt;b&gt;{sample}&lt;/b&gt;</div>');
+    })).toEqual('<div>&lt;b&gt;{sample}&lt;/b&gt;</div>');
   });
   
   describe('should work with other attributes', () => {
-    it('repeat', async () => {
-      await expect(transform('<b #ignore #repeat="3">{$item}</b>'))
-        .resolves.toEqual('<b>{$item}</b><b>{$item}</b><b>{$item}</b>');
+    it('repeat', () => {
+      expect(render('<b #ignore #repeat="3">{$item}</b>'))
+        .toEqual('<b>{$item}</b><b>{$item}</b><b>{$item}</b>');
     });
   
-    it('fragment', async () => {
-      await expect(transform('<b #ignore #fragment>{item}</b>')).resolves.toEqual('<b>{item}</b>');
+    it('fragment', () => {
+      expect(() => render('<b #ignore #fragment>{item}</b>')).toThrowError('item is not defined');
     });
   
-    it('if', async () => {
-      await expect(transform('<b #if="false" #ignore>{item}</b>')).resolves.toEqual('');
-      await expect(transform('<b #if="true" #ignore>{item}</b>')).resolves.toEqual('<b>{item}</b>');
+    it('if', () => {
+      expect(render('<b #if="false" #ignore>{item}</b>')).toEqual('');
+      expect(render('<b #if="true" #ignore>{item}</b>')).toEqual('<b>{item}</b>');
     });
     
-    it('attr', async () => {
-      await expect(transform('<b #attr="class, cls, true" #ignore>{item}</b>'))
-        .resolves.toEqual('<b class="cls">{item}</b>');
+    it('attr', () => {
+      expect(render('<b #attr="class, cls, true" #ignore>{item}</b>'))
+        .toEqual('<b class="cls">{item}</b>');
     });
   });
 });

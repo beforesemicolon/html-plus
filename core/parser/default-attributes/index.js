@@ -7,11 +7,11 @@ const {Attr} = require('./attr.attribute');
 
 // the order of this list is essential to make things work
 const defaultAttributes = [
-  If,
-  Repeat,
-  Attr,
-  Ignore,
-  Fragment,
+  If, // decides if the node will render
+  Repeat, // decides how many times the rendering node will repeat
+  Fragment, // decides if only the content of the node will be rendered
+  Attr, // defines the attributes of the rendering node
+  Ignore, // decides if the node will be rendered without being compiled
 ]
 
 const defaultAttributesName = [];
