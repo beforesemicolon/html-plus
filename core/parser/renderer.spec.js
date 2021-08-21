@@ -58,14 +58,14 @@ describe('render', () => {
   beforeAll(async () => {
     await writeFile(path.resolve(__dirname, '_head.html'), headContent, 'utf-8');
     await writeFile(path.resolve(__dirname, 'page.html'), pageContent, 'utf-8');
-  
+    
     pageFile = new File(path.resolve(__dirname, 'page.html'), __dirname);
     headFile = new PartialFile(path.resolve(__dirname, '_head.html'), __dirname);
     
     for (let key in defaultAttributesMap) {
       customAttributesRegistry.define(key, defaultAttributesMap[key])
     }
-  
+    
     for (let key in defaultTagsMap) {
       customTagsRegistry.define(key, defaultTagsMap[key])
     }
@@ -77,6 +77,7 @@ describe('render', () => {
   })
   
   it('should render page', () => {
+    
     expect(render({
       file: pageFile,
       partialFiles: [headFile],
@@ -130,5 +131,61 @@ describe('render', () => {
  </script>
 </body>
 </html>`.replace(/\s+/g, ''))
+  });
+  
+  it('should call', () => {
+  
+  });
+  
+  describe('should handle errors', () => {
+    it('in text', () => {
+      try {
+        render('<div><p>{text}</p></div>')
+      } catch (e) {
+        expect(e.message).toEqual('Error: [91mtext is not defined [39m\n' +
+          'Markup: [32m<p>[91m[39m[32m[39m\n' +
+          '[32m[91m{text} <= Error: text is not defined [39m[32m[39m\n' +
+          '[32m[91m[39m[32m</p>[39m')
+      }
+    });
+    
+    it('in attributes', () => {
+      try {
+        render('<div><p class="{cls}">Lorem ipsum dolor.</p></div>')
+      } catch (e) {
+        expect(e.message).toEqual('Error: [91mcls is not defined[39m\n' +
+          'Markup: [32m<p class="{cls}">Lorem ipsum dolor.</p>[39m')
+      }
+    });
+    
+    it('inside custom tags', () => {
+      customTagsRegistry.define('bfs-test', class {
+        constructor() {
+          throw new Error('tag failed')
+        }
+      })
+  
+      try {
+        render('<div><bfs-test></bfs-test></div>')
+      } catch (e) {
+        expect(e.message).toEqual('Error: [91mtag failed[39m\n' +
+          'Markup: [32m<bfs-test></bfs-test>[39m')
+      }
+    });
+    
+    it('inside custom attributes', () => {
+      customAttributesRegistry.define('test', class {
+        constructor() {
+          throw new Error('attr failed')
+        }
+      })
+  
+      try {
+        render('<div #test></div>')
+      } catch (e) {
+        expect(e.message).toEqual('Error: [91mattr failed[39m\n' +
+          'Markup: [32m<div #test></div>[39m')
+      }
+    });
   });
 });

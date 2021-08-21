@@ -1,4 +1,4 @@
-const {HTMLElement} = require("node-html-parser");
+const {Element} = require('./Element');
 const {handleError} = require('./handle-error');
 const {Text} = require('./Text');
 
@@ -15,7 +15,7 @@ describe('handleError', () => {
   });
   
   it('should throw error with markup', () => {
-    const htmlNode = new HTMLElement('h1', {id: 'main-title'}, 'id="main-title"', null);
+    const htmlNode = new Element('h1', 'id="main-title"');
     htmlNode.textContent = 'my title';
   
     try {
@@ -27,14 +27,14 @@ describe('handleError', () => {
   });
   
   it('should throw error with markup and file info', () => {
-    const htmlNode = new HTMLElement('h1', {id: 'main-title'}, 'id="main-title"', null);
+    const htmlNode = new Element('h1', 'id="main-title"');
     htmlNode.textContent = 'my title';
     
     try {
       handleError(
         {message: 'not so good'},
         htmlNode,
-        {file: {filePath: '/path/to/file.html'}})
+        {filePath: '/path/to/file.html'})
     } catch(e) {
         expect(e.message.includes('not so good')).toBeTruthy()
         expect(e.message.includes('/path/to/file.html')).toBeTruthy()
@@ -43,14 +43,14 @@ describe('handleError', () => {
   });
   
   it('should throw error with markup and file info replacing text', () => {
-    const htmlNode = new HTMLElement('h1', {id: 'main-title'}, 'id="main-title"', null);
+    const htmlNode = new Element('h1', 'id="main-title"');
     htmlNode.textContent = 'my title';
   
     try {
       handleError(
         {message: 'Failed <=> my title'},
         htmlNode,
-        {file: {filePath: '/path/to/file.html'}})
+        {filePath: '/path/to/file.html'})
     } catch(e) {
       expect(e.message.includes('my title <= Error: Failed')).toBeTruthy()
     }

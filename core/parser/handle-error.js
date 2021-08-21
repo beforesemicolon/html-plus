@@ -4,7 +4,7 @@ function escapeRegex(string) {
   return string.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
-function handleError(e, node = {}, options = {}) {
+function handleError(e, node = {}, file) {
   let error = e.message;
   
   if (node.nodeName === '#text' || node.nodeName === '#comment') {
@@ -20,8 +20,8 @@ function handleError(e, node = {}, options = {}) {
     ? ((node).outerHTML ?? '').replace(new RegExp(escapeRegex(text), 'gm'), chalk.redBright(`\n${text.trim()} <= Error: ${errMsg}\n`))
     : node.outerHTML ?? '';
   
-  const fileInfo = options.file
-    ? `\nFile: ${chalk.yellow(options.file.filePath)}`
+  const fileInfo = file
+    ? `\nFile: ${chalk.yellow(file.filePath)}`
     : '';
   
   throw new Error(

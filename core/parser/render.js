@@ -9,6 +9,7 @@ const {defaultAttributesName} = require("./default-attributes");
 const {bindData} = require("./utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
 const {parseHTMLString, Element} = require("./Element");
+const {handleError} = require("./handle-error");
 
 const defaultOptions = {
   onRender() {
@@ -36,57 +37,63 @@ function render(dt = defaultOptions) {
     let content = (dt.content || dt.file?.toString()) ?? '';
     
     if (!content) {
-        return '';
+      return '';
     }
     
     root = parseHTMLString(content, dt.context);
   }
   
+  const customAttributes = Array.from(new Set([...defaultAttributesName, ...customAttributesRegistry.registeredItems]));
+  
   return (function renderNode(node) {
-    if (node instanceof Comment) {
-      dt.onRender(node);
-      return node.toString();
-    }
-    
-    if (node instanceof Text) {
-      if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
-        node.textContent = bindData(node.textContent, node.context)
+    try {
+      if (node instanceof Comment) {
+        dt.onRender(node);
+        return node.toString();
       }
-      
-      dt.onRender(node);
-      return node.toString();
-    }
+  
+      if (node instanceof Text) {
+        if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
+          node.textContent = bindData(node.textContent, node.context)
+        }
     
-    if (node.tagName === null) {
-      return node.childNodes.map(renderNode).join('');
-    }
-    
-    for (let attr of defaultAttributesName) {
-      if (node.hasAttribute(`#${attr}`)) {
-        return renderByAttribute(node, `#${attr}`, dt);
+        dt.onRender(node);
+        return node.toString();
       }
+  
+      if (node.tagName === null) {
+        return node.childNodes.map(renderNode).join('');
+      }
+  
+      for (let attr of customAttributes) {
+        if (node.hasAttribute(`#${attr}`)) {
+          return renderByAttribute(node, `#${attr}`, dt);
+        }
+      }
+  
+      if (customTagsRegistry.isRegistered(node.tagName)) {
+        return renderTag(node, dt);
+      }
+  
+      for (let attribute of node.attributes) {
+        node.setAttribute(attribute.name, bindData(attribute.value, node.context))
+      }
+  
+      dt.onRender(node);
+  
+      const isSelfClosing = selfClosingPattern.test(node.tagName);
+      let tag = `<${/doctype/i.test(node.tagName) ? '!' : ''}${node.tagName} ${node.attributes}`.trim();
+  
+      if (isSelfClosing) {
+        tag = tag.trim() + '>'
+      } else {
+        tag = tag.trim() + `>${node.childNodes.map(renderNode).join('')}</${node.tagName}>`;
+      }
+  
+      return tag;
+    } catch (e) {
+      handleError(e, node, dt.file);
     }
-    
-    if (customTagsRegistry.isRegistered(node.tagName)) {
-      return renderTag(node, dt);
-    }
-    
-    for (let attribute of node.attributes) {
-      node.setAttribute(attribute.name, bindData(attribute.value, node.context))
-    }
-    
-    dt.onRender(node);
-    
-    const isSelfClosing = selfClosingPattern.test(node.tagName);
-    let tag = `<${/doctype/i.test(node.tagName) ? '!' : ''}${node.tagName} ${node.attributes}`.trim();
-    
-    if (isSelfClosing) {
-      tag = tag.trim() + '>'
-    } else {
-      tag = tag.trim() + `>${node.childNodes.map(renderNode).join('')}</${node.tagName}>`;
-    }
-    
-    return tag;
   })(root)
 }
 
