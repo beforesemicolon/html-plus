@@ -75,7 +75,9 @@ function render(dt = defaultOptions) {
       }
       
       for (let attribute of node.attributes) {
-        node.setAttribute(attribute.name, bindData(attribute.value, node.context))
+        if (!attribute.name.startsWith('on')) {
+          node.setAttribute(attribute.name, bindData(attribute.value, node.context))
+        }
       }
       
       dt.onRender(node, dt.file);
@@ -106,7 +108,7 @@ function renderTag(node, metadata) {
       customAttributes.set(attribute.name,
         processCustomAttributeValue(tag.customAttributes[attribute.name], attribute.value, node.context)
       );
-    } else {
+    } else if(!attribute.name.startsWith('on')) {
       node.setAttribute(attribute.name, bindData(attribute.value, node.context))
     }
   }

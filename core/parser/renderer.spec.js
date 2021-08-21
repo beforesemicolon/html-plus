@@ -7,6 +7,7 @@ const {customTagsRegistry} = require("./default-tags/CustomTagsRegistry");
 const {PartialFile} = require("./PartialFile");
 const {File} = require("./File");
 const {render} = require("./render");
+const {parseHTMLString} = require("./Element");
 
 describe('render', () => {
   const headContent = `<head>
@@ -130,10 +131,6 @@ describe('render', () => {
  </script>
 </body>
 </html>`.replace(/\s+/g, ''))
-  });
-  
-  it('should call', () => {
-  
   });
   
   describe('should handle errors', () => {

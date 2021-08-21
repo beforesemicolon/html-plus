@@ -109,7 +109,8 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   
         try {
           const onBeforeRender = traverseNode(pagesDirectoryPath);
-          
+  
+          console.time('render');
           let html = render({
             file,
             content: file.content,
@@ -134,6 +135,8 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
           if (usedTagsWithStyle.size) {
             html = injectTagStylesToPage(html, await collectPageTagsStyle(usedTagsWithStyle, customTagStyles))
           }
+  
+          console.timeEnd('render');
           
           callback(null, html);
     
