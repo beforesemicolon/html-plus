@@ -77,7 +77,6 @@ describe('render', () => {
   })
   
   it('should render page', () => {
-    
     expect(render({
       file: pageFile,
       partialFiles: [headFile],

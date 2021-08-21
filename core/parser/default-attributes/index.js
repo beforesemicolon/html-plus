@@ -5,14 +5,24 @@ const {Fragment} = require('./fragment.attribute');
 const {Ignore} = require('./ignore.attribute');
 const {Attr} = require('./attr.attribute');
 
-// the order of this list is essential to make things work
 const defaultAttributes = [
-  If, // decides if the node will render
-  Repeat, // decides how many times the rendering node will repeat
-  Fragment, // decides if only the content of the node will be rendered
-  Attr, // defines the attributes of the rendering node
-  Ignore, // decides if the node will be rendered without being compiled
+  If,
+  Repeat,
+  Fragment,
+  Attr,
+  Ignore,
 ]
+
+// the order the attributes should be picked on the tag
+// will determine how to successfully render the node when multiple of these
+// are present on the node
+const attrsPriorities = {
+  '#if': 1,
+  '#repeat': 2,
+  '#fragment': 3,
+  '#attr': 4,
+  '#ignore': 5
+}
 
 const defaultAttributesName = [];
 const defaultAttributesMap = {}
@@ -26,6 +36,7 @@ for (let attribute of defaultAttributes) {
 module.exports.defaultAttributesMap = defaultAttributesMap;
 module.exports.defaultAttributes = defaultAttributes;
 module.exports.defaultAttributesName = defaultAttributesName;
+module.exports.attrsPriorities = attrsPriorities;
 module.exports.If = If;
 module.exports.Repeat = Repeat;
 module.exports.Attr = Attr;

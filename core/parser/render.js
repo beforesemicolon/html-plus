@@ -5,11 +5,11 @@ const {selfClosingPattern} = require("./utils/regexPatterns");
 const {customAttributesRegistry} = require("./default-attributes/CustomAttributesRegistry");
 const {customTagsRegistry} = require("./default-tags/CustomTagsRegistry");
 const {defaultTagsMap} = require("./default-tags");
-const {defaultAttributesName} = require("./default-attributes");
 const {bindData} = require("./utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
 const {parseHTMLString, Element} = require("./Element");
 const {handleError} = require("./handle-error");
+const {getNextCustomAttribute} = require("./utils/getNextCustomAttribute");
 
 const defaultOptions = {
   onRender() {
@@ -43,8 +43,6 @@ function render(dt = defaultOptions) {
     root = parseHTMLString(content, dt.context);
   }
   
-  const customAttributes = Array.from(new Set([...defaultAttributesName, ...customAttributesRegistry.registeredItems]));
-  
   return (function renderNode(node) {
     try {
       if (node instanceof Comment) {
@@ -64,11 +62,11 @@ function render(dt = defaultOptions) {
       if (node.tagName === null) {
         return node.childNodes.map(renderNode).join('');
       }
-  
-      for (let attr of customAttributes) {
-        if (node.hasAttribute(`#${attr}`)) {
-          return renderByAttribute(node, `#${attr}`, dt);
-        }
+      
+      const customAttr = getNextCustomAttribute(node.getAttributeNames());
+      
+      if (customAttr) {
+        return renderByAttribute(node, customAttr, dt);
       }
   
       if (customTagsRegistry.isRegistered(node.tagName)) {
