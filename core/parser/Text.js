@@ -1,10 +1,10 @@
 const {Node} = require('./Node');
-const {tagPattern} = require("./utils/regexPatterns");
+const {tagCommentPattern} = require("./utils/regexPatterns");
 
 class Text extends Node {
   constructor(value) {
     super();
-    super.textContent = value.replace(tagPattern, '');
+    super.textContent = value.replace(tagCommentPattern, '');
   }
   
   get nodeName() {
@@ -29,7 +29,7 @@ class Text extends Node {
   }
   
   toString() {
-    return this.nodeValue;
+    return this.textContent;
   }
   
   appendChild() {}
@@ -38,8 +38,8 @@ class Text extends Node {
   
   insertBefore() {}
   
-  cloneNode(deep = false) {
-    return new Text(deep ? this.nodeValue : '');
+  cloneNode() {
+    return new Text(this.textContent);
   }
 }
 
