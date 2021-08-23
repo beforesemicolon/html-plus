@@ -1,4 +1,4 @@
-const {extractExecutableSnippetFromString, findCode} = require('./extract-executable-snippet-from-string');
+const {extractExecutableSnippetFromString} = require('./extract-executable-snippet-from-string');
 
 describe('extractExecutableSnippetFromString', () => {
   it('should extract executable snippets', () => {
