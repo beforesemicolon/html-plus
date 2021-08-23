@@ -17,7 +17,7 @@ class ApiDescriptionList {
   }
   
   render() {
-    const {descriptions} = this.node.attributes;
+    const descriptions = this.node.getAttribute('descriptions');
     
     return `
     <dl class="api-description-list">

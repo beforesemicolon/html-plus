@@ -17,7 +17,7 @@ class ContentNavigation {
   }
   
   render() {
-    const {currentPage} = this.node.attributes;
+    const currentPage = this.node.getAttribute('currentPage');
     
     if (currentPage?.next || currentPage?.prev) {
       return `

@@ -17,7 +17,9 @@ class ApiTableDetails {
   }
   
   render() {
-    const {name, details, heading} = this.node.attributes;
+    const name = this.node.getAttribute('name');
+    const details = this.node.getAttribute('details');
+    const heading = this.node.getAttribute('heading');
     
     return `
       <table class="api-reference-details">

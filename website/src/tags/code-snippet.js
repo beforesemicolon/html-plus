@@ -20,8 +20,8 @@ class CodeSnippet {
   
   constructor(node) {
     this.node = node;
-    const {language = 'bash'} = node.attributes;
-    let content = this.node.innerHTML.trim();
+    const language = node.getAttribute('language') || 'bash';
+    let content = this.node.innerHTML;
     
     this.content = hljs.highlight(content, {language}).value;
     this.language = language;

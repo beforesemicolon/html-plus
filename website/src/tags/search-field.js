@@ -3,7 +3,7 @@ const path = require('path');
 
 class SearchField {
   constructor(node) {
-    this.attributes = node.attributes;
+    this.node = node;
   }
   
   static get style() {
@@ -11,7 +11,8 @@ class SearchField {
   }
   
   render() {
-    const {style, placeholder} = this.attributes;
+    const style = this.node.getAttribute('style');
+    const placeholder = this.node.getAttribute('placeholder');
     
     return `
       <label class="search-field" aria-label="search field" ${style ? `style=${style}` : ''}>
