@@ -104,9 +104,10 @@ function renderTag(node, metadata) {
   
   for (let attribute of node.attributes) {
     if (tag.customAttributes && tag.customAttributes.hasOwnProperty(attribute.name)) {
-      customAttributes.set(attribute.name,
-        processCustomAttributeValue(tag.customAttributes[attribute.name], attribute.value, node.context)
-      );
+      let val = parseValue(processCustomAttributeValue(tag.customAttributes[attribute.name], attribute.value, node.context))
+    
+      customAttributes.set(attribute.name, val);
+      
     } else if(!attribute.name.startsWith('on')) {
       node.setAttribute(attribute.name, bindData(attribute.value, node.context))
     }
@@ -161,7 +162,7 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
   let val = node.getAttribute(attrName);
   
   if (val) {
-    val = processCustomAttributeValue(handler, val, node.context);
+    val = parseValue(processCustomAttributeValue(handler, val, node.context));
   }
   
   node.removeAttribute(attrName);
@@ -188,6 +189,17 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
   }
   
   return render({...metadata, node: result});
+}
+
+function parseValue(val) {
+  if (typeof val === 'string') {
+    try {
+      val = JSON.parse(val)
+    } catch (e) {
+    }
+  }
+  
+  return val;
 }
 
 module.exports.render = render;
