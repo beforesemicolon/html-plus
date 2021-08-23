@@ -14,13 +14,13 @@ describe('Attr', () => {
     expect(attr3.name).toEqual('download');
     expect(attr3.value).toEqual(null);
     expect(attr4.name).toEqual('href');
-    expect(attr4.value).toEqual('');
+    expect(attr4.value).toEqual(null);
   });
   
   it('should return formatted string', () => {
     expect(attr1.toString()).toEqual('id="sample"');
     expect(attr2.toString()).toEqual('#if="x > 10"');
     expect(attr3.toString()).toEqual('download');
-    expect(attr4.toString()).toEqual('href=""');
+    expect(attr4.toString()).toEqual('href');
   });
 });

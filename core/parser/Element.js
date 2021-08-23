@@ -3,21 +3,26 @@ const {Comment} = require('./Comment');
 const {Node} = require('./Node');
 const {Attributes} = require('./Attributes');
 const {Attr} = require('./Attr');
-const {selfClosingPattern, tagCommentPattern, specificAttrPattern} = require('./utils/regexPatterns');
+const {tagCommentPattern, attrPattern} = require('./utils/regexPatterns');
+const selfClosingTags = require('./utils/selfClosingTags.json');
 
 class Element extends Node {
   #tagName;
   #attributes;
   #children = [];
   
-  constructor(tagName = null, attributeString = '') {
+  constructor(tagName = null) {
     super();
     this.#tagName = tagName;
-    this.#attributes = new Attributes(attributeString);
+    this.#attributes = new Attributes();
   }
   
   get tagName() {
     return this.#tagName;
+  }
+  
+  get nodeName() {
+    return this.tagName?.toUpperCase();
   }
   
   get attributes() {
@@ -92,15 +97,8 @@ class Element extends Node {
       if (this._customAttributes && this._customAttributes.hasOwnProperty(name)) {
         this._customAttributes.set(name, value);
       }
-      
-      const currAttr = this.getAttribute(name);
-      
-      if (currAttr) {
-        this.#attributes = new Attributes(this.attributes.toString().replace(currAttr, value))
-      } else {
-        const attr = value ? `${name}="${value}"` : name;
-        this.#attributes = new Attributes(`${this.attributes} ${attr}`)
-      }
+  
+      this.#attributes.setNamedItem(name, value);
     }
   }
   
@@ -135,7 +133,7 @@ class Element extends Node {
       this._customAttributes.delete(name);
     }
     
-    this.#attributes = new Attributes(this.attributes.toString().replace(specificAttrPattern(name), ''))
+    this.#attributes.removeNamedItem(name);
   }
   
   removeAttributeNode(attr) {
@@ -181,7 +179,12 @@ class Element extends Node {
   }
   
   cloneNode(deep = false) {
-    const cloneNode = new Element(this.tagName, this.attributes.toString());
+    const cloneNode = new Element(this.tagName);
+    
+    for (let attribute of this.attributes) {
+      cloneNode.setAttribute(attribute.name, attribute.value)
+    }
+    
     cloneNode.context = {...this.selfContext};
     
     if (deep) {
@@ -265,13 +268,12 @@ class Element extends Node {
       return this.childNodes.join('');
     }
     
-    const isSelfClosing = selfClosingPattern.test(this.tagName);
-    let tag = `<${/doctype/i.test(this.tagName) ? '!' : ''}${this.tagName} ${this.#attributes}`.trim();
+    let tag = `<${this.tagName} ${this.#attributes}`.trimRight();
     
-    if (isSelfClosing) {
-      tag = tag.trim() + '>'
+    if (selfClosingTags[this.tagName]) {
+      tag += '>'
     } else {
-      tag = tag.trim() + `>${this.childNodes.join('')}</${this.tagName}>`;
+      tag += `>${this.childNodes.join('')}</${this.tagName}>`;
     }
     
     return tag;
@@ -279,7 +281,7 @@ class Element extends Node {
 }
 
 function isValidNode(node) {
-  return node && (node instanceof Element || node instanceof Text || node instanceof Comment);
+  return node && node instanceof Node;
 }
 
 function parseHTMLString(markup, data = {}) {
@@ -306,13 +308,27 @@ function parseHTMLString(markup, data = {}) {
       continue;
     }
     
-    if (closeOrBangSymbol === '!' || selfCloseSlash || selfClosingPattern.test(tagName)) {
-      parentNode.appendChild(new Element(tagName, attributes));
+    if (closeOrBangSymbol === '!' || selfCloseSlash || selfClosingTags[tagName]) {
+      const node = new Element(`${closeOrBangSymbol || ''}${tagName}`);
+      
+      let match = '';
+      while ((match = attrPattern.exec(attributes))) {
+        node.setAttribute(match[1], match[2] || match[3] || match[4] || null);
+      }
+      
+      parentNode.appendChild(node);
     } else if (closeOrBangSymbol === '/' && stack[stack.length - 1].tagName === tagName) {
       stack.pop();
     } else if(!closeOrBangSymbol) {
-      const node = new Element(tagName, attributes);
+      const node = new Element(tagName);
+      
+      let match = '';
+      while ((match = attrPattern.exec(attributes))) {
+        node.setAttribute(match[1], match[2] || match[3] || match[4] || null);
+      }
+      
       parentNode.appendChild(node);
+      
       stack.push(node)
     }
   }

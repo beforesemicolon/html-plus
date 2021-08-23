@@ -4,7 +4,7 @@ class Attr {
   
   constructor(name, value = null) {
     this.#name = name.toLowerCase();
-    this.#value = value;
+    this.#value = value || null;
   }
   
   get name() {

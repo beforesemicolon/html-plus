@@ -15,7 +15,7 @@ class Node {
   }
   
   get nodeName() {
-    return this.tagName || '#node';
+    return '#node';
   }
   
   get nodeType() {

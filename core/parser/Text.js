@@ -1,10 +1,9 @@
 const {Node} = require('./Node');
-const {tagCommentPattern} = require("./utils/regexPatterns");
 
 class Text extends Node {
   constructor(value) {
     super();
-    super.textContent = value.replace(tagCommentPattern, '');
+    super.textContent = value;
   }
   
   get nodeName() {

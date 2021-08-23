@@ -6,7 +6,9 @@ const {Comment} = require('./Comment');
 describe('Element', () => {
   describe('should render', () => {
     it('self closing tag', () => {
-      const meta = new Element('meta', 'http-equiv="X-UA-Compatible" content="ie=edge"');
+      const meta = new Element('meta');
+      meta.setAttribute('http-equiv', 'X-UA-Compatible');
+      meta.setAttribute('content', 'ie=edge');
 
       expect(meta.toString()).toBe('<meta http-equiv="X-UA-Compatible" content="ie=edge">')
     });
@@ -258,7 +260,10 @@ describe('Element', () => {
 
   it('should clone node', () => {
     const parent = new Element('div');
-    const anchor = new Element('a', 'href="path/to/page" download #if="valid === true"');
+    const anchor = new Element('a');
+    anchor.setAttribute('href', 'path/to/page');
+    anchor.setAttribute('download');
+    anchor.setAttribute('#if', 'valid === true');
     parent.appendChild(anchor);
     anchor.setContext('valid', true);
     const anchorClone = anchor.cloneNode(true);
@@ -342,7 +347,7 @@ describe('parseHTMLString', () => {
       expect(root.children.length).toBe(1);
       expect(root.children[0].tagName).toBe('bfs-img');
       expect(root.children[0].children.length).toBe(0);
-      expect(root.children[0].attributes.toString()).toBe('src="img/circle" alt=""');
+      expect(root.children[0].attributes.toString()).toBe('src="img/circle" alt');
     });
   
     it('when repeated next to each other', () => {
@@ -366,7 +371,7 @@ describe('parseHTMLString', () => {
       expect(root.children[0].children.length).toBe(0);
       expect(root.children[1].children.length).toBe(0);
       expect(root.children[0].attributes.toString()).toBe('charset="UTF-8"');
-      expect(root.children[1].attributes.toString()).toBe('src="img/circle" alt=""');
+      expect(root.children[1].attributes.toString()).toBe('src="img/circle" alt');
     });
   });
   
@@ -502,7 +507,7 @@ describe('parseHTMLString', () => {
     it('when has empty or no value', () => {
       const root = parseHTMLString('<a href="" download></a>');
   
-      expect(root.toString()).toBe('<a href="" download></a>');
+      expect(root.toString()).toBe('<a href download></a>');
     });
   });
   

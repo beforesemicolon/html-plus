@@ -1,6 +1,6 @@
-const {Element} = require('./Element');
+const {Element} = require('../Element');
 const {handleError} = require('./handle-error');
-const {Text} = require('./Text');
+const {Text} = require('../Text');
 
 describe('handleError', () => {
   it('should throw error message separated by <=> if text node', () => {
@@ -15,7 +15,8 @@ describe('handleError', () => {
   });
   
   it('should throw error with markup', () => {
-    const htmlNode = new Element('h1', 'id="main-title"');
+    const htmlNode = new Element('h1');
+    htmlNode.setAttribute('id', 'main-title')
     htmlNode.textContent = 'my title';
   
     try {
@@ -27,7 +28,8 @@ describe('handleError', () => {
   });
   
   it('should throw error with markup and file info', () => {
-    const htmlNode = new Element('h1', 'id="main-title"');
+    const htmlNode = new Element('h1');
+    htmlNode.setAttribute('id', 'main-title')
     htmlNode.textContent = 'my title';
     
     try {

@@ -1,14 +1,14 @@
 const {Text} = require('./Text');
 const {Comment} = require('./Comment');
 const {RenderNode} = require('./RenderNode');
-const {selfClosingPattern} = require("./utils/regexPatterns");
+const selfClosingTags = require("./utils/selfClosingTags.json");
 const {customAttributesRegistry} = require("./default-attributes/CustomAttributesRegistry");
 const {customTagsRegistry} = require("./default-tags/CustomTagsRegistry");
 const {defaultTagsMap} = require("./default-tags");
 const {bindData} = require("./utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
 const {parseHTMLString, Element} = require("./Element");
-const {handleError} = require("./handle-error");
+const {handleError} = require("./utils/handle-error");
 const {getNextCustomAttribute} = require("./utils/getNextCustomAttribute");
 
 const defaultOptions = {
@@ -75,20 +75,19 @@ function render(dt = defaultOptions) {
       }
       
       for (let attribute of node.attributes) {
-        if (!attribute.name.startsWith('on')) {
+        if (!attribute.name.startsWith('on')) { // avoid binding event attributes
           node.setAttribute(attribute.name, bindData(attribute.value, node.context))
         }
       }
       
       dt.onRender(node, dt.file);
       
-      const isSelfClosing = selfClosingPattern.test(node.tagName);
-      let tag = `<${/doctype/i.test(node.tagName) ? '!' : ''}${node.tagName} ${node.attributes}`.trim();
+      let tag = `<${node.tagName} ${node.attributes}`.trimRight();
       
-      if (isSelfClosing) {
-        tag = tag.trim() + '>'
+      if (selfClosingTags[node.tagName]) {
+        tag += '>'
       } else {
-        tag = tag.trim() + `>${node.childNodes.map(renderNode).join('')}</${node.tagName}>`;
+        tag += `>${node.childNodes.map(renderNode).join('')}</${node.tagName}>`;
       }
       
       return tag;

@@ -2,7 +2,13 @@ const {Attributes} = require('./Attributes');
 const {Attr} = require('./Attr');
 
 describe('Attributes', () => {
-  const attributes = new Attributes('#if="shouldShow" href="sample/path" download');
+  const attributes = new Attributes();
+  
+  beforeAll(() => {
+    attributes.setNamedItem('#if', 'shouldShow');
+    attributes.setNamedItem('href', 'sample/path');
+    attributes.setNamedItem('download');
+  })
   
   it('should set', () => {
     expect(attributes.toString()).toBe('#if="shouldShow" href="sample/path" download')
@@ -35,22 +41,28 @@ describe('Attributes', () => {
   });
   
   it('should remove repeated attribute', () => {
-    const attr = new Attributes('class="one" class="two"');
+    const attr = new Attributes();
+    attr.setNamedItem('class', 'one');
+    attr.setNamedItem('class', 'two');
     const cls = attr.getNamedItem('class');
     const fn = jest.fn();
     
     [...attr].forEach(fn);
   
     expect(attr.length).toBe(1);
-    expect(cls.value).toBe('one');
+    expect(cls.value).toBe('two');
     expect(fn).toHaveBeenCalledTimes(1);
-    expect(attr.toString()).toBe('class="one"');
+    expect(attr.toString()).toBe('class="two"');
   
     fn.mockRestore();
   });
   
   it('should not render special attributes', () => {
-    const attr = new Attributes('class="one" #if="logic" #repeat="3" id="sample"');
+    const attr = new Attributes();
+    attr.setNamedItem('class', 'one');
+    attr.setNamedItem('#if', 'logic');
+    attr.setNamedItem('#repeat', '3');
+    attr.setNamedItem('id', 'sample');
   
     expect(attr.toString()).toBe('class="one" #if="logic" #repeat="3" id="sample"');
   });

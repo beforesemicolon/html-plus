@@ -7,12 +7,12 @@ function bindData(str, data = {}) {
 
     if (execs.length) {
       for (let m of execs) {
-        try {
+        // try {
           const res = executeCode(`(() => (${m.executable}))()`, data);
           str = str.replace(m.match, res);
-        } catch(e) {
-        
-        }
+        // } catch(e) {
+        //
+        // }
       }
     }
   }
