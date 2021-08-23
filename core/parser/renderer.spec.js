@@ -137,9 +137,9 @@ describe('render', () => {
       try {
         render('<div><p>{text}</p></div>')
       } catch (e) {
-        expect(e.message).toEqual('Error: [91mtext is not defined [39m\n' +
+        expect(e.message).toEqual('Error: [91mtext is not defined[39m\n' +
           'Markup: [32m<p>[91m[39m[32m[39m\n' +
-          '[32m[91m{text} <= Error: text is not defined [39m[32m[39m\n' +
+          '[32m[91m{text} <= Error: text is not defined[39m[32m[39m\n' +
           '[32m[91m[39m[32m</p>[39m')
       }
     });
@@ -183,4 +183,8 @@ describe('render', () => {
       }
     });
   });
+  
+  // it('should render', () => {
+  //   expect(render('<p #repeat="2"><span #repeat="2"></span></p>')).toEqual(null);
+  // });
 });

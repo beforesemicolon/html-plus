@@ -3,10 +3,16 @@ const {handleError} = require('./handle-error');
 const {Text} = require('../Text');
 
 describe('handleError', () => {
-  it('should throw error message separated by <=> if text node', () => {
+  it('should throw error message with the text markup', () => {
     const text = new Text('some text');
     
-    expect(() => handleError({message: 'Failed'}, text)).toThrowError('Failed <=> some text')
+    try {
+      handleError({message: 'Failed'}, text)
+    } catch(e) {
+      expect(e.message).toEqual('Error: [91mFailed[39m\n' +
+        'Markup: [32msome text[39m')
+    }
+    
   });
   
   it('should throw error as is if message starts with "Error"', () => {
@@ -50,11 +56,13 @@ describe('handleError', () => {
   
     try {
       handleError(
-        {message: 'Failed <=> my title'},
+        {message: 'Failed'},
         htmlNode,
         {filePath: '/path/to/file.html'})
     } catch(e) {
-      expect(e.message.includes('my title <= Error: Failed')).toBeTruthy()
+      expect(e.message).toEqual('Error: [91mFailed[39m\n' +
+        'File: [33m/path/to/file.html[39m\n' +
+        'Markup: [32m<h1>my title</h1>[39m')
     }
   });
 });

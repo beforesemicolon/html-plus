@@ -44,57 +44,84 @@ function render(dt = defaultOptions) {
     root = parseHTMLString(content, dt.context);
   }
   
-  return (function renderNode(node) {
+  let nodeList = [root];
+  let htmlString = '';
+
+  while (nodeList.length) {
+    const node = nodeList.shift();
+
     try {
       if (node instanceof Comment) {
         dt.onRender(node, dt.file);
-        return node.toString();
+        htmlString += node.toString() + closeAncestorTags(node);
+        continue;
       }
-      
+  
       if (node instanceof Text) {
         if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
           node.textContent = bindData(node.textContent, node.context)
         }
-        
+    
         dt.onRender(node, dt.file);
-        return node.toString();
+        htmlString += node.toString() + closeAncestorTags(node);;
+        continue;
       }
-      
+  
       if (node.tagName === null) {
-        return node.childNodes.map(renderNode).join('');
+        nodeList.unshift(...node.childNodes);
+        continue;
       }
-      
+  
       const customAttr = getNextCustomAttribute(node.getAttributeNames());
-      
+  
       if (customAttr) {
-        return renderByAttribute(node, customAttr, dt);
+        htmlString += renderByAttribute(node, customAttr, dt) + closeAncestorTags(node);
+        continue;
       }
-      
+  
       if (customTagsRegistry.isRegistered(node.tagName)) {
-        return renderTag(node, dt);
+        htmlString += renderTag(node, dt) + closeAncestorTags(node);
+        continue;
       }
-      
+  
       for (let attribute of node.attributes) {
         if (!attribute.name.startsWith('on')) { // avoid binding event attributes
           node.setAttribute(attribute.name, bindData(attribute.value, node.context))
         }
       }
-      
+  
       dt.onRender(node, dt.file);
-      
-      let tag = `<${node.tagName} ${node.attributes}`.trimRight();
-      
-      if (selfClosingTags[node.tagName]) {
-        tag += '>'
-      } else {
-        tag += `>${node.childNodes.map(renderNode).join('')}</${node.tagName}>`;
+  
+      htmlString += `<${node.tagName} ${node.attributes}`.trimRight() + '>';
+  
+      if (!selfClosingTags[node.tagName]) {
+        if (node.childNodes.length) {
+          nodeList.unshift(...node.childNodes)
+        } else {
+          htmlString += `</${node.tagName}>` + closeAncestorTags(node);
+        }
       }
-      
-      return tag;
-    } catch (e) {
+    } catch(e) {
       handleError(e, node, dt.nodeFile);
     }
-  })(root)
+  }
+
+  return htmlString;
+}
+
+function closeAncestorTags(node) {
+  let parent = node.parentNode;
+  let str = '';
+  
+  while (parent && parent.lastChild === node) {
+    if (parent.tagName) {
+      str += `</${parent.tagName}>`;
+    }
+    node = parent;
+    parent = node.parentNode;
+  }
+  
+  return str;
 }
 
 function renderTag(node, metadata) {

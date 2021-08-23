@@ -5,20 +5,19 @@ function escapeRegex(string) {
 }
 
 function handleError(e, node = {}, file) {
-  let error = e.message;
+  let errMsg = e.message;
+  let text = '';
+  let nodeString = '';
   
   if (node.nodeName === '#text' || node.nodeName === '#comment') {
-    throw new Error(`${error} <=> ${node.nodeValue}`);
+    text = node.nodeValue;
+    let parentString = (node.parentNode)?.outerHTML || '';
+    nodeString = parentString
+      ? parentString.replace(new RegExp(escapeRegex(text), 'm'), chalk.redBright(`\n${text.trim()} <= Error: ${errMsg}\n`))
+      : text;
+  } else {
+    nodeString = node.outerHTML ?? '';
   }
-  
-  if (error && error.startsWith('Error: ')) {
-    throw new Error(error)
-  }
-  
-  const [errMsg, text = ''] = error.split('<=>');
-  const nodeString = text
-    ? ((node).outerHTML ?? '').replace(new RegExp(escapeRegex(text), 'gm'), chalk.redBright(`\n${text.trim()} <= Error: ${errMsg}\n`))
-    : node.outerHTML ?? '';
   
   const fileInfo = file
     ? `\nFile: ${chalk.yellow(file.filePath)}`
