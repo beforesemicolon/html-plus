@@ -110,23 +110,19 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
         try {
           const onBeforeRender = traverseNode(pagesDirectoryPath);
   
-          console.time('render');
           let html = render({
             file,
             content: file.content,
             partialFiles: partials,
             context: {$data: opt.staticData, ...context},
             onRender: (node, nodeFile) => {
-              // only catch elements= nodes and not comments or text nodes
-              if (node.nodeValue === null) {
-                // collect any tag style if not already collected
-                if (customTagStyles[node.tagName] && !usedTagsWithStyle.has(node.tagName)) {
-                  usedTagsWithStyle.add(node.tagName)
-                }
-                
-                if (!customTagStyles[node.tagName] && !defaultTagsMap[node.tagName]) {
-                  onBeforeRender(node, nodeFile)
-                }
+              // collect any tag style if not already collected
+              if (customTagStyles[node.tagName] && !usedTagsWithStyle.has(node.tagName)) {
+                usedTagsWithStyle.add(node.tagName)
+              }
+  
+              if (!customTagStyles[node.tagName] && !defaultTagsMap[node.tagName]) {
+                onBeforeRender(node, nodeFile)
               }
             }
           })
@@ -136,8 +132,6 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
             html = injectTagStylesToPage(html, await collectPageTagsStyle(usedTagsWithStyle, customTagStyles))
           }
   
-          console.timeEnd('render');
-          
           callback(null, html);
     
           if (isProduction) {

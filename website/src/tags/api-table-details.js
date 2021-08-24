@@ -1,5 +1,6 @@
 const {importStyle} = require("./../../../core/utils/import-style");
 const path = require("path");
+const {html} = require("../../../core/parser/html");
 
 class ApiTableDetails {
   constructor(node) {
@@ -21,26 +22,22 @@ class ApiTableDetails {
     const details = this.node.getAttribute('details');
     const heading = this.node.getAttribute('heading');
     
-    return `
+    return html(`
       <table class="api-reference-details">
-        <caption>${name} details</caption>
+        <caption>{name} details</caption>
         <thead>
           <tr>
-            <th colspan="2" style="text-align: left">${heading ?? 'Details'}</th>
+            <th colspan="2" style="text-align: left">{heading ?? 'Details'}</th>
           </tr>
         </thead>
         <tbody>
-            ${
-              Object.keys(details).map(key => `
-                <tr>
-                    <td>${key}</td>
-                    <td>${details[key]}</td>
-                </tr>
-              `).join('')
-            }
+          <tr #repeat="details">
+              <td>{$key}</td>
+              <td>{$item}</td>
+          </tr>
         </tbody>
       </table>
-    `
+    `, {name, details, heading});
   }
 }
 

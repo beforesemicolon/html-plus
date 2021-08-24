@@ -1,5 +1,6 @@
 const {importStyle} = require("./../../../core/utils/import-style");
 const path = require("path");
+const {html} = require("../../../core/parser/html");
 
 class ApiDescriptionList {
   constructor(node) {
@@ -19,15 +20,13 @@ class ApiDescriptionList {
   render() {
     const descriptions = this.node.getAttribute('descriptions');
     
-    return `
-    <dl class="api-description-list">
-      ${descriptions
-        .map(desc => `
-            <dt>${desc.concept}</dt>
-            <dd><span>${desc.type}</span> : ${desc.description}</dd>`)
-        .join('')
-      }
-    </dl>`;
+    return html(`
+      <dl class="api-description-list">
+        <fragment #repeat="descriptions as desc">
+          <dt>{desc.concept}</dt>
+          <dd><span>{desc.type}</span> : {desc.description}</dd>
+        </fragment>
+      </dl>`, {descriptions});
   }
 }
 
