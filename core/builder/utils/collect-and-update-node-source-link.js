@@ -22,7 +22,7 @@ function collectAndUpdateNodeSourceLink(node, pageFile, resources, fileDirPath) 
   switch (node.tagName) {
     case 'link':
     case 'image':
-      srcPath = node.attributes.href;
+      srcPath = node.getAttribute('href');
       srcAttrName = 'href';
       break;
     case 'script':
@@ -30,20 +30,20 @@ function collectAndUpdateNodeSourceLink(node, pageFile, resources, fileDirPath) 
     case 'audio':
     case 'track':
     case 'video':
-      srcPath = node.attributes.src;
+      srcPath = node.getAttribute('src');
       srcAttrName = 'src';
       break;
     case 'source':
-      if (node.attributes.src) {
-        srcPath = node.attributes.src;
+      if (node.hasAttribute('src')) {
+        srcPath = node.getAttribute('src');
         srcAttrName = 'src';
-      } else if (node.attributes.srcset) {
-        srcPath = node.attributes.srcset;
+      } else if (node.hasAttribute('srcset')) {
+        srcPath = node.getAttribute('srcset');
         srcAttrName = 'srcset';
       }
       break;
     case 'object':
-      srcPath = node.attributes.data;
+      srcPath = node.getAttribute('data');
       srcAttrName = 'data';
       break;
     default:
@@ -71,10 +71,10 @@ function collectAndUpdateNodeSourceLink(node, pageFile, resources, fileDirPath) 
     let type = resourceType[node.tagName];
     
     if (type === 'link') {
-      const rel = node.attributes['rel'];
+      const rel = node.getAttribute('rel');
   
       if (/preload|prefetch|prerender|preconnect/.test(rel)) {
-        const as = node.attributes['as'];
+        const as = node.getAttribute('as');
         type = as || type;
       } else {
         type = rel || type;
