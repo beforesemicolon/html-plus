@@ -62,7 +62,16 @@ describe('Include Tag', () => {
       file: {fileDirectoryPath: __dirname}
     })).toEqual('<div>Nested: include partial</div>');
   });
-
+  
+  it('should allow parent context through', () => {
+    const str = '<variable name="title" value="`my title`"></variable><include partial="inc-partial"></include>'
+  
+    expect(render( {
+      content: str,
+      partialFiles: [partialFile]
+    })).toEqual('<div>my title</div>');
+  });
+  
   it('should render blank if no partial info is provided', () => {
     const str = '<include></include>'
 

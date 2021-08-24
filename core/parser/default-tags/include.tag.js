@@ -1,7 +1,6 @@
 const path = require('path');
 const {PartialFile} = require("../PartialFile");
 const chalk = require("chalk");
-const {html} = require("../html");
 
 class Include {
   constructor(node, options) {

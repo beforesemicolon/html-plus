@@ -9,7 +9,7 @@ class Variable {
       throw new Error(`Variable must have a name`);
     }
     
-    if (!/^[a-zA-Z_][a-zA-Z0-9_$]*$/.test(name.trim())) {
+    if (!/^[a-z_$][a-z0-9_$]*$/i.test(name.trim())) {
       throw new Error(`Invalid variable name "${name}"`);
     }
     

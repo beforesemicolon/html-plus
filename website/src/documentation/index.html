@@ -8,6 +8,7 @@
 	            : currentGroup.list.find((item) => item.path === path)"></variable>
 <variable name="title"
           value="`${page.title} ${currentPage === page ? '' : `: ${currentPage.title}`}`"></variable>
+<variable name="$path">{path}</variable>
 
 <include partial="layout" data="{...page, title}">
 	<link rel="stylesheet" href="documentation.scss" inject-id="style" defer>
@@ -22,18 +23,18 @@
 			</header>
 			<section class="doc-menu-section">
 				<ul role="menu" aria-label="Documentation Menu" class="doc-menu">
-					<li #repeat="page.menu.list" #attr="class, current, path === $item.path" role="menuitem">
+					<li #repeat="page.menu.list" #attr="class, current, $path === $item.path" role="menuitem">
 						<variable name="hasSubmenu"
 						          value="Boolean($item.list?.length)"></variable>
 						<variable name="expanded"
-						          value="(hasSubmenu && path.startsWith($item.path)) ? true : false"></variable>
+						          value="(hasSubmenu && $path.startsWith($item.path)) ? true : false"></variable>
 
 						<a href="{$item.path}" aria-expanded="{expanded}">{$item.title}</a>
 
 						<span #if="hasSubmenu" class="expand-indicator {expanded ? 'expanded' : ''}"></span>
 
 						<ul #if="hasSubmenu" #attr="class, expanded, expanded">
-							<li #repeat="$item.list" #attr="class, current, path === $item.path">
+							<li #repeat="$item.list" #attr="class, current, $path === $item.path">
 								<a href="{$item.path}"><ignore value="$item.title" escape></ignore></a>
 							</li>
 						</ul>
