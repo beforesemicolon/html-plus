@@ -1,5 +1,13 @@
-module.exports.executeCode = (executableString = '', contextData = {}, timeout = 10000) => {
-  const fn = new Function(...Object.keys(contextData), `return ${executableString}`);
+const globals = [
+  'URL',
+  'URLSearchParams',
+]
+
+module.exports.executeCode = (executableString = '', contextData = {}) => {
+  const args = [...Object.keys(contextData), ...globals];
+  const values = [...Object.values(contextData), ...globals.map(() => {})];
   
-  return fn.apply(contextData, Object.values(contextData));
+  const fn = new Function(...args, `return ${executableString}`);
+  
+  return fn.apply(contextData, values);
 }
