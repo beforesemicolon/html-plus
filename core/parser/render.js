@@ -52,7 +52,6 @@ function render(dt = defaultOptions) {
 
     try {
       if (node instanceof Comment) {
-        dt.onRender(node, dt.file);
         htmlString += node.toString() + closeAncestorTags(node);
         continue;
       }
@@ -62,7 +61,6 @@ function render(dt = defaultOptions) {
           node.textContent = bindData(node.textContent, node.context)
         }
     
-        dt.onRender(node, dt.file);
         htmlString += node.toString() + closeAncestorTags(node);;
         continue;
       }
@@ -90,7 +88,7 @@ function render(dt = defaultOptions) {
         }
       }
   
-      dt.onRender(node, dt.file);
+      dt.onRender(node, dt.nodeFile);
   
       htmlString += `<${node.tagName} ${node.attributes}`.trimRight() + '>';
   
@@ -144,7 +142,7 @@ function renderTag(node, metadata) {
     node._customAttributes = customAttributes;
   }
   
-  metadata.onRender(node, metadata.file);
+  metadata.onRender(node, metadata.nodeFile);
   
   let instance;
   
