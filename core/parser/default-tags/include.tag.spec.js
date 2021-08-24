@@ -1,4 +1,5 @@
 const {PartialFile} = require("../PartialFile");
+const {File} = require("../File");
 const {render} = require('../render');
 const path = require('path');
 const {writeFile, unlink} = require('fs/promises');
@@ -8,6 +9,7 @@ const {defaultTagsMap} = require("../default-tags");
 const {customTagsRegistry} = require("../default-tags/CustomTagsRegistry");
 
 describe('Include Tag', () => {
+  const file = new File(path.resolve(__dirname, __filename), __dirname)
   const nestedPartialAbsPath = `${path.resolve(__dirname)}/_inc-nested-partial.html`;
   const partialAbsPath = `${path.resolve(__dirname)}/_inc-partial.html`;
   let partialFile;
@@ -68,6 +70,8 @@ describe('Include Tag', () => {
   
     expect(render( {
       content: str,
+      file,
+      nodeFile: file,
       partialFiles: [partialFile]
     })).toEqual('<div>my title</div>');
   });

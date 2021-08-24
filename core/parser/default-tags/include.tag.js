@@ -10,7 +10,7 @@ class Include {
       throw new Error('The "<include>" tag "data" attribute value must be a normal object literal')
     }
     
-    const {file, partialFiles} = options;
+    const {file, nodeFile, partialFiles} = options;
     
     this.node = node;
     this.partial = null;
@@ -20,18 +20,18 @@ class Include {
     if (partialName || partialPath) {
       if (partialFiles.length ) {
         if (partialPath) {
-          partialPath = path.resolve(file.fileDirectoryPath, partialPath);
+          partialPath = path.resolve(nodeFile.fileDirectoryPath, partialPath);
         } else {
           partialName = '_' + partialName.replace(/^_+/, '');
         }
-
+        
         this.partial = partialFiles.find(obj => {
           return obj.name === partialName || obj.fileAbsolutePath === partialPath;
         });
       }
 
       if (!this.partial && partialPath) {
-        const partialAbsolutePath = path.resolve(file.fileDirectoryPath, partialPath);
+        const partialAbsolutePath = path.resolve(nodeFile.fileDirectoryPath, partialPath);
 
         this.partial = new PartialFile(partialAbsolutePath, file.srcDirectoryPath);
       }
