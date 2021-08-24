@@ -24,10 +24,14 @@ class ContentNavigation {
       return html(`
         <ul role="menu" id="documentation-menu" aria-label="Content Navigation Menu">
             <li class="prev" #if="currentPage.prev">
-              <a href="{currentPage.prev.path}"><inject html="currentPage.prev.title"></inject></a>
+              <a href="{currentPage.prev.path}">
+                <ignore value="currentPage.prev.title" escape></ignore>
+              </a>
             </li>
             <li class="next" #if="currentPage.next">
-              <a href="{currentPage.next.path}"><inject html="currentPage.next.title"></inject></a>
+              <a href="{currentPage.next.path}">
+                <ignore value="currentPage.next.title" escape></ignore>
+              </a>
             </li>
         </ul>
       `, {currentPage})

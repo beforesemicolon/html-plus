@@ -31,7 +31,9 @@ class CodeSnippet {
   render() {
     return html(`
         <pre class="hljs">
-            <code class="language-{language">{content}</code>
+            <code class="language-{language}">
+              <ignore value="content" escape></ignore>
+            </code>
         </pre>`,
       this);
   }
