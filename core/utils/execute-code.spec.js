@@ -8,6 +8,7 @@ describe('execute', () => {
     expect(executeCode('1 * "2"')).toBe(2);
     expect(executeCode('5 * x', {x: 20})).toBe(100);
     expect(executeCode('str.replace(2, "")', {str: 'name2'})).toBe('name');
+    expect(executeCode('this.z - 2000', {z: 3000})).toBe(1000);
   });
   
   it('should throw error', async () => {
@@ -15,12 +16,5 @@ describe('execute', () => {
     
     await expect(() => executeCode('x + y', {x: 10}))
       .toThrowError('y is not defined');
-  });
-  
-  it('should timeout for long executing scripts',  () => {
-    expect.assertions(1);
-  
-    expect(() => executeCode('while(true);', {}, 3000))
-      .toThrowError('Script execution timed out after 3000ms');
   });
 });

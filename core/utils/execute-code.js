@@ -1,8 +1,5 @@
-const vm = require('vm');
-
 module.exports.executeCode = (executableString = '', contextData = {}, timeout = 10000) => {
-  vm.createContext(contextData);
-  const script = new vm.Script(executableString);
+  const fn = new Function(...Object.keys(contextData), `return ${executableString}`);
   
-  return script.runInContext(contextData, {timeout});
+  return fn.apply(contextData, Object.values(contextData));
 }
