@@ -8,7 +8,7 @@ function bindData(str, data = {}) {
     if (execs.length) {
       for (let m of execs) {
         // try {
-          const res = executeCode(`(() => (${m.executable}))()`, data);
+          const res = executeCode(m.executable, data);
           str = str.replace(m.match, res);
         // } catch(e) {
         //

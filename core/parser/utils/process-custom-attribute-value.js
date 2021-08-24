@@ -11,7 +11,7 @@ function processCustomAttributeValue(attr, val, data) {
   }
   
   if (attr.execute) {
-    val = executeCode(`(() => (${val}))()`, data);
+    val = executeCode(val, data);
   }
   
   return val;
