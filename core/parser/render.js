@@ -190,6 +190,7 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
     val = parseValue(processCustomAttributeValue(handler, val, node.context));
   }
   
+  const parentNode = node.parentNode;
   node.removeAttribute(attrName);
   
   let result = handler.render(val, node);
@@ -211,6 +212,13 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
       content: result.htmlString,
       context: {...node.context, ...result.context}
     });
+  }
+  
+  // the custom attribute may return a different node than the original
+  // when that is the case it is necessary to swap it so the
+  // node tree is accurate
+  if (node !== result) {
+    parentNode.replaceChild(result, node)
   }
   
   return render({...metadata, node: result});
