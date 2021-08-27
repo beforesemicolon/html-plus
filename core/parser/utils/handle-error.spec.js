@@ -16,7 +16,6 @@ describe('handleError', () => {
   });
   
   it('should throw error as is if message starts with "Error"', () => {
-  
     expect(() => handleError({message: 'Error: failed at something'}, {})).toThrowError('Error: failed at something')
   });
   

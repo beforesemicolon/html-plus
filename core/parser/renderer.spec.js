@@ -59,9 +59,6 @@ describe('render', () => {
     await writeFile(path.resolve(__dirname, '_head.html'), headContent, 'utf-8');
     await writeFile(path.resolve(__dirname, 'page.html'), pageContent, 'utf-8');
     
-    pageFile = new File(path.resolve(__dirname, 'page.html'), __dirname);
-    headFile = new PartialFile(path.resolve(__dirname, '_head.html'), __dirname);
-    
     for (let key in defaultAttributesMap) {
       customAttributesRegistry.define(key, defaultAttributesMap[key])
     }
@@ -69,6 +66,11 @@ describe('render', () => {
     for (let key in defaultTagsMap) {
       customTagsRegistry.define(key, defaultTagsMap[key])
     }
+  })
+  
+  beforeEach(() => {
+    pageFile = new File(path.resolve(__dirname, 'page.html'), __dirname);
+    headFile = new PartialFile(path.resolve(__dirname, '_head.html'), __dirname);
   })
   
   afterAll(async () => {
@@ -182,9 +184,40 @@ describe('render', () => {
           'Markup: [32m<div #test></div>[39m')
       }
     });
-  });
   
-  // it('should render', () => {
-  //   expect(render('<p #repeat="2"><span #repeat="2"></span></p>')).toEqual(null);
-  // });
+    it('inside node', () => {
+      try {
+        render('<div><p class="text">{no}</p></div>')
+      } catch (e) {
+        expect(e.message).toEqual('Error: [91mno is not defined[39m\n' +
+          'Markup: [32m<p class="text">[91m[39m[32m[39m\n' +
+          '[32m[91m{no} <= Error: no is not defined[39m[32m[39m\n' +
+          '[32m[91m[39m[32m</p>[39m')
+      }
+    });
+  
+    it('inside partial', () => {
+      const str = '<include partial="head" data="{title: \'include partial\'}"></include>';
+      headFile.content += '{nono}';
+      
+      try {
+        render( {
+          content: str,
+          partialFiles: [headFile]
+        })
+      } catch(e) {
+          expect(e.message).toEqual('Error: [91mnono is not defined[39m\n' +
+            'File: [33m/_head.html[39m\n' +
+            'Markup: [32m<head>[39m\n' +
+            '[32m  <meta charset="UTF-8">[39m\n' +
+            '[32m  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">[39m\n' +
+            '[32m  <title>include partial</title>[39m\n' +
+            '[32m  <inject id="style"></inject>[39m\n' +
+            '[32m  <inject></inject>[39m\n' +
+            '[32m</head>[91m[39m[32m[39m\n' +
+            '[32m[91m{nono} <= Error: nono is not defined[39m[32m[39m\n' +
+            '[32m[91m[39m[32m[39m')
+      }
+    });
+  });
 });

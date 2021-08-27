@@ -5,6 +5,10 @@ function escapeRegex(string) {
 }
 
 function handleError(e, node = {}, file) {
+  if (e.message.startsWith('Error: ')) {
+      throw e;
+  }
+  
   let errMsg = e.message;
   let text = '';
   let nodeString = '';
