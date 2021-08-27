@@ -29,8 +29,9 @@ class CodeSnippet {
   }
   
   render() {
-    return html(`<pre class="hljs"><code class="language-${this.language}">{content}</code></pre>`, {
-      content: this.content
+    return html(`<pre class="hljs"><code class="language-{language}">{content}</code></pre>`, {
+      content: this.content,
+      language: this.language
     });
   }
 }
