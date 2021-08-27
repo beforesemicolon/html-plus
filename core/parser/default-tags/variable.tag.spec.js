@@ -77,9 +77,9 @@ describe('Variable Tag', () => {
   
   describe('should throw an error', () => {
     it('when access data outside the scope', () => {
-      const str = '{test}<variable name="test" value="20"></variable>';
+      const str = '{sample}<variable name="test" value="20"></variable>';
   
-      expect(() => render(str)).toThrowError('test is not defined');
+      expect(() => render(str)).toThrowError('sample is not defined');
     });
   
     it('if name not provided', () => {

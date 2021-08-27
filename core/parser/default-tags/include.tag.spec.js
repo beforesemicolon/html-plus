@@ -18,8 +18,6 @@ describe('Include Tag', () => {
   beforeAll(async () => {
     await writeFile(partialAbsPath, '<div>{title}</div>', 'utf-8');
     await writeFile(nestedPartialAbsPath, '<div>Nested: {title}</div>', 'utf-8');
-    partialFile = new PartialFile(partialAbsPath, __dirname);
-    nestedPartialFile = new PartialFile(nestedPartialAbsPath, __dirname);
     
     for (let key in defaultAttributesMap) {
       customAttributesRegistry.define(key, defaultAttributesMap[key])
@@ -28,6 +26,11 @@ describe('Include Tag', () => {
     for (let key in defaultTagsMap) {
       customTagsRegistry.define(key, defaultTagsMap[key])
     }
+  })
+  
+  beforeEach(() => {
+    partialFile = new PartialFile(partialAbsPath, __dirname);
+    nestedPartialFile = new PartialFile(nestedPartialAbsPath, __dirname);
   })
   
   afterAll(async () => {
