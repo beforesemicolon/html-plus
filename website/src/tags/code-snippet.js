@@ -2,6 +2,15 @@ const hljs = require('highlight.js');
 const {html} = require("../../../core/parser/html");
 
 class CodeSnippet {
+  constructor(node) {
+    this.node = node;
+    const language = node.getAttribute('language') || 'bash';
+    let content = this.node.innerHTML.trim();
+    
+    this.content = hljs.highlight(content, {language}).value;
+    this.language = language;
+  }
+  
   static get style() {
     return `
       <style>
@@ -19,23 +28,10 @@ class CodeSnippet {
     `
   }
   
-  constructor(node) {
-    this.node = node;
-    const language = node.getAttribute('language') || 'bash';
-    let content = this.node.innerHTML.trim();
-    
-    this.content = hljs.highlight(content, {language}).value;
-    this.language = language;
-  }
-  
   render() {
-    return html(`
-        <pre class="hljs">
-            <code class="language-{language}">
-              <ignore value="content" escape></ignore>
-            </code>
-        </pre>`,
-      this);
+    return html(`<pre class="hljs"><code class="language-${this.language}">{content}</code></pre>`, {
+      content: this.content
+    });
   }
 }
 

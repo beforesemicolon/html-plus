@@ -15,31 +15,39 @@ describe('Ignore Attribute', () => {
     }
   })
   
-  describe('should not bind data', () => {
-    it('when no value', () => {
-      const str = '<div #ignore><b>{sample}</b></div>'
+  it('should ignore', () => {
+    const str = '<div #ignore><b>{sample}</b></div>'
   
-      expect(render(str)).toEqual('<div><b>{sample}</b></div>');
-    });
+    expect(render(str)).toEqual('<div><b>{sample}</b></div>');
+  });
   
-    it('with value', () => {
-      expect(render({
-        content: '<div #ignore="content"><b>{sample}</b></div>',
-        context: {
-          content: '<p>Sample</p>'
-        }
-      })).toEqual('<div><b>{sample}</b><p>Sample</p></div>');
-    });
+  it('should ignore like adding ', () => {
+    expect(render({
+      content: '<div><b>{sample}</b>{content}</div>',
+      context: {
+        x: 'test',
+        sample: 'super',
+        content: '<p>{x}</p>'
+      }
+    })).toEqual('<div><b>super</b><p>{x}</p></div>');
+    
+    expect(render({
+      content: '<div #ignore="content"><b>{sample}</b></div>',
+      context: {
+        x: 'test',
+        content: '<p>{x}</p>'
+      }
+    })).toEqual('<div><b>{sample}</b><p>{x}</p></div>');
   });
   
   it('should escape html', () => {
     
     expect(render({
-      content: '<div #ignore escape><b>{sample}</b></div>',
+      content: '<div #ignore="content" escape><b>{sample}</b></div>',
       context: {
         content: '<p>Sample</p>'
       }
-    })).toEqual('<div>&lt;b&gt;{sample}&lt;/b&gt;</div>');
+    })).toEqual('<div>&lt;b&gt;{sample}&lt;/b&gt;&lt;p&gt;Sample&lt;/p&gt;</div>');
   });
   
   describe('should work with other attributes', () => {
