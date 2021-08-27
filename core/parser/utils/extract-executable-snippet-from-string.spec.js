@@ -1,68 +1,27 @@
 const {extractExecutableSnippetFromString} = require('./extract-executable-snippet-from-string');
 
 describe('extractExecutableSnippetFromString', () => {
-  it('should extract executable snippets', () => {
-    expect.assertions(6);
-    
-    expect(
-      extractExecutableSnippetFromString('{1 + 1}')
-    ).toEqual([{executable: "1 + 1", match: "{1 + 1}"}]);
-
-
-    expect(
-      extractExecutableSnippetFromString('{1 + 1}-{2 + 2}')
-    ).toEqual([
-      {
-        executable: "1 + 1",
-        match: "{1 + 1}"
-      },
-      {
-        executable: "2 + 2",
-        match: "{2 + 2}"
-      }
-    ]);
-
-    expect(
-      extractExecutableSnippetFromString('{1 + 1} {name + "sample"}')
-    ).toEqual([
-      {executable: "1 + 1", match: "{1 + 1}"},
-      {executable: "name + \"sample\"", match: "{name + \"sample\"}"}
-    ]);
-
-    expect(
-      extractExecutableSnippetFromString('{{name: "test"}}')
-    ).toEqual([
-      {executable: '{name: "test"}', match: '{{name: "test"}}'}
-    ]);
-
-    expect(extractExecutableSnippetFromString(`{list.push({name: "sample"})}{{sample: 12}}{name}`))
-      .toEqual([
-        {
-          executable: "list.push({name: \"sample\"})",
-          match: "{list.push({name: \"sample\"})}"
-        },
-        {
-          executable: "{sample: 12}",
-          match: "{{sample: 12}}"
-        },
-        {
-          executable: "name",
-          match: "{name}"
-        }
-      ]);
-
-    expect(
-      extractExecutableSnippetFromString('({n})')
-    ).toEqual([
-      {
-        "executable": "n",
-        "match": "{n}"
-      }
-    ]);
-    
-  });
   
-  it('should ignore escaped curly braces', () => {
-  
+  it('should extract pair curly braces content', () => {
+    [
+      ['{item}', 'item'],
+      ['{{item}', 'item'],
+      ['}{item}', 'item'],
+      ['{item}}', 'item'],
+      ['{item}{', 'item'],
+      ['{{sample: 12}}', '{sample: 12}'],
+      ['{{sample: 12, x: {text: "super"}}}', '{sample: 12, x: {text: "super"}}'],
+      ['{{sample: 12, x: {text: "super"}}} {sample}', '{sample: 12, x: {text: "super"}}', 'sample'],
+      ['{sample} {test}', 'sample', 'test'],
+      ['{list.push({name: "sample"})} {{sample: 12}} {test}', 'list.push({name: "sample"})', '{sample: 12}', 'test'],
+      ['{sample - test} {}', 'sample - test'],
+      ['({my {work}})', 'my {work}'],
+    ].forEach(([str, ...execs]) => {
+      extractExecutableSnippetFromString(str).forEach((res, i) => {
+        const executable = execs[i];
+        expect(res.executable).toEqual(executable);
+        expect(res.match).toEqual(`{${executable}}`);
+      })
+    })
   });
 });

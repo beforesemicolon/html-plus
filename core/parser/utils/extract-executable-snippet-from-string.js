@@ -1,28 +1,39 @@
 function extractExecutableSnippetFromString(str) {
   const stack = [];
-  const snippets = [];
-  const pattern = /\{|\}/g;
+  const pattern = /[}{]/g;
+  let snippets = [];
   let match;
-  let startingCurlyIndex = 0;
+  let startingCurlyIndex = null;
   
   while((match = pattern.exec(str)) !== null) {
     const char = match[0];
   
     if(char === '{') {
       stack.push(match.index);
-    } else if(char === '}') {
+    } else if(char === '}' && stack.length) {
       startingCurlyIndex = stack.pop();
-    }
-  
-    if(stack.length === 0 && char === '}') {
-      const matchStr = str.slice(startingCurlyIndex+1, match.index).trim();
-      snippets.push({
-        match: `{${matchStr}}`,
-        executable: matchStr
-      });
+    
+      const matchStr = str.slice(startingCurlyIndex+1, match.index);
+    
+      if (matchStr) {
+        for (let j = 0; j < snippets.length; j++) {
+          const snippet = snippets[j];
+        
+          if (snippet.from > startingCurlyIndex && snippet.to < match.index) {
+            snippets.splice(j, 1)
+          }
+        }
+      
+        snippets.push({
+          from: startingCurlyIndex,
+          to: match.index,
+          match: `{${matchStr}}`,
+          executable: matchStr
+        });
+      }
     }
   }
-  
+
   return snippets;
 }
 
