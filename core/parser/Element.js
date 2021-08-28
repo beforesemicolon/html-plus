@@ -87,6 +87,26 @@ class Element extends Node {
     return null;
   }
   
+  get id() {
+    return this.getAttribute('id')
+  }
+  
+  set id(val) {
+    if (typeof val === 'string') {
+      this.setAttribute('id', val)
+    }
+  }
+  
+  get className() {
+    return this.getAttribute('class')
+  }
+  
+  set className(val) {
+    if (typeof val === 'string') {
+      this.setAttribute('class', val)
+    }
+  }
+  
   hasAttributes() {
     return this.attributes.length > 0;
   }

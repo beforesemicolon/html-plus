@@ -78,6 +78,22 @@ describe('Element', () => {
 
       expect(anchor.toString()).toBe('<a></a>')
     });
+  
+    it('should get and set id', () => {
+      const div = new Element('div');
+      div.id = 'sample';
+      
+      expect(div.id).toEqual('sample');
+      expect(div.getAttribute('id')).toEqual('sample');
+    });
+  
+    it('should get and set className', () => {
+      const div = new Element('div');
+      div.className = 'sample-cls container';
+    
+      expect(div.className).toEqual('sample-cls container');
+      expect(div.getAttribute('class')).toEqual('sample-cls container');
+    });
   })
 
   describe('children', () => {
