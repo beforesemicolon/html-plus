@@ -23,6 +23,11 @@ const defaultOptions = {
   context: {}
 }
 
+/**
+ * parsed HTML renderer
+ * @param dt
+ * @returns {string}
+ */
 function render(dt = defaultOptions) {
   if (typeof dt === 'string') {
     dt = {content: dt};
@@ -32,6 +37,9 @@ function render(dt = defaultOptions) {
   
   let root;
   
+  /**
+   * use provided node or parse the html content instead
+   */
   if (dt.node && dt.node instanceof Element) {
     root = dt.node;
   } else {
@@ -57,14 +65,22 @@ function render(dt = defaultOptions) {
       }
   
       if (node instanceof Text) {
+        /**
+         * it is necessary to ignore script and style tag text content because
+         * it may contain content that resemble things to be bind
+         */
         if (!node.parentNode || (node.parentNode.tagName !== 'script' && node.parentNode.tagName !== 'style')) {
           node.textContent = bindData(node.textContent, node.context)
         }
     
-        htmlString += node.toString() + closeAncestorTags(node);;
+        htmlString += node.toString() + closeAncestorTags(node);
         continue;
       }
   
+      /**
+       * null nodes are normally root nodes containing everything
+       * sort of like the DocumentElement
+       */
       if (node.tagName === null) {
         nodeList.unshift(...node.childNodes);
         continue;
@@ -83,7 +99,11 @@ function render(dt = defaultOptions) {
       }
   
       for (let attribute of node.attributes) {
-        if (!attribute.name.startsWith('on')) { // avoid binding event attributes
+        /**
+         * ignore on* attributes because these are tag event attributes which values
+         * must be ignored for the same reason we are ignoring the style and script tags content
+         */
+        if (!attribute.name.startsWith('on')) {
           node.setAttribute(attribute.name, bindData(attribute.value, node.context))
         }
       }
@@ -107,14 +127,24 @@ function render(dt = defaultOptions) {
   return htmlString;
 }
 
+/**
+ * recursively upwards tag closing tag
+ * @param node
+ * @returns {string}
+ */
 function closeAncestorTags(node) {
   let parent = node.parentNode;
   let str = '';
   
+  /**
+   * only loop if the node is the last child of the parent node
+   * to make sure it needs closing
+   */
   while (parent && parent.lastChild === node) {
     if (parent.tagName) {
       str += `</${parent.tagName}>`;
     }
+    
     node = parent;
     parent = node.parentNode;
   }

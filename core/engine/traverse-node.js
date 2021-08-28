@@ -1,6 +1,11 @@
 const validUrl = require('valid-url');
 const path = require('path');
 
+/**
+ * replace the node link in place while traverse on render
+ * @param pagesDirectoryPath
+ * @returns {(function(*, *): void)|*}
+ */
 function traverseNode(pagesDirectoryPath) {
   return (node, nodeFile) => {
     let srcAttrName = '';

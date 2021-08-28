@@ -10,6 +10,13 @@ const styleExtensions = new Set([
   '.styl',
 ]);
 
+/**
+ * takes a valid CSS file path and transforms it which
+ * calls the "transformFile" function which imports the file
+ * and compiles it to raw CSS
+ * @param styleFileFullPath
+ * @returns {Promise<*|undefined>}
+ */
 async function importStyle(styleFileFullPath) {
   const ext = path.extname(styleFileFullPath);
   

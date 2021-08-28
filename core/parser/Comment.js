@@ -1,5 +1,8 @@
 const {Node} = require('./Node');
 
+/**
+ * a simpler server-side DOM comment facade
+ */
 class Comment extends Node {
   constructor(value) {
     super();

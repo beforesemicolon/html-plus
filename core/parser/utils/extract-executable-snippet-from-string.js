@@ -1,3 +1,8 @@
+/**
+ * manually check curly brackets pairs to collect content inside recursively
+ * @param str
+ * @returns {*[]}
+ */
 function extractExecutableSnippetFromString(str) {
   const stack = [];
   const pattern = /[}{]/g;

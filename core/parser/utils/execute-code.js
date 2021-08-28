@@ -3,6 +3,12 @@ const globals = [
   'URLSearchParams',
 ]
 
+/**
+ * simple Function based eval
+ * @param executableString
+ * @param contextData
+ * @returns {*}
+ */
 module.exports.executeCode = (executableString = '', contextData = {}) => {
   const args = [...Object.keys(contextData), ...globals];
   const values = [...Object.values(contextData), ...globals.map(() => {})];

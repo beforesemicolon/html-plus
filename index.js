@@ -7,6 +7,7 @@ const {Element} = require('./core/parser/Element');
 const {Text} = require('./core/parser/Text');
 const {Comment} = require('./core/parser/Comment');
 const {PartialFile} = require('./core/parser/PartialFile');
+const {html} = require("./core/parser/html");
 
 module.exports.CustomAttribute = CustomAttribute;
 module.exports.File = File;
@@ -14,6 +15,7 @@ module.exports.PartialFile = PartialFile;
 module.exports.Element = Element;
 module.exports.Text = Text;
 module.exports.Comment = Comment;
+module.exports.html = html;
 module.exports.engine = engine;
 module.exports.build = build;
 module.exports.importStyle = importStyle;

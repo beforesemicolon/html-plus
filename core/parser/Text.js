@@ -1,5 +1,8 @@
 const {Node} = require('./Node');
 
+/**
+ * a simpler server-side DOM text facade
+ */
 class Text extends Node {
   constructor(value) {
     super();

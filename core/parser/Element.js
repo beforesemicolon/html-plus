@@ -6,6 +6,9 @@ const {Attr} = require('./Attr');
 const {tagCommentPattern, attrPattern} = require('./utils/regexPatterns');
 const selfClosingTags = require('./utils/selfClosingTags.json');
 
+/**
+ * a simpler server-side DOM Element facade
+ */
 class Element extends Node {
   #tagName;
   #attributes;
@@ -280,10 +283,22 @@ class Element extends Node {
   }
 }
 
+/**
+ * check for a Node instance
+ * @param node
+ * @returns {boolean}
+ */
 function isValidNode(node) {
   return node && node instanceof Node;
 }
 
+/**
+ * html regex based parser with support for Element context data and
+ * attributes prefixed with # and complex logic as value
+ * @param markup
+ * @param data
+ * @returns {Element}
+ */
 function parseHTMLString(markup, data = {}) {
   const root = new Element();
   root.context = data;

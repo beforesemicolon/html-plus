@@ -1,3 +1,6 @@
+/**
+ * a simpler server-side DOM attr facade
+ */
 class Attr {
   #name;
   #value;

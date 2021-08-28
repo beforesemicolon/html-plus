@@ -4,7 +4,13 @@ const {readFileContent} = require("../utils/readFileContent");
 const {File} = require("../parser/File");
 
 const defaultOptions = {
+  /**
+   * environment mode
+   */
   env: 'development',
+  /**
+   * File instance
+   */
   file: null,
   target: 'es2016',
   envVariables: {},
@@ -16,67 +22,22 @@ const defaultOptions = {
   workingDirectoryPath: ''
 }
 
-const loaderPlugin = (file, linkedResources) => ({
-  name: 'files',
-  setup(build) {
-    build.onLoad({ filter: /\.[a-zA-Z0-9]{2,}$/ }, async (args) => {
-      const ext = path.extname(args.path);
-      
-      switch (ext) {
-        case '.html':
-        case '.xml':
-        case '.svg':
-          return {
-            contents: readFileContent(args.path),
-            loader: 'text',
-          }
-        case '.js':
-        case '.mjs':
-        case '.cjs':
-          return {loader: 'js'}
-        case '.ts':
-        case '.tsx':
-        case '.jsx':
-        case '.json':
-        case '.css':
-          return {loader: ext.substring(1)}
-        case '.txt':
-          return {loader: 'text'}
-        case '.data':
-          return {loader: 'binary'}
-        default:
-          linkedResources.push(args.path);
-          return {
-            contents: args.path
-              .replace(file.srcDirectoryPath, '')
-              .replace(process.cwd(), ''),
-            loader: 'file',
-          }
-      }
-    })
-  },
-})
-
-const getConfig = (opt, configPath) => {
-  let config = null;
-  
-  if (
-    opt.loader === 'ts'
-    || opt.loader === 'tsx'
-    || opt.file?.ext === '.ts'
-    || opt.file?.ext === '.tsx'
-  ) {
-    try {
-      config = require(configPath);
-    } catch (e) {
-    }
+/**
+ * compile typescript and javascript into browser ready javascript
+ * @param content
+ * @param opt
+ * @returns {Promise<string|{linkedResources: [], content: *}>}
+ */
+async function jsTransformer(content, opt = defaultOptions) {
+  if (content === undefined || content === null) {
+    return '';
   }
   
-  return config;
-}
-
-async function jsTransformer(content, opt = defaultOptions) {
-  if (content && typeof content === 'object') {
+  /**
+   * content can be left out completely by providing an option
+   * which contains a file to read the content from
+   */
+  if (typeof content === 'object') {
     opt = content;
     content = null;
   
@@ -149,6 +110,67 @@ async function jsTransformer(content, opt = defaultOptions) {
   }
   
   return '';
+}
+
+function loaderPlugin(file, linkedResources) {
+  return {
+    name: 'files',
+    setup(build) {
+      build.onLoad({ filter: /\.[a-zA-Z0-9]{2,}$/ }, async (args) => {
+        const ext = path.extname(args.path);
+        
+        switch (ext) {
+          case '.html':
+          case '.xml':
+          case '.svg':
+            return {
+              contents: readFileContent(args.path),
+              loader: 'text',
+            }
+          case '.js':
+          case '.mjs':
+          case '.cjs':
+            return {loader: 'js'}
+          case '.ts':
+          case '.tsx':
+          case '.jsx':
+          case '.json':
+          case '.css':
+            return {loader: ext.substring(1)}
+          case '.txt':
+            return {loader: 'text'}
+          case '.data':
+            return {loader: 'binary'}
+          default:
+            linkedResources.push(args.path);
+            return {
+              contents: args.path
+                .replace(file.srcDirectoryPath, '')
+                .replace(process.cwd(), ''),
+              loader: 'file',
+            }
+        }
+      })
+    },
+  }
+}
+
+function getConfig(opt, configPath) {
+  let config = null;
+  
+  if (
+    opt.loader === 'ts'
+    || opt.loader === 'tsx'
+    || opt.file?.ext === '.ts'
+    || opt.file?.ext === '.tsx'
+  ) {
+    try {
+      config = require(configPath);
+    } catch (e) {
+    }
+  }
+  
+  return config;
 }
 
 module.exports.jsTransformer = jsTransformer;

@@ -1,5 +1,10 @@
 const {attrsPriorities} = require('./../default-attributes');
 
+/**
+ * collect custom attribute based on priority
+ * @param attrs
+ * @returns {null}
+ */
 function getNextCustomAttribute(attrs) {
   let lastPrio = 100;
   let nextAttr = null;

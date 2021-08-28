@@ -2,16 +2,28 @@ const {createHash} = require('crypto');
 const {mkdir, rmdir, writeFile, readFile, unlink} = require('fs/promises');
 const path = require('path');
 
+/**
+ * handles content and file caching
+ */
 class CacheService {
   #cacheDir = path.resolve(process.cwd(), '.hp-cache');
   #memCache = new Map();
   #cacheFiles = new Set();
   
+  /**
+   * first makes sure the cache file directory is cleared and created empty
+   * @returns {Promise<void>}
+   */
   async init() {
     await rmdir(this.cacheDir, {recursive: true});
     await mkdir(this.cacheDir);
   }
   
+  /**
+   * sha256 hash any string
+   * @param content
+   * @returns {string}
+   */
   hashString(content) {
     const hash = createHash('sha256');
     hash.write(content)
@@ -22,6 +34,14 @@ class CacheService {
     return this.#cacheDir;
   }
   
+  /**
+   * caches a file content by saving in a hashed file name file with the same extension
+   * which makes it unique based on the file path and always the same as long
+   * as the file is of same path
+   * @param filePath
+   * @param content
+   * @returns {Promise<void>}
+   */
   async cacheFile(filePath, content) {
     const hashedFilePath = this.hashString(filePath);
     
@@ -51,6 +71,11 @@ class CacheService {
     }
   }
   
+  /**
+   * memory caches key-value pair data
+   * @param key
+   * @param value
+   */
   cache(key, value) {
     this.#memCache.set(key, value);
   }

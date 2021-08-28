@@ -6,8 +6,22 @@ const defaultOptions = {
   paths: []
 }
 
+/**
+ * compiles stylus CSS into raw CSS
+ * @param content
+ * @param opt
+ * @returns {Promise<unknown>}
+ */
 async function stylusTransformer(content = null, opt = defaultOptions) {
-  if (content && typeof content === 'object') {
+  if (content === undefined || content === null) {
+    return '';
+  }
+  
+  /**
+   * content can be left out completely by providing an option
+   * which contains a file to read the content from
+   */
+  if (typeof content === 'object') {
     opt = content;
     content = null;
     

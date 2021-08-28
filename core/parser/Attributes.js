@@ -1,5 +1,8 @@
 const {Attr} = require("./Attr");
 
+/**
+ * a simpler server-side DOM attributes facade
+ */
 class Attributes {
   #map = new Map();
   
