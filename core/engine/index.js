@@ -19,6 +19,13 @@ const {defaultTagsMap} = require("../parser/default-tags");
 const {customTagsRegistry} = require("../parser/default-tags/CustomTagsRegistry");
 const {render} = require("../parser/render");
 
+/**
+ * express engine and router
+ * @param app
+ * @param pagesDirectoryPath
+ * @param opt
+ * @returns {Promise<Router>}
+ */
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
     throw new Error('engine first argument must be provided and be a valid express app.')
@@ -78,6 +85,9 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
     traverseSourceDirectoryAndCollect(pagesDirectoryPath, partials, pagesRoutes, opt.env)
   )
     .then(async () => {
+      /**
+       * clear previous caching directory
+       */
       await cacheService.init();
       
       app.engine('html', async function (filePath, {settings, _locals, cache, ...context}, callback) {

@@ -34,6 +34,11 @@ let resources = {};
 let partials = [];
 let pages = [];
 
+/**
+ * static site builder
+ * @param options
+ * @returns {Promise<T>}
+ */
 async function build(options = defaultOptions) {
   options.env = 'production'
   options = collectHPConfig(options, defaultOptions);

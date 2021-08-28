@@ -1,6 +1,13 @@
 const {PartialFile} = require("../parser/PartialFile");
 const path = require('path');
 
+/**
+ * collect the pages and partial page info
+ * @param pagesDirectoryPath
+ * @param partials
+ * @param pagesRoutes
+ * @returns {function(*=): boolean}
+ */
 function traverseSourceDirectoryAndCollect(pagesDirectoryPath, partials, pagesRoutes) {
   return filePath => {
     if (filePath.endsWith('.html')) {

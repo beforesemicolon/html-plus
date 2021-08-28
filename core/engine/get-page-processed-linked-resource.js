@@ -2,6 +2,13 @@ const {cacheService} = require("../CacheService");
 const {File} = require("../parser/File");
 const {transform} = require('../transformers');
 
+/**
+ * process linked page resource
+ * @param resourcePath
+ * @param pagesDirectoryPath
+ * @param options
+ * @returns {Promise<{contentType: string, content: string}>}
+ */
 async function getPageProcessedLinkedResource(resourcePath, pagesDirectoryPath, options) {
   // for production, using the cached transformed pages help the CSS purge
   // better decide which CSS to keep or remove
