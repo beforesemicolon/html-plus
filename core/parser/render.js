@@ -69,7 +69,7 @@ function render(dt = defaultOptions) {
         nodeList.unshift(...node.childNodes);
         continue;
       }
-  
+      
       const customAttr = getNextCustomAttribute(node.getAttributeNames());
   
       if (customAttr) {
@@ -92,12 +92,12 @@ function render(dt = defaultOptions) {
   
       htmlString += `<${node.tagName} ${node.attributes}`.trimRight() + '>';
   
-      if (!selfClosingTags[node.tagName]) {
-        if (node.childNodes.length) {
-          nodeList.unshift(...node.childNodes)
-        } else {
-          htmlString += `</${node.tagName}>` + closeAncestorTags(node);
-        }
+      if (selfClosingTags[node.tagName]) {
+        htmlString += closeAncestorTags(node);
+      } else if (node.childNodes.length) {
+        nodeList.unshift(...node.childNodes)
+      } else {
+        htmlString += `</${node.tagName}>` + closeAncestorTags(node);
       }
     } catch(e) {
       handleError(e, node, dt.nodeFile);

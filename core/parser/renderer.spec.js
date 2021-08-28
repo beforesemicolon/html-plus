@@ -134,6 +134,13 @@ describe('render', () => {
 </html>`.replace(/\s+/g, ''))
   });
   
+  it('should close tag with self-closing child node', () => {
+    expect(render({
+      context: {title: 'welcome'},
+      content: `<head><link rel="stylesheet" href="./home.scss"></head>`
+    })).toEqual('<head><link rel="stylesheet" href="./home.scss"></head>')
+  });
+  
   describe('should handle errors', () => {
     it('in text', () => {
       try {
