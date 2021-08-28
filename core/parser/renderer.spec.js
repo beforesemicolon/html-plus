@@ -1,3 +1,9 @@
+jest.mock('chalk', () => ({
+  green: str => str,
+  yellow: str => str,
+  redBright: str => str,
+}));
+
 const {writeFile, unlink} = require('fs/promises');
 const path = require('path');
 const {defaultAttributesMap} = require("./default-attributes");
@@ -76,6 +82,7 @@ describe('render', () => {
   afterAll(async () => {
     await unlink(pageFile.fileAbsolutePath);
     await unlink(headFile.fileAbsolutePath);
+    jest.restoreAllMocks();
   })
   
   it('should render page', () => {
@@ -146,10 +153,10 @@ describe('render', () => {
       try {
         render('<div><p>{text}</p></div>')
       } catch (e) {
-        expect(e.message).toEqual('Error: [91mtext is not defined[39m\n' +
-          'Markup: [32m<p>[91m[39m[32m[39m\n' +
-          '[32m[91m{text} <= Error: text is not defined[39m[32m[39m\n' +
-          '[32m[91m[39m[32m</p>[39m')
+        expect(e.message).toEqual('Error: text is not defined\n' +
+          'Markup: <p>\n' +
+          '{text} <= Error: text is not defined\n' +
+          '</p>')
       }
     });
     
@@ -157,8 +164,8 @@ describe('render', () => {
       try {
         render('<div><p class="{cls}">Lorem ipsum dolor.</p></div>')
       } catch (e) {
-        expect(e.message).toEqual('Error: [91mcls is not defined[39m\n' +
-          'Markup: [32m<p class="{cls}">Lorem ipsum dolor.</p>[39m')
+        expect(e.message).toEqual('Error: cls is not defined\n' +
+          'Markup: <p class="{cls}">Lorem ipsum dolor.</p>')
       }
     });
     
@@ -172,8 +179,8 @@ describe('render', () => {
       try {
         render('<div><bfs-test></bfs-test></div>')
       } catch (e) {
-        expect(e.message).toEqual('Error: [91mtag failed[39m\n' +
-          'Markup: [32m<bfs-test></bfs-test>[39m')
+        expect(e.message).toEqual('Error: tag failed\n' +
+          'Markup: <bfs-test></bfs-test>')
       }
     });
     
@@ -187,8 +194,8 @@ describe('render', () => {
       try {
         render('<div #test></div>')
       } catch (e) {
-        expect(e.message).toEqual('Error: [91mattr failed[39m\n' +
-          'Markup: [32m<div #test></div>[39m')
+        expect(e.message).toEqual('Error: attr failed\n' +
+          'Markup: <div #test></div>')
       }
     });
   
@@ -196,10 +203,10 @@ describe('render', () => {
       try {
         render('<div><p class="text">{no}</p></div>')
       } catch (e) {
-        expect(e.message).toEqual('Error: [91mno is not defined[39m\n' +
-          'Markup: [32m<p class="text">[91m[39m[32m[39m\n' +
-          '[32m[91m{no} <= Error: no is not defined[39m[32m[39m\n' +
-          '[32m[91m[39m[32m</p>[39m')
+        expect(e.message).toEqual('Error: no is not defined\n' +
+          'Markup: <p class="text">\n' +
+          '{no} <= Error: no is not defined\n' +
+          '</p>')
       }
     });
   
@@ -213,17 +220,17 @@ describe('render', () => {
           partialFiles: [headFile]
         })
       } catch(e) {
-          expect(e.message).toEqual('Error: [91mnono is not defined[39m\n' +
-            'File: [33m/_head.html[39m\n' +
-            'Markup: [32m<head>[39m\n' +
-            '[32m  <meta charset="UTF-8">[39m\n' +
-            '[32m  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">[39m\n' +
-            '[32m  <title>include partial</title>[39m\n' +
-            '[32m  <inject id="style"></inject>[39m\n' +
-            '[32m  <inject></inject>[39m\n' +
-            '[32m</head>[91m[39m[32m[39m\n' +
-            '[32m[91m{nono} <= Error: nono is not defined[39m[32m[39m\n' +
-            '[32m[91m[39m[32m[39m')
+          expect(e.message).toEqual('Error: nono is not defined\n' +
+            'File: /_head.html\n' +
+            'Markup: <head>\n' +
+            '  <meta charset="UTF-8">\n' +
+            '  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">\n' +
+            '  <title>include partial</title>\n' +
+            '  <inject id="style"></inject>\n' +
+            '  <inject></inject>\n' +
+            '</head>\n' +
+            '{nono} <= Error: nono is not defined\n' +
+            '')
       }
     });
   });

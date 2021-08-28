@@ -1,16 +1,26 @@
+jest.mock('chalk', () => ({
+  green: str => str,
+  yellow: str => str,
+  redBright: str => str,
+}));
+
 const {Element} = require('../Element');
 const {handleError} = require('./handle-error');
 const {Text} = require('../Text');
 
 describe('handleError', () => {
+  afterAll(() => {
+    jest.restoreAllMocks();
+  })
+  
   it('should throw error message with the text markup', () => {
     const text = new Text('some text');
     
     try {
       handleError({message: 'Failed'}, text)
     } catch(e) {
-      expect(e.message).toEqual('Error: [91mFailed[39m\n' +
-        'Markup: [32msome text[39m')
+      expect(e.message).toEqual('Error: Failed\n' +
+        'Markup: some text')
     }
     
   });
@@ -59,9 +69,9 @@ describe('handleError', () => {
         htmlNode,
         {filePath: '/path/to/file.html'})
     } catch(e) {
-      expect(e.message).toEqual('Error: [91mFailed[39m\n' +
-        'File: [33m/path/to/file.html[39m\n' +
-        'Markup: [32m<h1>my title</h1>[39m')
+      expect(e.message).toEqual('Error: Failed\n' +
+        'File: /path/to/file.html\n' +
+        'Markup: <h1>my title</h1>')
     }
   });
 });
