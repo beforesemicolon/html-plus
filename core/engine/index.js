@@ -122,6 +122,7 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   
           let html = render({
             file,
+            env,
             content: file.content,
             partialFiles: partials,
             context: {$data: opt.staticData, ...context},

@@ -12,6 +12,7 @@ const {handleError} = require("./utils/handle-error");
 const {getNextCustomAttribute} = require("./utils/getNextCustomAttribute");
 
 const defaultOptions = {
+  env: 'development',
   onRender() {
   },
   file: null,
@@ -60,7 +61,9 @@ function render(dt = defaultOptions) {
 
     try {
       if (node instanceof Comment) {
-        htmlString += node.toString() + closeAncestorTags(node);
+        if (dt.env === 'development') {
+          htmlString += node.toString() + closeAncestorTags(node);
+        }
         continue;
       }
   
