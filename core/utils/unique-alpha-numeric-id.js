@@ -1,3 +1,7 @@
+/**
+ * generates unique alphanumeric id
+ * @type {function(*=): string}
+ */
 const uniqueAlphaNumericId = (() => {
   const heyStack = '0123456789abcdefghijklmnopqrstuvwxyz';
   const {length} = heyStack;

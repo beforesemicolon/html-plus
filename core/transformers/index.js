@@ -26,6 +26,13 @@ const sourcesExtensions = new Set([
   '.jsx',
 ]);
 
+/**
+ * transforms file based on their extension using the provided options
+ * as long as they are supported file extension
+ * @param file
+ * @param opt
+ * @returns {Promise<string|*>}
+ */
 const transformFile = async (file, opt = {}) => {
   if (sourcesExtensions.has(file.ext)) {
     let content = '';

@@ -1,11 +1,8 @@
 const {lessTransformer} = require('./less.transformer');
-const {File} = require('../File');
+const {File} = require('../parser/File');
 const path = require('path');
-const cp = require('child_process');
-const {promisify} = require('util');
 const data = require('./test-data');
-
-const exec = promisify(cp.exec);
+const {writeFile, unlink} = require('fs/promises');
 
 describe('lessTransformer', () => {
   
@@ -13,11 +10,11 @@ describe('lessTransformer', () => {
     const cssFile = `${path.resolve(__dirname)}/__style.less`;
     
     beforeAll(async () => {
-      await exec(`echo '${data.less}' >> ${cssFile}`);
+      await writeFile(cssFile, data.less)
     })
     
     afterAll(async () => {
-      await exec(`rm ${cssFile}`);
+      await unlink(cssFile);
     });
     
     it('from string', () => {
@@ -52,15 +49,15 @@ describe('lessTransformer', () => {
     const file3 = `${path.resolve(__dirname, `../style3.less`)}`;
     
     beforeAll(async () => {
-      await exec(`touch ${file1}`);
-      await exec(`echo '${baseStyle}' >> ${file2}`);
-      await exec(`echo '${baseStyle}' >> ${file3}`);
+      await writeFile(file1, '');
+      await writeFile(file2, baseStyle);
+      await writeFile(file3, baseStyle);
     })
     
     afterAll(async () => {
-      await exec(`rm ${file1}`);
-      await exec(`rm ${file2}`);
-      await exec(`rm ${file3}`);
+      await unlink(file1);
+      await unlink(file2);
+      await unlink(file3);
     });
     
     it('at same directory ', () => {

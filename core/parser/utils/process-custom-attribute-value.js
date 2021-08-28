@@ -1,6 +1,13 @@
-const {bindData} = require("../../utils/bind-data");
-const {executeCode} = require("../../utils/execute-code");
+const {bindData} = require("./bind-data");
+const {executeCode} = require("./execute-code");
 
+/**
+ * process CustomAttribute properties
+ * @param attr
+ * @param val
+ * @param data
+ * @returns {*}
+ */
 function processCustomAttributeValue(attr, val, data) {
   if (typeof attr.process === 'function') {
     val = attr.process(val);
@@ -11,7 +18,7 @@ function processCustomAttributeValue(attr, val, data) {
   }
   
   if (attr.execute) {
-    val = executeCode(`(() => (${val}))()`, data);
+    val = executeCode(val, data);
   }
   
   return val;

@@ -1,24 +1,21 @@
 const {jsTransformer} = require('./js.transformer');
-const {File} = require('../File');
+const {File} = require('../parser/File');
 const path = require('path');
-const cp = require('child_process');
-const {promisify} = require('util');
 const data = require('./test-data');
-
-const exec = promisify(cp.exec);
+const {writeFile, mkdir, rmdir} = require('fs/promises');
 
 describe('jsTransformer', () => {
   const src = path.resolve(__dirname, '__src-js');
   
   beforeAll(async () => {
-    await exec(`mkdir "${src}"`);
-    await exec(`echo "${data.js}" >> ${path.join(src, 'app.js')}`);
-    await exec(`echo "${data.ts}" >> ${path.join(src, 'app.ts')}`);
-    await exec(`echo "${data.react}" >> ${path.join(src, 'app.jsx')}`);
+    await mkdir(src);
+    await writeFile(path.join(src, 'app.js'), data.js);
+    await writeFile(path.join(src, 'app.ts'), data.ts);
+    await writeFile(path.join(src, 'app.jsx'), data.react);
   });
   
   afterAll(async () => {
-    await exec(`rm -r "${src}"`);
+    await rmdir(src, {recursive: true});
   });
   
   describe('should transform from content', () => {
@@ -121,7 +118,7 @@ describe('jsTransformer', () => {
 
       const file = new File(path.join(src, 'app.jsx'));
 
-      return jsTransformer({file})
+      return jsTransformer({file, excludeModules: ['react']})
         .then(res => {
           expect(res.content.replace(/\s+/g, ''))
             .toEqual(data.reactResult.replace(/\s+/g, ''));

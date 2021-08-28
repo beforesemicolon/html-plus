@@ -1,4 +1,4 @@
-const {PartialFile} = require("../../PartialFile");
+const {PartialFile} = require("../../parser/PartialFile");
 const {uniqueAlphaNumericId} = require("../../utils/unique-alpha-numeric-id");
 const path = require('path');
 

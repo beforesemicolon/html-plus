@@ -1,24 +1,47 @@
-const {bindData} = require("../utils/bind-data");
-const {handleError} = require("./handle-error");
+const {Node} = require('./Node');
 
-class Text {
-  #data;
-  
-  constructor(value, data = {}) {
-    this.value = value;
-    this.#data = data;
+/**
+ * a simpler server-side DOM text facade
+ */
+class Text extends Node {
+  constructor(value) {
+    super();
+    super.textContent = value;
   }
   
-  get type() {
-    return 'text';
+  get nodeName() {
+    return '#text';
+  }
+  
+  get nodeType() {
+    return 3
+  }
+  
+  get nodeValue() {
+    return super.textContent;
+  }
+  
+  set textContent(value) {
+    super.textContent = value;
+    super.appendChild(new Text(this.nodeValue))
+  }
+  
+  get textContent() {
+    return super.textContent;
   }
   
   toString() {
-    try {
-      return bindData(this.value, this.#data);
-    } catch(e) {
-      handleError(e, this);
-    }
+    return this.textContent;
+  }
+  
+  appendChild() {}
+  
+  replaceChild() {}
+  
+  insertBefore() {}
+  
+  cloneNode() {
+    return new Text(this.textContent);
   }
 }
 

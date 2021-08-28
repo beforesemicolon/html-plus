@@ -1,19 +1,26 @@
 const {Text} = require('./Text');
 
 describe('Text', () => {
+  const txt = new Text('some');
+  
   it('should create no data text', () => {
-    const txt = new Text('some');
-    
-    expect(txt.type).toEqual('text')
-    expect(txt.value).toEqual('some')
+    expect(txt.nodeName).toEqual('#text')
+    expect(txt.nodeType).toEqual(3)
+    expect(txt.nodeValue).toEqual('some')
+    expect(txt.textContent).toEqual('some')
     expect(txt.toString()).toEqual('some')
   });
   
-  it('should create text with data ', () => {
-    const txt = new Text('some {text}', {text: 'value'});
+  it('should clone', () => {
+    const clone = txt.cloneNode();
   
-    expect(txt.type).toEqual('text')
-    expect(txt.value).toEqual('some {text}')
-    expect(txt.toString()).toEqual('some value')
+    expect(clone === txt).toBeFalsy()
+    expect(clone.textContent).toEqual('some')
+  });
+  
+  it('should update text', () => {
+    txt.textContent = 'some text';
+  
+    expect(txt.textContent).toEqual('some text')
   });
 });

@@ -670,7 +670,7 @@ var __publicField = (obj, key, value) => {
 };
 
 // core/transformers/__src-js/app.jsx
-var react = require(react);
+var react = require("react");
 module.exports = class Test extends react.Component {
   constructor() {
     super(...arguments);

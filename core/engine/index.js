@@ -3,9 +3,8 @@ const {collectHPConfig} = require("../utils/collect-hp-config");
 const chalk = require("chalk");
 const serialize = require('serialize-javascript');
 const {traverseSourceDirectoryAndCollect} = require("./traverse-source-directory-and-collect");
-const {transform} = require('../transform');
 const {getDirectoryFilesDetail} = require('../utils/getDirectoryFilesDetail');
-const {File} = require('../File');
+const {File} = require('../parser/File');
 const {traverseNode} = require("./traverse-node");
 const {Router} = require("./Router");
 const {collectPageTagsStyle} = require("./collect-page-tags-style");
@@ -14,7 +13,19 @@ const {defaultOptions} = require("./default-options");
 const {cacheService} = require('../CacheService');
 const {injectTagStylesToPage} = require("./inject-tag-styles-to-page");
 const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
+const {defaultAttributesMap} = require("../parser/default-attributes");
+const {customAttributesRegistry} = require("../parser/default-attributes/CustomAttributesRegistry");
+const {defaultTagsMap} = require("../parser/default-tags");
+const {customTagsRegistry} = require("../parser/default-tags/CustomTagsRegistry");
+const {render} = require("../parser/render");
 
+/**
+ * express engine and router
+ * @param app
+ * @param pagesDirectoryPath
+ * @param opt
+ * @returns {Promise<Router>}
+ */
 const engine = (app, pagesDirectoryPath, opt = {}) => {
   if (!app) {
     throw new Error('engine first argument must be provided and be a valid express app.')
@@ -46,19 +57,37 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   const partials = [];
   const pagesRoutes = {};
   const isProduction = opt.env === 'production';
-  const customTagStyles = opt.customTags.reduce((acc, tag) => {
-    if (tag.style) {
-      acc[turnCamelOrPascalToKebabCasing(tag.name)] = tag.style;
-    }
-    
-    return acc;
-  }, {})
+  const customTagStyles = {};
+  
+  // register default and custom attributes
+  for (let key in defaultAttributesMap) {
+    customAttributesRegistry.define(key, defaultAttributesMap[key])
+  }
+  
+  for (let attribute of opt.customAttributes) {
+    const attr = turnCamelOrPascalToKebabCasing(attribute.name);
+    customAttributesRegistry.define(attr, attribute);
+  }
+  
+  // register default and custom tags
+  for (let key in defaultTagsMap) {
+    customTagsRegistry.define(key, defaultTagsMap[key])
+  }
+  
+  for (let tag of opt.customTags) {
+    const tagName = turnCamelOrPascalToKebabCasing(tag.name);
+    customTagsRegistry.define(tagName, tag);
+    customTagStyles[tagName] = tag.style;
+  }
   
   return getDirectoryFilesDetail(
     pagesDirectoryPath,
     traverseSourceDirectoryAndCollect(pagesDirectoryPath, partials, pagesRoutes, opt.env)
   )
     .then(async () => {
+      /**
+       * clear previous caching directory
+       */
       await cacheService.init();
       
       app.engine('html', async function (filePath, {settings, _locals, cache, ...context}, callback) {
@@ -90,31 +119,30 @@ const engine = (app, pagesDirectoryPath, opt = {}) => {
   
         try {
           const onBeforeRender = traverseNode(pagesDirectoryPath);
-          
-          let html = await transform(file.content, {
-            data: opt.staticData,
-            context,
+  
+          let html = render({
             file,
-            customTags: opt.customTags,
-            customAttributes: opt.customAttributes,
+            env: opt.env,
+            content: file.content,
             partialFiles: partials,
-            onBeforeRender: (node, nodeFile) => {
+            context: {$data: opt.staticData, ...context},
+            onRender: (node, nodeFile) => {
               // collect any tag style if not already collected
               if (customTagStyles[node.tagName] && !usedTagsWithStyle.has(node.tagName)) {
                 usedTagsWithStyle.add(node.tagName)
               }
   
-              onBeforeRender(node, nodeFile)
+              if (!customTagStyles[node.tagName] && !defaultTagsMap[node.tagName]) {
+                onBeforeRender(node, nodeFile)
+              }
             }
-          }).then(async html => {
-            // include the collected styles at the end of the head tag
-            if (usedTagsWithStyle.size) {
-              return injectTagStylesToPage(html, await collectPageTagsStyle(usedTagsWithStyle, customTagStyles))
-            }
-            
-            return html;
           })
-          
+  
+          // include the collected styles at the end of the head tag
+          if (usedTagsWithStyle.size) {
+            html = injectTagStylesToPage(html, await collectPageTagsStyle(usedTagsWithStyle, customTagStyles))
+          }
+  
           callback(null, html);
     
           if (isProduction) {

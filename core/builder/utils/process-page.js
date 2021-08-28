@@ -1,9 +1,7 @@
-const {transform} = require("../../transform");
-const {File} = require("../../File");
+const {render} = require("../../parser/render");
+const {File} = require("../../parser/File");
 const {collectAndUpdateNodeSourceLink} = require('./collect-and-update-node-source-link');
 const path = require('path');
-const {defaultTagsMap} = require("./../../default-tags");
-const {defaultAttributes} = require("./../../default-attributes");
 const {injectTagStylesToPage} = require("./../../engine/inject-tag-styles-to-page");
 const {collectPageTagsStyle} = require("./../../engine/collect-page-tags-style");
 
@@ -16,17 +14,13 @@ async function processPage(pagePath, fileName, resources, opt, filePath) {
     : file.fileDirectoryPath;
   const usedTagsWithStyle = new Set();
   
-  const content = await transform(file.toString(), {
+  let content = render({
     file,
-    data: opt.staticData,
-    context: opt.contextData,
-    customTags: opt.customTags,
-    defaultTags: defaultTagsMap,
-    defaultAttributes: defaultAttributes,
-    customAttributes: opt.customAttributes,
-    partialFiles: opt.partials,
     env: opt.env,
-    onBeforeRender: (node, nodeFile) => {
+    content: file.toString(),
+    context: {$data: opt.staticData, ...opt.contextData},
+    partialFiles: opt.partials,
+    onRender: (node, nodeFile) => {
       const src = collectAndUpdateNodeSourceLink(node, nodeFile, resources, fileDirPath);
   
       // collect any tag style if not already collected
@@ -38,14 +32,12 @@ async function processPage(pagePath, fileName, resources, opt, filePath) {
         linkedSources.push(src);
       }
     }
-  }).then(async html => {
-    // include the collected styles at the end of the head tag
-    if (usedTagsWithStyle.size) {
-      return injectTagStylesToPage(html, await collectPageTagsStyle(usedTagsWithStyle, opt.customTagStyles))
-    }
-  
-    return html;
   })
+  
+  // include the collected styles at the end of the head tag
+  if (usedTagsWithStyle.size) {
+    content = injectTagStylesToPage(content, await collectPageTagsStyle(usedTagsWithStyle, opt.customTagStyles))
+  }
   
   return {
     content,
