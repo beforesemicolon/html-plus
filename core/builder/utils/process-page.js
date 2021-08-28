@@ -16,6 +16,7 @@ async function processPage(pagePath, fileName, resources, opt, filePath) {
   
   let content = render({
     file,
+    env: opt.env,
     content: file.toString(),
     context: {$data: opt.staticData, ...opt.contextData},
     partialFiles: opt.partials,
