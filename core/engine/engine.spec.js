@@ -193,7 +193,7 @@ describe('engine', () => {
         })
     });
 
-    it('should cache page resource', async () => {
+    it.skip('should cache page resource', async () => {
       const spy = jest.spyOn(cacheService, 'getCachedValue');
 
       await request(app).get('/home.scss')
