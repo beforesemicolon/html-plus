@@ -12,7 +12,7 @@ const buildLink = '/documentation/build-static-site';
 const faqLink = '/documentation/faq';
 const apiReferenceLink = '/documentation/api-reference';
 const faqs = require('./faqs.json');
-const site = require('./site.json');
+const site = require('./site');
 
 function addNextAndPrevPaths(list, preListItem, postListItem) {
   for (let i = 0; i < list.length; i++) {
@@ -225,11 +225,6 @@ const data = {
         partial: 'api-reference',
         list: [
           {
-            title: "Attribute",
-            path: `${apiReferenceLink}/attribute-class`,
-            partial: 'attribute-class'
-          },
-          {
             title: "#attr",
             path: `${apiReferenceLink}/attr-attribute`,
             partial: 'attr-attribute',
@@ -245,9 +240,14 @@ const data = {
             partial: 'comment-class',
           },
           {
-            title: "composeTagString()",
-            path: `${apiReferenceLink}/compose-tag-string`,
-            partial: 'compose-tag-string'
+            title: "CustomAttribute",
+            path: `${apiReferenceLink}/custom-attribute-class`,
+            partial: 'custom-attribute-class'
+          },
+          {
+            title: "Element",
+            path: `${apiReferenceLink}/element-class`,
+            partial: 'element-class',
           },
           {
             title: "engine()",
@@ -270,14 +270,14 @@ const data = {
             partial: 'fragment-attribute',
           },
           {
-            title: "HTMLNode",
-            path: `${apiReferenceLink}/html-node-class`,
-            partial: 'html-node-class',
-          },
-          {
             title: "#if",
             path: `${apiReferenceLink}/if-attribute`,
             partial: 'if-attribute',
+          },
+          {
+            title: "html()",
+            path: `${apiReferenceLink}/html-function`,
+            partial: 'html-function',
           },
           {
             title: "<ignore/>",

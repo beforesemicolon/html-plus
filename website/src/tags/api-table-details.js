@@ -33,7 +33,7 @@ class ApiTableDetails {
         <tbody>
           <tr #repeat="details">
               <td>{$key}</td>
-              <td>{$item}</td>
+              <td><inject html="$item"></inject></td>
           </tr>
         </tbody>
       </table>

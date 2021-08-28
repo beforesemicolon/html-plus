@@ -1,0 +1,30 @@
+<api-table-details name="engine" details="{
+	name: 'html',
+	type: 'function',
+	arguments: 'html string, context object',
+	description: 'A function that will render the provided html string with the context data bind to it',
+}"></api-table-details>
+<h3>Description</h3>
+<p>This function allows you to use HTML+ attributes and tags inside your custom tags and attributes in order to
+avoid weird and complex string manipulation.</p>
+<code-snippet language="js">
+const {html} = require('@beforesemicolon/html-plus');
+
+class SearchField {
+	constructor(node, options) {
+		this.node = node;
+	}
+
+	render() {
+		return html(`
+			<label class="search-field" aria-label="search field">
+				<input type="search" name="search" placeholder="{placeholder}" value="{value}">
+			</label>
+		`, {
+			placeholder: this.node.getAttribute('placeholder'),
+			value: this.node.getAttribute('value'),
+		});
+	}
+}
+</code-snippet>
+<content-navigation currentPage="currentPage"></content-navigation>

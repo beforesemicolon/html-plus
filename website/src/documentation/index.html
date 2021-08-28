@@ -44,7 +44,6 @@
 		</aside>
 		<article #if="currentPage" id="documentation">
 			<h2 #if="currentPage !== page"><ignore value="currentPage.title" escape></ignore></h2>
-			<p>{currentPage.partial}</p>
 			<include partial="{currentPage.partial}"></include>
 		</article>
 	</main>

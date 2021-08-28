@@ -19,13 +19,14 @@ class SearchField {
 	</style>`;
 
 	render() {
-		const {value = '', placeholder = 'Search...'} = this.node.attributes;
-
-		return `
+		return html(`
 			<label class="search-field" aria-label="search field">
-				<input type="search" name="search" placeholder="${placeholder}" value="${value}">
+				<input type="search" name="search" placeholder="{placeholder}" value="{value}">
 			</label>
-		`;
+		`, {
+			value: this.node.getAttribute('value'),
+			placeholder: this.node.getAttribute('placeholder') || 'Search...',
+		});
 	}
 }
 </code-snippet>

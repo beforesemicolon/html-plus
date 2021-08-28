@@ -1,4 +1,4 @@
-{
+module.exports = {
   "name": "HTML+",
   "description": "HTML Template Language, Engine and Site Builder",
   "navigation": [
@@ -7,11 +7,11 @@
       "label": "Documentation",
       "type": "link"
     },
-    {
-      "path": "/learn",
-      "label": "Learn",
-      "type": "button"
-    }
+    // {
+    //   "path": "/learn",
+    //   "label": "Learn",
+    //   "type": "button"
+    // }
   ],
   "footer": {
     "links" : [

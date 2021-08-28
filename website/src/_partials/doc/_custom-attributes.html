@@ -17,7 +17,7 @@ class WrapWith extends CustomAttribute {
 	render(value, node) {
 		return this.tags.reduce((content, tag) => {
 			return `<${tag}>${content}<${tag}>`;
-		}, node.render());
+		}, node.outerHTML));
 	}
 }
 </code-snippet>

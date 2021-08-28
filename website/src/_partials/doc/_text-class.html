@@ -7,36 +7,26 @@
 	description: 'A class representing HTML comment.',
 }"></api-table-details>
 <h3>Constructor</h3>
-<p>The constructor takes the text string and a optional object representing the context data.</p>
-<h3>Properties</h3>
-<api-description-list descriptions="[
-		{
-			concept: 'value',
-			type: 'type: string',
-			description: 'The text value.'
-		},
-				{
-			concept: 'type',
-			type: 'type: string, readonly',
-			description: 'Always returns \'text\'.'
-		},
-	]"></api-description-list>
-<h3>Methods</h3>
-<api-description-list descriptions="[
-		{
-			concept: 'toString',
-			type: 'type: function',
-			description: 'Function that returns an HTML text string.'
-		},
-	]"></api-description-list>
-<h3>Usage Examples</h3>
+<p>The constructor takes the text string. It is the same as calling the
+	<a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/createTextNode">createNodeText</a> on the
+   document in the browser.</p>
+<h3>Properties and Methods</h3>
+<p>The text instance is a server-side replica of the browser text node. It shares the node most properties and
+   methods.</p>
+<h3>Context</h3>
+<p>You can set and read <strong>context</strong> on the text node which is a feature unique to HTML+ that allows you to
+   define the data the text can refer to for rendering.</p>
 <code-snippet language="js">
-const path = require("path");
 const {Text} = require("@beforesemicolon/html-plus");
 
-const text = new Text('total is {total}', {
-	total: 200
-});
-console.log(text.toString());
+const text = new Text('total is {total}');
+text.setContext('total', 200);
+
+comment.nodeValue; // 'total is {total}'
+comment.nodeName; // '#text'
+comment.nodeType; // '3'
+
+// when rendered it will become
+// 'total is 200'
 </code-snippet>
 <content-navigation currentPage="currentPage"></content-navigation>
