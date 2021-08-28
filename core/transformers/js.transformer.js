@@ -13,6 +13,7 @@ const defaultOptions = {
    */
   file: null,
   target: 'es2016',
+  excludeModules: [],
   envVariables: {},
   loaders: {},
   loader: 'js',
@@ -89,6 +90,7 @@ async function jsTransformer(content, opt = defaultOptions) {
         ...options,
         ...(opt.tsConfigPath && {tsconfig: opt.tsConfigPath}),
         absWorkingDir: workingDirectory,
+        external: opt.excludeModules,
         entryPoints: [opt.file.fileAbsolutePath],
         allowOverwrite: true,
         bundle: true,

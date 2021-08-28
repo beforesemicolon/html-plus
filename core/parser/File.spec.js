@@ -1,10 +1,7 @@
 const {File} = require('./File');
 const fs = require('fs');
 const path = require('path');
-const cp = require('child_process');
-const {promisify} = require('util');
-
-const exec = promisify(cp.exec);
+const {writeFile, unlink} = require('fs/promises');
 
 describe('File', () => {
   const absPath = path.resolve(__dirname, 'file.ext');
@@ -46,11 +43,11 @@ describe('File', () => {
     const filePath = path.join(__dirname, 'sample.txt');
     
     beforeAll(async () => {
-      await exec(`echo "file content sample" >> ${filePath}`);
+      await writeFile(filePath, 'file content sample', 'utf-8');
     })
     
     afterAll(async () => {
-      await exec(`rm "${filePath}"`);
+      await unlink(filePath);
     })
     
     it('should load content', async () => {
@@ -58,13 +55,13 @@ describe('File', () => {
     
       file.load();
     
-      expect(file.content).toBe('file content sample\n');
+      expect(file.content).toBe('file content sample');
     });
   
     it('should print string version of the file', () => {
       const file = new File('sample.txt', __dirname);
     
-      expect(file.toString()).toBe('file content sample\n');
+      expect(file.toString()).toBe('file content sample');
     });
   
     it('should allow to set content', () => {
@@ -80,7 +77,7 @@ describe('File', () => {
   
       file.content  = fs.readFileSync(filePath);
   
-      expect(file.toString()).toEqual('file content sample\n');
+      expect(file.toString()).toEqual('file content sample');
     });
   });
 });

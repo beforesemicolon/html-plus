@@ -1,20 +1,17 @@
 const {readFileContent} = require('./readFileContent');
-const cp = require('child_process');
+const {writeFile, unlink} = require('fs/promises');
 const path = require('path');
-const {promisify} = require('util');
-
-const exec = promisify(cp.exec);
 
 describe('readFileContent', () => {
   const fileName = path.resolve(__dirname, './___test.txt');
   const fileContent = 'some text';
   
   beforeAll(async () => {
-    await exec(`echo "${fileContent}" >> ${fileName}`);
+    await writeFile(fileName, fileContent)
   });
   
   afterAll(async () => {
-    await exec(`rm ${fileName}`);
+    await unlink(fileName);
   });
   
   it('should read file content', () => {
