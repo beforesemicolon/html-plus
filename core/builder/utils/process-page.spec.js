@@ -40,7 +40,7 @@ describe('processPage', () => {
         path: path.join(__dirname, 'app.css')
       })
     }))
-    expect(res.content).toMatch(/<link href=".\/stylesheets\/app-[a-zA-Z0-9]{8}.css"\/>/)
+    expect(res.content).toMatch(/<link href=".\/stylesheets\/app-[a-zA-Z0-9]{8}.css">/)
     expect(res.file).toEqual(expect.any(File))
     expect(res.linkedSources).toEqual(expect.arrayContaining([
       expect.objectContaining({
