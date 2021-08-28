@@ -27,7 +27,11 @@
 						<variable name="hasSubmenu"
 						          value="Boolean($item.list?.length)"></variable>
 						<variable name="expanded"
-						          value="(hasSubmenu && $path.startsWith($item.path)) ? true : false"></variable>
+						          value="(hasSubmenu &&
+						          (
+						            $path.startsWith($item.path) ||
+						            $item.path.startsWith('/documentation/api-reference')
+					              )) ? true : false"></variable>
 
 						<a href="{$item.path}" aria-expanded="{expanded}">{$item.title}</a>
 
