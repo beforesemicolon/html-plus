@@ -2,39 +2,23 @@
 	name: 'Comment',
 	type: 'class',
 	arguments: 'A plain string comment',
-	properties: 'value, type',
-	methods: 'toString',
+	properties: 'most DOM document comment properties',
+	methods: 'most DOM document comment methods',
 	description: 'A class representing HTML comment.',
 }"></api-table-details>
 <h3>Constructor</h3>
-<p>The constructor takes the comment string.</p>
-<h3>Properties</h3>
-<api-description-list descriptions="[
-		{
-			concept: 'value',
-			type: 'type: string',
-			description: 'The value of the comment.'
-		},
-		{
-			concept: 'type',
-			type: 'type: string, readonly',
-			description: 'Always returns \'comment\'.'
-		},
-	]"></api-description-list>
-<h3>Methods</h3>
-<api-description-list descriptions="[
-		{
-			concept: 'toString',
-			type: 'type: function',
-			description: 'Function that returns an HTML comment string.'
-		},
-	]"></api-description-list>
+<p>The constructor takes the comment string. It is the same as calling the
+	<a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/createComment">createComment</a> on the
+   document in the browser.</p>
+<h3>Properties and Methods</h3>
+<p>The comment instance is a server-side replica of the browser comment node. It shares the node most properties and methods.</p>
 <h3>Usage Examples</h3>
 <code-snippet language="js">
-const path = require("path");
 const {Comment} = require("@beforesemicolon/html-plus");
 
 const comment = new Comment('simple comment');
-console.log(comment.toString());
+
+comment.nodeValue; // 'simple comment'
+comment.nodeName; // '#comment'
+comment.nodeType; // '8'
 </code-snippet>
-<content-navigation currentPage="currentPage"></content-navigation>

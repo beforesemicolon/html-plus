@@ -1,7 +1,7 @@
 const {processPage} = require('./process-page');
-const {File} = require('./../../File');
+const {File} = require('../../parser/File');
 const path = require('path');
-const {writeFile, rm} = require('fs/promises');
+const {writeFile, rm} = require('../../utils/fs-promise');
 
 describe('processPage', () => {
   const options = {
@@ -40,7 +40,7 @@ describe('processPage', () => {
         path: path.join(__dirname, 'app.css')
       })
     }))
-    expect(res.content).toMatch(/<link href=".\/stylesheets\/app-[a-zA-Z0-9]{8}.css"\/>/)
+    expect(res.content).toMatch(/<link href=".\/stylesheets\/app-[a-zA-Z0-9]{8}.css">/)
     expect(res.file).toEqual(expect.any(File))
     expect(res.linkedSources).toEqual(expect.arrayContaining([
       expect.objectContaining({

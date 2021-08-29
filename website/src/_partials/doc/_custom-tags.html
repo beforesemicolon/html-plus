@@ -42,22 +42,25 @@ engine(app, path.resolve(__dirname, './pages'), {
 </code-snippet>
 <h3>Working with Attributes</h3>
 <p>The custom tag is initialized with two arguments. The
-	<a href="/documentation/api-reference/html-node-class">HTMLNode</a> object and the <strong>options</strong> the node was created with.</p>
+	<a href="/documentation/api-reference/html-node-class">Element</a> object and the <strong>options</strong> the node was created with.</p>
 <p>To accept a <em>value</em> and <em>placeholder</em> attribute we can use a constructor to collect the node.</p>
 <code-snippet language="js">
+const {html} = require('@beforesemicolon/html-plus');
+
 class SearchField {
 	constructor(node, options) {
 		this.node = node;
 	}
 
 	render() {
-		const {value = '', placeholder = 'Search...'} = this.node.attributes;
-
-		return `
+		return html(`
 			<label class="search-field" aria-label="search field">
-				<input type="search" name="search" placeholder="${placeholder}" value="${value}">
+				<input type="search" name="search" placeholder="{placeholder}" value="{value}">
 			</label>
-		`;
+		`, {
+			value: this.node.getAttribute('value'),
+			placeholder: this.node.getAttribute('placeholder') || 'Search...',
+		});
 	}
 }
 </code-snippet>
@@ -71,4 +74,3 @@ class SearchField {
 	<strong>Note:</strong> custom tags are <abbr title="Server Side Rendered">SSR</abbr>. This means that only the
 	HTML returned by the render method will be shipped to the browsers.
 </blockquote>
-<content-navigation currentPage="currentPage"></content-navigation>

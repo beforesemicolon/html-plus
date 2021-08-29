@@ -1,4 +1,10 @@
-async function injectTagStylesToPage(html, styles) {
+/**
+ * puts a style tag with CSS before the end of page head tag
+ * @param html
+ * @param styles
+ * @returns {*}
+ */
+function injectTagStylesToPage(html, styles) {
   const endOfHeadPattern = /<\/head>/gm;
   
   return html.replace(endOfHeadPattern, m => {

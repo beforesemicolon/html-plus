@@ -1,0 +1,48 @@
+<api-table-details name="CustomAttribute" details="{
+	name: 'CustomAttribute',
+	type: 'class',
+	properties: 'execute, bind',
+	methods: 'process, render',
+	description: 'A class to extend in order to create custom HTML+ attributes',
+}"></api-table-details>
+<h3>Constructor</h3>
+<p>The constructor takes no argument.</p>
+<h3>Properties</h3>
+<api-description-list descriptions="[
+		{
+			concept: 'execute',
+			type: 'type: boolean, optional',
+			description: 'flags whether to execute the string value to a Javascript value.'},
+		{
+			concept: 'render',
+			type: 'type: boolean, optional',
+			description: 'flags whether to bind the string value to another string value.'
+		},
+	]"></api-description-list>
+<h3>Methods</h3>
+<api-description-list descriptions="[
+		{
+			concept: 'process',
+			type: 'arguments: raw attribute value',
+			description: 'a function called before value bind and execution that must return a new string representing the new attribute value to be bind or executed.'},
+		{
+			concept: 'render',
+			type: 'arguments: processed attribute value, Element instance',
+			description: 'a function called on node render that must return the node or a new HTML markup string.'
+		},
+	]"></api-description-list>
+<h3>Usage Examples</h3>
+<p>This is how the native <strong>#if</strong> attribute is implemented.</p>
+<code-snippet language="js">
+const {CustomAttribute} = require("@beforesemicolon/html-plus");
+
+class If extends CustomAttribute {
+	execute = true;
+
+	render(condition, node) {
+		return condition ? node : null;
+	}
+}
+
+module.exports.If = If;
+</code-snippet>

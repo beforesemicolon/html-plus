@@ -1,0 +1,34 @@
+<api-table-details name="Element" details="{
+		name: 'Element',
+		type: 'class',
+		arguments: 'tag name',
+		properties: 'most DOM Element properties',
+		methods: 'most DOM Element properties',
+		description: 'A class representing DOM document Element.',
+	}"></api-table-details>
+<h3>Constructor</h3>
+<p>The constructor takes a required absolute path to the file and an optional source directory.</p>
+<h3>Properties and Methods</h3>
+<p>The element instance is a server-side replica of the browser
+	<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a> node.
+   It shares the node most properties and methods.</p>
+<blockquote>
+	<strong>Note:</strong> As of now, most Element properties and methods are available,
+	except for a few like the query selectors, style, classList, and dataset. It also does not contain any
+	Event related or other properties and methods that only make sense on the client.
+</blockquote>
+<h3>Context</h3>
+<p>You can set <strong>context</strong> on the element which is a feature unique to HTML+ which allows you to
+define the data the element can refer to for rendering.</p>
+<code-snippet language="js">
+const path = require("path");
+const {Element} = require("@beforesemicolon/html-plus");
+
+const title = new Element('h2');
+title.setAttribute('id', 'main-title');
+title.textContent = '{title}';
+title.setContext('title', 'Main Title');
+
+// when rendered it will become
+// <h2 id="main-title">Main Title</h2>
+</code-snippet>

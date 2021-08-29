@@ -1,4 +1,4 @@
-const site = require('./site.json');
+const site = require('./site');
 
 module.exports = {
   path: "/",
@@ -7,10 +7,10 @@ module.exports = {
   banner: {
     description: "HTML is powerful on its own and there is no need to change its syntax. <strong>HTML+</strong> simply\n\t\tadds and allows you to add extra capabilities while still enjoying the HTML syntax.",
     links: [
-       {
-          path: "/learn",
-          label: "Start Learning"
-        },
+       // {
+       //    path: "/learn",
+       //    label: "Start Learning"
+       //  },
         {
           path: "/documentation",
           label: "Documentation"

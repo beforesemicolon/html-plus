@@ -6,25 +6,54 @@ const purgeCSS = require('@fullhuman/postcss-purgecss');
 const atImport = require("postcss-import");
 const cssnano = require('cssnano');
 const comments = require('postcss-discard-comments');
-const {uniqueAlphaNumericId} = require("../utils/unique-alpha-numeric-id");
 const purgeHTML = require('purgecss-from-html');
 
 const defaultOptions = {
+  /**
+   * any post CSS plugin already started https://www.postcss.parts/
+   */
   plugins: [],
+  /**
+   * the director the file will go to
+   */
   destPath: undefined,
+  /**
+   * the directory containing all the assets to resolve the linked assets path to
+   */
   assetsPath: '',
-  assetsHashedMap: {},
+  /**
+   * a valid purgeCSS extractor
+   */
   htmlExtractor: null,
+  /**
+   * environment mode
+   */
   env: 'development',
+  /**
+   * flag whether to create source map or not
+   */
   map: false,
+  /**
+   * File instance
+   */
   file: null
 };
 
+/**
+ * compiles CSS with PostCSS
+ * @param content
+ * @param opt
+ * @returns {Promise<string|{linkedResources: *[], content: string}|string>}
+ */
 async function cssTransformer(content, opt = defaultOptions) {
   if (content === undefined || content === null) {
       return '';
   }
   
+  /**
+   * content can be left out completely by providing an option
+   * which contains a file to read the content from
+   */
   if (typeof content === 'object') {
     opt = content;
     content = null;
@@ -65,6 +94,7 @@ async function cssTransformer(content, opt = defaultOptions) {
       ...plugins,
       comments({removeAll: true}),
       purgeCSS({
+        // https://purgecss.com/extractors.html
         extractors: [
           {
             extractor: htmlExtractor,
@@ -83,7 +113,7 @@ async function cssTransformer(content, opt = defaultOptions) {
     
     if (opt.assetsPath) {
       post.use(url({
-        url: resolveUrl(opt.assetsPath, linkedResources, opt.assetsHashedMap || {}, opt.file)
+        url: resolveUrl(opt.assetsPath, linkedResources)
       }));
     }
   } else {
@@ -99,33 +129,24 @@ async function cssTransformer(content, opt = defaultOptions) {
     })
 }
 
-const resolveUrl = (assetsPath, linkedResources, assetsHashedMap) => (urlInfo) => {
-  let absPath = urlInfo.absolutePath;
-  if (!assetsHashedMap[absPath]) {
-    const relativePath = urlInfo.relativePath.match(/(?=\w).+/)[0];
-    let found = false;
-    
-    for (let key in assetsHashedMap) {
-      if (key.endsWith(relativePath)) {
-        absPath = key;
-        found = true;
-        break;
-      }
-    }
-    
-    if (!found) {
-      assetsHashedMap[urlInfo.absolutePath] = {
-        path: urlInfo.absolutePath,
-        hash: uniqueAlphaNumericId(8)
-      }
-    }
-  }
-  
-  linkedResources.push(absPath);
+/**
+ * replaces any CSS link to resolve to a specific directory
+ * @param assetsPath
+ * @param linkedResources
+ * @returns {function(*): string}
+ */
+const resolveUrl = (assetsPath, linkedResources) => (urlInfo) => {
+  // collect any css file absolute link
+  linkedResources.push(urlInfo.absolutePath);
   
   return `${assetsPath}/${path.basename(urlInfo.url)}`;
 };
 
+/**
+ * extract html selectors according to https://purgecss.com/extractors.html
+ * @param fileName
+ * @returns {(function(*=): (ExtractorResultDetailed|[]))|*}
+ */
 function defaultHtmlExtractor(fileName) {
   return content => {
     if (content.match(new RegExp(`${fileName}`, 'g'))) {

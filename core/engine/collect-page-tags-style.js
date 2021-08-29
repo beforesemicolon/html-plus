@@ -1,3 +1,9 @@
+/**
+ * check for the style property on custom tags and collect its content
+ * @param usedTagsWithStyle
+ * @param tagStyles
+ * @returns {Promise<*[]>}
+ */
 async function collectPageTagsStyle(usedTagsWithStyle, tagStyles) {
   const styles = [];
   

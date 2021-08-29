@@ -1,4 +1,4 @@
-const site = require('./site.json');
+const site = require('./site.js');
 
 module.exports = {
   path: "/learn",

@@ -1,6 +1,6 @@
 const {getDirectoryFilesDetail} = require('./getDirectoryFilesDetail');
 const path = require('path');
-const {mkdir, rmdir} = require('fs/promises');
+const {mkdir, rmdir} = require('../utils/fs-promise');
 
 describe('getDirectoryFilesDetail', () => {
   const dir = path.resolve(__dirname);

@@ -1,11 +1,8 @@
 const {cssTransformer} = require('./css.transformer');
 const path = require('path');
-const cp = require('child_process');
-const {promisify} = require('util');
-const {File} = require('../File');
+const {File} = require('../parser/File');
 const data = require('./test-data');
-
-const exec = promisify(cp.exec);
+const {writeFile, unlink} = require('../utils/fs-promise');
 
 describe('cssTransformer', () => {
   describe('should transform from file', () => {
@@ -15,16 +12,16 @@ describe('cssTransformer', () => {
     let file = null;
     
     beforeAll(async () => {
-      await exec(`echo "${data.css.trim()}" > ${cssFile}`);
-      await exec(`echo "* {box-sizing: border-box;}" > ${css2File}`);
-      await exec(`echo "<html><head><link rel="stylesheet" href="__style.css"></head><body><div class="image"></div></body></html>" > ${htmlFile}`);
+      await writeFile(cssFile, data.css.trim());
+      await writeFile(css2File, '* {box-sizing: border-box;}');
+      await writeFile(htmlFile, '<html><head><link rel="stylesheet" href="__style.css"></head><body><div class="image"></div></body></html>');
       file = new File(cssFile, __dirname);
     })
     
     afterAll(async () => {
-      await exec(`rm ${cssFile}`);
-      await exec(`rm ${css2File}`);
-      await exec(`rm ${htmlFile}`);
+      await unlink(cssFile);
+      await unlink(css2File);
+      await unlink(htmlFile);
     });
     
     it('from string', () => {

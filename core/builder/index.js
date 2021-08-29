@@ -1,5 +1,5 @@
 const fs = require('fs');
-const {mkdir, rmdir, writeFile} = require('fs/promises');
+const {mkdir, rmdir, writeFile} = require('../utils/fs-promise');
 const path = require('path');
 const chalk = require("chalk");
 const {collectHPConfig} = require("../utils/collect-hp-config");
@@ -8,6 +8,10 @@ const {processPage} = require("./utils/process-page");
 const {collectFilePaths} = require("./utils/collect-file-paths");
 const {getDirectoryFilesDetail} = require("../utils/getDirectoryFilesDetail");
 const {turnCamelOrPascalToKebabCasing} = require("../utils/turn-camel-or-pascal-to-kebab-casing");
+const {defaultAttributesMap} = require("../parser/default-attributes");
+const {customAttributesRegistry} = require("../parser/default-attributes/CustomAttributesRegistry");
+const {defaultTagsMap} = require("../parser/default-tags");
+const {customTagsRegistry} = require("../parser/default-tags/CustomTagsRegistry");
 
 const defaultOptions = {
   // absolute path to the directory containing the page, style, script and asset files
@@ -30,6 +34,11 @@ let resources = {};
 let partials = [];
 let pages = [];
 
+/**
+ * static site builder
+ * @param options
+ * @returns {Promise<T>}
+ */
 async function build(options = defaultOptions) {
   options.env = 'production'
   options = collectHPConfig(options, defaultOptions);
@@ -45,20 +54,32 @@ async function build(options = defaultOptions) {
   resources = {};
   partials = [];
   pages = [];
-  const customTagStyles = options.customTags.reduce((acc, tag) => {
-    if (tag.style) {
-      acc[turnCamelOrPascalToKebabCasing(tag.name)] = tag.style;
-    }
-    
-    return acc;
-  }, {})
-  const tagStyles = {};
+  const customTagStyles = {};
+  
+  // register default and custom attributes
+  for (let key in defaultAttributesMap) {
+    customAttributesRegistry.define(key, defaultAttributesMap[key])
+  }
+  
+  for (let attribute of options.customAttributes) {
+    const attr = turnCamelOrPascalToKebabCasing(attribute.name);
+    customAttributesRegistry.define(attr, attribute);
+  }
+  
+  // register default and custom tags
+  for (let key in defaultTagsMap) {
+    customTagsRegistry.define(key, defaultTagsMap[key])
+  }
+  
+  for (let tag of options.customTags) {
+    const tagName = turnCamelOrPascalToKebabCasing(tag.name);
+    customTagsRegistry.define(tagName, tag);
+    customTagStyles[tagName] = tag.style;
+  }
+  
   console.time(chalk.cyan('\ntotal duration'));
-  console.log(chalk.blue('\nReading source directory'));
-  console.time(chalk.blue('reading duration'));
   return getDirectoryFilesDetail(options.srcDir, collectFilePaths(options.srcDir, {partials, pages, resources}))
     .then(async () => {
-      console.timeEnd(chalk.blue('reading duration'));
       // clear previous destination directory
       if (fs.existsSync(options.destDir)) {
         await rmdir(options.destDir, {recursive: true});
@@ -115,7 +136,7 @@ async function build(options = defaultOptions) {
                 fileName += '.html';
                 filePath += '.html';
               }
-
+  
               await handleProcessedPageResult(
                 await processPage(template.path, fileName, resources, {...options, contextData, partials, customTagStyles}, filePath),
                 pageResources,
@@ -137,7 +158,7 @@ async function build(options = defaultOptions) {
         })
       )
       console.timeEnd(chalk.greenBright('processing duration'));
-      
+
       console.timeEnd(chalk.cyan('\ntotal duration'));
     })
     .catch(async e => {

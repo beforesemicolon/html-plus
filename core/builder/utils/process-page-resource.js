@@ -1,7 +1,7 @@
 const {getFileSourceHashedDestPath} = require("./get-file-source-hashed-dest-path");
 const {transform} = require("../../transformers");
-const {File} = require("../../File");
-const {copyFile, writeFile} = require('fs/promises');
+const {File} = require("../../parser/File");
+const {copyFile, writeFile} = require('../../utils/fs-promise');
 const path = require('path');
 const purgeHTML = require('purgecss-from-html');
 const {readFileContent} = require("../../utils/readFileContent");
@@ -25,7 +25,6 @@ async function processPageResource({srcPath, srcDestPath, pageFile, type}, optio
   const absoluteDestPath = path.join(destPath, srcDestPath);
   const destFile = new File(absoluteDestPath, destPath);
   const assetsPath = `../assets`;
-  const assetsHashedMap = resources;
   let content;
   let linkedResources;
   
@@ -38,8 +37,7 @@ async function processPageResource({srcPath, srcDestPath, pageFile, type}, optio
         destPath,
         env,
         file: destFile,
-        assetsPath,
-        assetsHashedMap
+        assetsPath
       }));
       break;
     case '.less':
@@ -49,8 +47,7 @@ async function processPageResource({srcPath, srcDestPath, pageFile, type}, optio
         destPath,
         env,
         file: destFile,
-        assetsPath,
-        assetsHashedMap
+        assetsPath
       }))
       break;
     case '.styl':
@@ -60,13 +57,12 @@ async function processPageResource({srcPath, srcDestPath, pageFile, type}, optio
         destPath,
         env,
         file: destFile,
-        assetsPath,
-        assetsHashedMap
+        assetsPath
       }))
       break;
     case '.css':
       ({content, linkedResources} = await transform.css({
-        ...postCSS, pageFile, destPath, env, file, assetsPath, assetsHashedMap,
+        ...postCSS, pageFile, destPath, env, file, assetsPath,
         // need to provide the html extractor because the source file and the destination file
         // are two different things
         htmlExtractor: htmlExtractor(destFile.file)
@@ -102,10 +98,16 @@ async function processPageResource({srcPath, srcDestPath, pageFile, type}, optio
   if (typeof content === 'string') {
     await writeFile(absoluteDestPath, content);
     // log so the user can track it
-    console.log(absoluteDestPath.replace(process.cwd(), ''));
+    console.log(file.fileAbsolutePath.replace(process.cwd(), ''));
     
     for (let source of linkedResources) {
-      if (!resources[source].copied) {
+      // the CSS processed after processed for preprocessors use the destination path
+      // which means all the connected resources will have destination path
+      // therefore it is necessary to convert them to the source path
+      // before we can use
+      source = source.replace(destFile.srcDirectoryPath, file.srcDirectoryPath);
+      
+      if (resources[source] && !resources[source].copied) {
         const srcDestPath = path.join(destPath, getFileSourceHashedDestPath(source, resources[source].hash));
         resources[source].copied = true;
         // log so the user can track it
