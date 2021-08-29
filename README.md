@@ -2,9 +2,12 @@
 
 HTML Template system to build websites
 
-![license](https://img.shields.io/github/license/beforesemicolon/html-plus)
 ![npm](https://img.shields.io/npm/v/@beforesemicolon/html-plus)
-![node-current](https://img.shields.io/node/v/html-plus)
+![license](https://img.shields.io/github/license/beforesemicolon/html-plus)
+![node version](https://img.shields.io/badge/min%20node%20version-14.*-brightgreen)
+
+[![Generic badge](https://img.shields.io/badge/website-documentation-blue)](https://html-plus.beforesemicolon.com/)
+
 ![Mac Build](https://github.com/beforesemicolon/html-plus/actions/workflows/mac.yml/badge.svg)
 ![Linux Build](https://github.com/beforesemicolon/html-plus/actions/workflows/linux.yml/badge.svg)
 
