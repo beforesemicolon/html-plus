@@ -1,6 +1,6 @@
-const {createHash} = require('crypto');
 const {mkdir, rmdir, writeFile, readFile, unlink} = require('fs/promises');
 const path = require('path');
+const {hashString} = require("./utils/hash-string");
 
 /**
  * handles content and file caching
@@ -8,7 +8,7 @@ const path = require('path');
 class CacheService {
   #cacheDir = path.resolve(process.cwd(), '.hp-cache');
   #memCache = new Map();
-  #cacheFiles = new Set();
+  #cacheFiles = new Map();
   
   /**
    * first makes sure the cache file directory is cleared and created empty
@@ -17,17 +17,6 @@ class CacheService {
   async init() {
     await rmdir(this.cacheDir, {recursive: true});
     await mkdir(this.cacheDir);
-  }
-  
-  /**
-   * sha256 hash any string
-   * @param content
-   * @returns {string}
-   */
-  hashString(content) {
-    const hash = createHash('sha256');
-    hash.write(content)
-    return hash.digest('hex');
   }
   
   get cacheDir() {
@@ -43,20 +32,24 @@ class CacheService {
    * @returns {Promise<void>}
    */
   async cacheFile(filePath, content) {
-    const hashedFilePath = this.hashString(filePath);
+    const hashedFilePath = path.join(this.cacheDir, `${hashString(filePath)}${path.extname(filePath)}`);
     
-    await writeFile(path.join(this.cacheDir, `${hashedFilePath}${path.extname(filePath)}`), content, 'utf-8');
+    await writeFile(hashedFilePath, content, 'utf-8');
     
-    this.#cacheFiles.add(filePath);
+    this.#cacheFiles.set(filePath, hashedFilePath);
   }
   
   async getCachedFile(filePath) {
     if (this.hasCachedFile(filePath)) {
-      const hashedFilePath = this.hashString(filePath);
+      const hashedFilePath = hashString(filePath);
       return readFile(path.join(this.cacheDir, `${hashedFilePath}${path.extname(filePath)}`), 'utf-8');
     }
     
     return null;
+  }
+  
+  getCachedFilePath(filePath) {
+    return this.#cacheFiles.get(filePath);
   }
   
   hasCachedFile(filePath) {
@@ -66,7 +59,7 @@ class CacheService {
   async removeCachedFile(filePath) {
     if (this.hasCachedFile(filePath)) {
       this.#cacheFiles.delete(filePath);
-      const hashedFilePath = this.hashString(filePath);
+      const hashedFilePath = hashString(filePath);
       await unlink(path.join(this.cacheDir, `${hashedFilePath}${path.extname(filePath)}`));
     }
   }
