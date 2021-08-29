@@ -2,7 +2,7 @@ const {jsTransformer} = require('./js.transformer');
 const {File} = require('../parser/File');
 const path = require('path');
 const data = require('./test-data');
-const {writeFile, mkdir, rmdir} = require('fs/promises');
+const {writeFile, mkdir, rmdir} = require('../utils/fs-promise');
 
 describe('jsTransformer', () => {
   const src = path.resolve(__dirname, '__src-js');

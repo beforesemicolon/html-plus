@@ -2,7 +2,7 @@ const {engine} = require('./');
 const request = require('supertest');
 const path = require('path');
 const express = require('express');
-const {rmdir, mkdir, writeFile} = require('fs/promises');
+const {rmdir, mkdir, writeFile} = require('../utils/fs-promise');
 const {cacheService} = require('../CacheService');
 
 describe('engine', () => {

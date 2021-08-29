@@ -1,4 +1,4 @@
-const {mkdir, rmdir, writeFile, readFile, unlink} = require('fs/promises');
+const {mkdir, rmdir, writeFile, readFile, unlink} = require('./utils/fs-promise');
 const path = require('path');
 const {hashString} = require("./utils/hash-string");
 

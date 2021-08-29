@@ -1,5 +1,5 @@
 const fs = require('fs');
-const {mkdir, rmdir, writeFile} = require('fs/promises');
+const {mkdir, rmdir, writeFile} = require('../utils/fs-promise');
 const path = require('path');
 const chalk = require("chalk");
 const {collectHPConfig} = require("../utils/collect-hp-config");

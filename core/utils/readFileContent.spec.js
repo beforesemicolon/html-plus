@@ -1,5 +1,5 @@
 const {readFileContent} = require('./readFileContent');
-const {writeFile, unlink} = require('fs/promises');
+const {writeFile, unlink} = require('../utils/fs-promise');
 const path = require('path');
 
 describe('readFileContent', () => {

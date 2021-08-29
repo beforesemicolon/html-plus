@@ -2,7 +2,7 @@ const {lessTransformer} = require('./less.transformer');
 const {File} = require('../parser/File');
 const path = require('path');
 const data = require('./test-data');
-const {writeFile, unlink} = require('fs/promises');
+const {writeFile, unlink} = require('../utils/fs-promise');
 
 describe('lessTransformer', () => {
   

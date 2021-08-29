@@ -1,5 +1,5 @@
 const path = require('path');
-const {writeFile, unlink} = require('fs/promises');
+const {writeFile, unlink} = require('../utils/fs-promise');
 const {PartialFile} = require('./PartialFile');
 const {RenderNode} = require("./RenderNode");
 

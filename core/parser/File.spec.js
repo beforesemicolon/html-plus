@@ -1,7 +1,7 @@
 const {File} = require('./File');
 const fs = require('fs');
 const path = require('path');
-const {writeFile, unlink} = require('fs/promises');
+const {writeFile, unlink} = require('../utils/fs-promise');
 
 describe('File', () => {
   const absPath = path.resolve(__dirname, 'file.ext');

@@ -1,7 +1,7 @@
 const {processPage} = require('./process-page');
 const {File} = require('../../parser/File');
 const path = require('path');
-const {writeFile, rm} = require('fs/promises');
+const {writeFile, rm} = require('../../utils/fs-promise');
 
 describe('processPage', () => {
   const options = {

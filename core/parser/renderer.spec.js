@@ -4,7 +4,7 @@ jest.mock('chalk', () => ({
   redBright: str => str,
 }));
 
-const {writeFile, unlink} = require('fs/promises');
+const {writeFile, unlink} = require('../utils/fs-promise');
 const path = require('path');
 const {defaultAttributesMap} = require("./default-attributes");
 const {customAttributesRegistry} = require("./default-attributes/CustomAttributesRegistry");

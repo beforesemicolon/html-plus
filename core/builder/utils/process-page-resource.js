@@ -1,7 +1,7 @@
 const {getFileSourceHashedDestPath} = require("./get-file-source-hashed-dest-path");
 const {transform} = require("../../transformers");
 const {File} = require("../../parser/File");
-const {copyFile, writeFile} = require('fs/promises');
+const {copyFile, writeFile} = require('../../utils/fs-promise');
 const path = require('path');
 const purgeHTML = require('purgecss-from-html');
 const {readFileContent} = require("../../utils/readFileContent");

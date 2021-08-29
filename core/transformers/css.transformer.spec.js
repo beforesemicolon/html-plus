@@ -2,7 +2,7 @@ const {cssTransformer} = require('./css.transformer');
 const path = require('path');
 const {File} = require('../parser/File');
 const data = require('./test-data');
-const {writeFile, unlink} = require('fs/promises');
+const {writeFile, unlink} = require('../utils/fs-promise');
 
 describe('cssTransformer', () => {
   describe('should transform from file', () => {
