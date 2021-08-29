@@ -103,10 +103,11 @@ function render(dt = defaultOptions) {
   
       for (let attribute of node.attributes) {
         /**
+         * ignore pattern attributes as it contains regex that must not be parsed
          * ignore on* attributes because these are tag event attributes which values
          * must be ignored for the same reason we are ignoring the style and script tags content
          */
-        if (!attribute.name.startsWith('on')) {
+        if (attribute.name !== 'pattern' && !attribute.name.startsWith('on')) {
           node.setAttribute(attribute.name, bindData(attribute.value, node.context))
         }
       }
