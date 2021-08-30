@@ -286,6 +286,8 @@ class Element extends Node {
     }
   }
   
+  querySelector(cssSelector) {}
+  
   toString() {
     if (this.tagName === null) {
       return this.childNodes.join('');
