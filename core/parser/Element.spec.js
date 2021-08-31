@@ -273,6 +273,81 @@ describe('Element', () => {
   describe('toString/parse', () => {
   
   })
+  
+  describe('querySelector', () => {
+    const node = parseHTMLString(`
+      <section class="block">
+        <h2 id="main-title">Some title</h2>
+        <ul class="list">
+            <li class="item" name="">item 1</li>
+            <li class="item">item 2</li>
+            <li class="item">item 3</li>
+            <li class="item">item 4</li>
+            <li class="item special-item">
+                <span>more</span>
+                <ul class="sub-menu" id="more-menu">
+                  <li>sub item 1</li>
+                  <li>sub item 2</li>
+                </ul>
+            </li>
+        </ul>
+        <a href="/path/to/page" download class="">view</a>
+      </section>
+    `);
+    
+    it('tag', () => {
+      const section = node.querySelector('section');
+      const ul = node.querySelector('ul');
+      const span = node.querySelector('span');
+      const li = node.querySelector('li');
+      
+      expect(section.tagName).toBe('section');
+      expect(ul.tagName).toBe('ul');
+      expect(ul.className).toBe('list');
+      expect(span.tagName).toBe('span');
+      expect(span.textContent).toBe('more');
+      expect(li.tagName).toBe('li');
+      expect(li.textContent).toBe('item 1');
+    });
+  
+    it('id', () => {
+      const h2 = node.querySelector('#main-title');
+      const ul = node.querySelector('#more-menu');
+  
+      expect(h2.tagName).toBe('h2');
+      expect(ul.tagName).toBe('ul');
+      expect(ul.className).toBe('sub-menu');
+    });
+  
+    it('class with dot', () => {
+      const block = node.querySelector('.block');
+      const item = node.querySelector('.item');
+      const subMenu = node.querySelector('.sub-menu');
+      const list = node.querySelector('.list');
+  
+      expect(block.tagName).toBe('section');
+      expect(item.tagName).toBe('li');
+      expect(item.textContent).toBe('item 1');
+      expect(subMenu.tagName).toBe('ul');
+      expect(list.tagName).toBe('ul');
+    });
+  
+    it('class with brackets', () => {
+      const el1 = node.querySelector('[class*="sub"]');
+      const el2 = node.querySelector('[class^="bl"]');
+      const el3 = node.querySelector('[class$="ist"]');
+      const el4 = node.querySelector('[class~="special-item"]');
+      const el5 = node.querySelector('[class]');
+      const el6 = node.querySelector('[class=""]');
+  
+      expect(el1.tagName).toBe('ul');
+      expect(el2.tagName).toBe('section');
+      expect(el3.tagName).toBe('ul');
+      expect(el4.tagName).toBe('li');
+      expect(el5.tagName).toBe('section');
+      expect(el6.tagName).toBe('a');
+    });
+  });
 
   it('should clone node', () => {
     const parent = new Element('div');

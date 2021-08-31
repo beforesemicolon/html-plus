@@ -5,6 +5,7 @@ const {Attributes} = require('./Attributes');
 const {Attr} = require('./Attr');
 const {tagCommentPattern, attrPattern} = require('./utils/regexPatterns');
 const selfClosingTags = require('./utils/selfClosingTags.json');
+const {createSelectors} = require("./utils/createSelectors");
 
 /**
  * a simpler server-side DOM Element facade
@@ -98,7 +99,7 @@ class Element extends Node {
   }
   
   get className() {
-    return this.getAttribute('class')
+    return this.getAttribute('class');
   }
   
   set className(val) {
@@ -120,7 +121,7 @@ class Element extends Node {
       if (this._customAttributes && this._customAttributes.hasOwnProperty(name)) {
         this._customAttributes.set(name, value);
       }
-  
+      
       this.#attributes.setNamedItem(name, value);
     }
   }
@@ -286,7 +287,124 @@ class Element extends Node {
     }
   }
   
-  querySelector(cssSelector) {}
+  querySelector(cssSelectorString) {
+    const selectors = createSelectors(cssSelectorString);
+    
+    let selector = selectors.shift();
+    let type;
+    
+    // console.log('-- selector', selector);
+    
+    return (function look(node) {
+      type = this.#getSelectionType(selector);
+      
+      if (/^\s|\+|\~|\>$/.test(selector.value)) {
+        selector = selectors.shift();
+      }
+      
+      let matchedNode = null;
+      
+      if (type === 'next-sibling') {
+        return this.#matchNodeWithSelector(node.nextElementSibling, selector);
+      } else if (type === 'sibling') {
+        let nextSib = node.nextElementSibling;
+        
+        while (nextSib) {
+          matchedNode = this.#matchNodeWithSelector(nextSib, selector);
+          
+          if (matchedNode) {
+            return matchedNode;
+          }
+          
+          nextSib = nextSib.nextElementSibling;
+        }
+        
+        return null;
+      }
+      
+      for (let child of node.children) {
+        matchedNode = this.#matchNodeWithSelector(child, selector);
+        
+        if (matchedNode) {
+          return matchedNode;
+        }
+      }
+      
+      for (let child of node.children) {
+        matchedNode = look.call(this, child);
+        
+        if (matchedNode) {
+          return matchedNode;
+        }
+      }
+      
+      return null;
+    }).call(this, this);
+  }
+  
+  #getSelectionType(selector) {
+    switch (selector.value) {
+      case '>':
+        return 'child';
+      case '+':
+        return 'next-sibling';
+      case '~':
+        return 'sibling';
+      default:
+        if (selector.type === 'attribute' || selector.type === 'pseudo-class') {
+          return 'attribute';
+        }
+        
+        return 'descendent';
+    }
+  }
+  
+  #matchNodeWithSelector(node, selector) {
+    if (selector.type === 'tag') {
+      return node.tagName === selector.name ? node : null;
+    }
+    
+    if (selector.type === 'attribute') {
+      switch (selector.name) {
+        case 'id':
+          return node.id === selector.value ? node : null;
+        default:
+          if (selector.value === null) {
+            return node.hasAttribute(selector.name) ? node : null;
+          }
+          
+          const value = node.getAttribute(selector.name);
+          
+          if (value !== null) {
+            switch (selector.operator) {
+              case '*':
+                return value.includes(selector.value) ? node : null;
+              case '^':
+                return value.startsWith(selector.value) ? node : null;
+              case '$':
+                return value.endsWith(selector.value) ? node : null;
+              case '|':
+                return new RegExp(`^${selector.value}(?:$|-)`).test(value) ? node : null;
+              case '~':
+                return new RegExp(`\\b${selector.value}\\b`).test(value) ? node : null;
+              default:
+                if (/class|style/.test(selector.name) && selector.value) {
+                  return new RegExp(`\\b${selector.value}\\b`).test(value)
+                    ? node
+                    : null;
+                }
+      
+                return node.hasAttribute(selector.name) && value === selector.value
+                  ? node
+                  : null;
+            }
+          }
+      }
+    }
+    
+    
+    return null;
+  }
   
   toString() {
     if (this.tagName === null) {
@@ -347,22 +465,16 @@ function parseHTMLString(markup, data = {}) {
     
     if (closeOrBangSymbol === '!' || selfCloseSlash || selfClosingTags[tagName]) {
       const node = new Element(`${closeOrBangSymbol || ''}${tagName}`);
-      
-      let match = '';
-      while ((match = attrPattern.exec(attributes))) {
-        node.setAttribute(match[1], match[2] || match[3] || match[4] || null);
-      }
+  
+      setAttribute(node, attributes);
       
       parentNode.appendChild(node);
     } else if (closeOrBangSymbol === '/' && stack[stack.length - 1].tagName === tagName) {
       stack.pop();
-    } else if(!closeOrBangSymbol) {
+    } else if (!closeOrBangSymbol) {
       const node = new Element(tagName);
-      
-      let match = '';
-      while ((match = attrPattern.exec(attributes))) {
-        node.setAttribute(match[1], match[2] || match[3] || match[4] || null);
-      }
+  
+      setAttribute(node, attributes);
       
       parentNode.appendChild(node);
       
@@ -376,6 +488,16 @@ function parseHTMLString(markup, data = {}) {
   }
   
   return root;
+}
+
+function setAttribute(node, attributes) {
+  let match = '';
+  
+  while ((match = attrPattern.exec(attributes))) {
+    node.setAttribute(match[1], match[2] || match[3] || match[4] || (
+      new RegExp(`^${match[1]}\\s*=`).test(match[0]) ? '' : null
+    ));
+  }
 }
 
 module.exports.parseHTMLString = parseHTMLString;
