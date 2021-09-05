@@ -288,10 +288,26 @@ class Element extends Node {
   }
   
   querySelector(cssSelectorString) {
-    const selectors = createSelectors(cssSelectorString);
+    let selectors;
+    
+    try {
+      ({selectors} = createSelectors(cssSelectorString)
+        .reduce(({selectors, lastSelector}, sel) => {
+          if (!selectors.length) {
+            selectors = [[sel]];
+          } else if (sel.type === 'combinator' || lastSelector.type === 'combinator') {
+            selectors = [...selectors, [sel]];
+          } else {
+            selectors[selectors.length - 1].push(sel)
+          }
+          
+          return {selectors, lastSelector: sel};
+        }, {selectors: [], lastSelector: null}));
+    } catch (e) {
+      throw new Error(`Failed to execute 'querySelector' on 'Element': '${cssSelectorString}' is not a valid selector`)
+    }
     
     let selector = selectors.shift();
-    let type;
     
     // matchedNode(node, cb)
     //    match node?
@@ -301,9 +317,20 @@ class Element extends Node {
     //            return traverse matched node
     //          no: return node
     //        no: return cb(node)
-    // const matchNode = (node, onNoMatch) => {
-    //   let mactchedNode = this.#matchNodeWithSelector(node, selector);
-    // }
+    const matchNode = (node, onNoMatch) => {
+      let matched = selector.every(sel => this.#matchNodeWithSelector(node, sel));
+      
+      if (matched) {
+        if (selectors.length) {
+          selector = selectors.shift();
+          return traverse(node)
+        } else {
+          return node;
+        }
+      } else {
+        return onNoMatch(node);
+      }
+    }
     
     // continueMatch(node)
     //   for each direct child
@@ -312,6 +339,32 @@ class Element extends Node {
     //      for each child child
     //        node = traverse node
     //   return matched node or null
+    const continueMatching = (node) => {
+      let matchedNode = null;
+      
+      for (let child of node.children) {
+        // console.log('-- child', child.tagName);
+        matchedNode = matchNode(child, () => null);
+        
+        if (matchedNode) {
+          break;
+        }
+      }
+      
+      if (!matchedNode) {
+        for (let child of node.children) {
+          for (let subChild of child.children) {
+            matchedNode = traverse(subChild);
+  
+            if (matchedNode) {
+              return matchedNode
+            }
+          }
+        }
+      }
+      
+      return matchedNode;
+    }
     
     // set selection type to descendents
     // is combinator?
@@ -335,70 +388,58 @@ class Element extends Node {
     //      if descendents
     //        grab next selector
     //        continueMatch(node)
-    
-    
-    // return (function look(node) {
-    //   type = this.#getSelectionType(selector);
-    //
-    //   if (/^\s|\+|\~|\>$/.test(selector.value)) {
-    //     selector = selectors.shift();
-    //   }
-    //
-    //   let matchedNode = null;
-    //
-    //   if (type === 'next-sibling') {
-    //     return this.#matchNodeWithSelector(node.nextElementSibling, selector);
-    //   } else if (type === 'sibling') {
-    //     let nextSib = node.nextElementSibling;
-    //
-    //     while (nextSib) {
-    //       matchedNode = this.#matchNodeWithSelector(nextSib, selector);
-    //
-    //       if (matchedNode) {
-    //         return matchedNode;
-    //       }
-    //
-    //       nextSib = nextSib.nextElementSibling;
-    //     }
-    //
-    //     return null;
-    //   }
-    //
-    //   for (let child of node.children) {
-    //     matchedNode = this.#matchNodeWithSelector(child, selector);
-    //
-    //     if (matchedNode) {
-    //       return matchedNode;
-    //     }
-    //   }
-    //
-    //   for (let child of node.children) {
-    //     matchedNode = look.call(this, child);
-    //
-    //     if (matchedNode) {
-    //       return matchedNode;
-    //     }
-    //   }
-    //
-    //   return null;
-    // }).call(this, this);
-  }
+    function traverse(node) {
+      // console.log('-- traverse', node.tagName);
+      if (selector.length === 1 && selector[0].type === 'combinator') {
+          const combinator = selector[0];
+          selector = selectors.shift();
+          
+          switch (combinator.value) {
+            case '+':
+              return matchNode(node.nextElementSibling, () => null);
+            case '~':
+              let nextSib = node.nextElementSibling;
+              
+              while (nextSib) {
+                let matchedNode = matchNode(nextSib, () => null);
+                
+                if (matchedNode) {
+                    return matchedNode;
+                }
   
-  #getSelectionType(selector) {
-    switch (selector.value) {
-      case '>':
-        return 'child';
-      case '+':
-        return 'next-sibling';
-      case '~':
-        return 'sibling';
-      default:
-        if (selector.type === 'attribute' || selector.type === 'pseudo-class') {
-          return 'attribute';
-        }
-        
-        return 'descendent';
+                nextSib = nextSib.nextElementSibling;
+              }
+              
+              return null;
+            case '>':
+              let matchedNode = null;
+  
+              for (let child of node.children) {
+                matchedNode = matchNode(child, () => null);
+    
+                if (matchedNode) {
+                  return matchedNode;
+                }
+              }
+              
+              return null;
+            default:
+              return continueMatching(node);
+          }
+      }
+  
+      return matchNode(node, continueMatching)
     }
+  
+    for (let child of this.children) {
+      const matchedNode = traverse(child);
+    
+      if (matchedNode) {
+        return matchedNode;
+      }
+    }
+    
+    return null;
   }
   
   #matchNodeWithSelector(node, selector) {
@@ -435,7 +476,7 @@ class Element extends Node {
                     ? node
                     : null;
                 }
-      
+                
                 return node.hasAttribute(selector.name) && value === selector.value
                   ? node
                   : null;
@@ -507,7 +548,7 @@ function parseHTMLString(markup, data = {}) {
     
     if (closeOrBangSymbol === '!' || selfCloseSlash || selfClosingTags[tagName]) {
       const node = new Element(`${closeOrBangSymbol || ''}${tagName}`);
-  
+      
       setAttribute(node, attributes);
       
       parentNode.appendChild(node);
@@ -515,7 +556,7 @@ function parseHTMLString(markup, data = {}) {
       stack.pop();
     } else if (!closeOrBangSymbol) {
       const node = new Element(tagName);
-  
+      
       setAttribute(node, attributes);
       
       parentNode.appendChild(node);

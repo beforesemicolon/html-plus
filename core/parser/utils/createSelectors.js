@@ -18,6 +18,10 @@ function createSelectors(selectorString) {
        throw new Error('Invalid selector string: It may not start with any combinator symbol.')
    }
    
+   if (/(\+|\~|\>)$/.test(selectorString)) {
+      throw new Error('Invalid selector string: It may not end with any combinator symbol.')
+   }
+   
    let selectorsList = [];
    let match;
    let lastSelector = null;

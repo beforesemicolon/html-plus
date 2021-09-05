@@ -297,14 +297,20 @@ describe('Element', () => {
   
     it('should match single selector at any level', () => {
       const section = node.querySelector('section');
-      // const h2 = node.querySelector('h2');
-      // const ulList = node.querySelector('.list');
-      // const a = node.querySelector('a');
-      // const liSpecialItem = node.querySelector('.special-item');
-      // const span = node.querySelector('section');
-      // const ulMoreMenu = node.querySelector('#more-menu');
+      const h2 = node.querySelector('h2');
+      const ulList = node.querySelector('.list');
+      const a = node.querySelector('a');
+      const liSpecialItem = node.querySelector('.special-item');
+      const span = node.querySelector('span');
+      const ulMoreMenu = node.querySelector('#more-menu');
       
-      expect(section?.tagName).toBe('s')
+      expect(section?.tagName).toBe('section')
+      expect(h2?.tagName).toBe('h2')
+      expect(ulList?.tagName).toBe('ul')
+      expect(a?.tagName).toBe('a')
+      expect(liSpecialItem?.tagName).toBe('li')
+      expect(span?.tagName).toBe('span')
+      expect(ulMoreMenu?.tagName).toBe('ul')
     });
     
     it('should match compound single selector at any level', () => {});
@@ -315,7 +321,7 @@ describe('Element', () => {
     });
 
     it('should', () => {
-      const el = node.querySelector('section');
+      const el = node.querySelector('section.box > ul.list li');
 
       expect(el).not.toBeNull()
     });

@@ -35,6 +35,15 @@ describe('createSelectors', () => {
         .toThrowError('Invalid selector string: It may not start with any combinator symbol.')
     });
   
+    it('if ends with combinator symbol', () => {
+      expect(() => createSelectors('section +'))
+        .toThrowError('Invalid selector string: It may not end with any combinator symbol.')
+      expect(() => createSelectors('section ~'))
+        .toThrowError('Invalid selector string: It may not end with any combinator symbol.')
+      expect(() => createSelectors('section >'))
+        .toThrowError('Invalid selector string: It may not end with any combinator symbol.')
+    });
+  
     it('if multiple combinator next to each other', () => {
       expect(() => createSelectors('body > + section'))
         .toThrowError('Invalid selector string: Must not contain nested combinator symbols.')
