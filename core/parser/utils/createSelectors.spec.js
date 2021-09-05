@@ -1,18 +1,6 @@
 const {createSelectors} = require("./createSelectors");
 
 describe('createSelectors', () => {
-  it('descendents selector', () => {
-    expect(createSelectors(' ')).toEqual([
-      {
-        "modifier": null,
-        "name": null,
-        "operator": null,
-        "type": "descendent",
-        "value": null
-      }
-    ])
-  });
-  
   it('global selector', () => {
     expect(createSelectors('*')).toEqual([
       {
@@ -35,6 +23,32 @@ describe('createSelectors', () => {
         "value": null
       }
     ])
+  });
+  
+  describe('should throw error', () => {
+    it('if starts with combinator symbol', () => {
+      expect(() => createSelectors('+ section'))
+        .toThrowError('Invalid selector string: It may not start with any combinator symbol.')
+      expect(() => createSelectors('~ section'))
+        .toThrowError('Invalid selector string: It may not start with any combinator symbol.')
+      expect(() => createSelectors('> section'))
+        .toThrowError('Invalid selector string: It may not start with any combinator symbol.')
+    });
+  
+    it('if multiple combinator next to each other', () => {
+      expect(() => createSelectors('body > + section'))
+        .toThrowError('Invalid selector string: Must not contain nested combinator symbols.')
+      expect(() => createSelectors('body > ~ section'))
+        .toThrowError('Invalid selector string: Must not contain nested combinator symbols.')
+      expect(() => createSelectors('body + > section'))
+        .toThrowError('Invalid selector string: Must not contain nested combinator symbols.')
+      expect(() => createSelectors('body + ~ section'))
+        .toThrowError('Invalid selector string: Must not contain nested combinator symbols.')
+      expect(() => createSelectors('body ~ > section'))
+        .toThrowError('Invalid selector string: Must not contain nested combinator symbols.')
+      expect(() => createSelectors('body ~ + section'))
+        .toThrowError('Invalid selector string: Must not contain nested combinator symbols.')
+    });
   });
   
   describe('attribute selectors', () => {
@@ -144,7 +158,7 @@ describe('createSelectors', () => {
           "modifier": null,
           "name": null,
           "operator": null,
-          "type": "sibling",
+          "type": "combinator",
           "value": "+"
         }
       ])
@@ -170,6 +184,18 @@ describe('createSelectors', () => {
           "operator": null,
           "type": "descendent",
           "value": ">"
+        }
+      ])
+    });
+  
+    it('descendents', () => {
+      expect(createSelectors(' ')).toEqual([
+        {
+          "modifier": null,
+          "name": null,
+          "operator": null,
+          "type": "descendent",
+          "value": null
         }
       ])
     });

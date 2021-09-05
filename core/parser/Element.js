@@ -293,53 +293,95 @@ class Element extends Node {
     let selector = selectors.shift();
     let type;
     
-    // console.log('-- selector', selector);
+    // matchedNode(node, cb)
+    //    match node?
+    //        yes: is there more selectors?
+    //          yes
+    //            grab next selector
+    //            return traverse matched node
+    //          no: return node
+    //        no: return cb(node)
+    // const matchNode = (node, onNoMatch) => {
+    //   let mactchedNode = this.#matchNodeWithSelector(node, selector);
+    // }
     
-    return (function look(node) {
-      type = this.#getSelectionType(selector);
-      
-      if (/^\s|\+|\~|\>$/.test(selector.value)) {
-        selector = selectors.shift();
-      }
-      
-      let matchedNode = null;
-      
-      if (type === 'next-sibling') {
-        return this.#matchNodeWithSelector(node.nextElementSibling, selector);
-      } else if (type === 'sibling') {
-        let nextSib = node.nextElementSibling;
-        
-        while (nextSib) {
-          matchedNode = this.#matchNodeWithSelector(nextSib, selector);
-          
-          if (matchedNode) {
-            return matchedNode;
-          }
-          
-          nextSib = nextSib.nextElementSibling;
-        }
-        
-        return null;
-      }
-      
-      for (let child of node.children) {
-        matchedNode = this.#matchNodeWithSelector(child, selector);
-        
-        if (matchedNode) {
-          return matchedNode;
-        }
-      }
-      
-      for (let child of node.children) {
-        matchedNode = look.call(this, child);
-        
-        if (matchedNode) {
-          return matchedNode;
-        }
-      }
-      
-      return null;
-    }).call(this, this);
+    // continueMatch(node)
+    //   for each direct child
+    //      node = matchedNode(child, () => null)
+    //   no match?
+    //      for each child child
+    //        node = traverse node
+    //   return matched node or null
+    
+    // set selection type to descendents
+    // is combinator?
+    //    no
+    //      node = matchedNode(node, continueMatch)
+    //      return node
+    //    yes
+    //      if next sib
+    //        grab next selector
+    //        return matchedNode(node.nextElementSibling, () => null)
+    //      if next sibs
+    //        grab next selector
+    //        for each next sib
+    //          node = matchedNode(sib, () => null)
+    //        return matched node or null
+    //      if direct child
+    //        grab next selector
+    //        for each direct child
+    //          node = matchedNode(child, () => null)
+    //        return matched node or null
+    //      if descendents
+    //        grab next selector
+    //        continueMatch(node)
+    
+    
+    // return (function look(node) {
+    //   type = this.#getSelectionType(selector);
+    //
+    //   if (/^\s|\+|\~|\>$/.test(selector.value)) {
+    //     selector = selectors.shift();
+    //   }
+    //
+    //   let matchedNode = null;
+    //
+    //   if (type === 'next-sibling') {
+    //     return this.#matchNodeWithSelector(node.nextElementSibling, selector);
+    //   } else if (type === 'sibling') {
+    //     let nextSib = node.nextElementSibling;
+    //
+    //     while (nextSib) {
+    //       matchedNode = this.#matchNodeWithSelector(nextSib, selector);
+    //
+    //       if (matchedNode) {
+    //         return matchedNode;
+    //       }
+    //
+    //       nextSib = nextSib.nextElementSibling;
+    //     }
+    //
+    //     return null;
+    //   }
+    //
+    //   for (let child of node.children) {
+    //     matchedNode = this.#matchNodeWithSelector(child, selector);
+    //
+    //     if (matchedNode) {
+    //       return matchedNode;
+    //     }
+    //   }
+    //
+    //   for (let child of node.children) {
+    //     matchedNode = look.call(this, child);
+    //
+    //     if (matchedNode) {
+    //       return matchedNode;
+    //     }
+    //   }
+    //
+    //   return null;
+    // }).call(this, this);
   }
   
   #getSelectionType(selector) {

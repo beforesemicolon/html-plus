@@ -13,9 +13,9 @@ module.exports = {
     return /^area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr|doctype$/i
   },
   get selectors() {
-    return /(?:\s+(\+|\~|\>)\s+)|\*|:([a-z][a-z-]*)(?:\(([^)]*)\))?|\[\s*([a-z][\w:.-]*)\s*(?:\s*(\*|\||\^|\$|\~)?\s*=\s*"([^"]*)")?\s*(i|s)?\s*\]|(?:#|\.)?([a-z][\w-]*)|[ \t]+/gi
+    return /(\+|\~|\>|\*)|:([a-z][a-z-]*)(?:\(([^)]*)\))?|\[\s*([a-z][\w:.-]*)\s*(?:\s*(\*|\||\^|\$|\~)?\s*=\s*"([^"]*)")?\s*(i|s)?\s*\]|(?:#|\.)?([a-z][\w-]*)|(?<=[^>+~\s])([ \t]+)(?=[^>+~\s])/gi
   },
   get pseudoClass() {
-    return /^:(disabled|enabled|checked|blank|read-only|read-write|required|optional|empty|nth-last-child|nth-child|first-child|last-child|only-child|nth-of-type|nth-last-of-type|first-of-type|last-of-type|only-of-type)$/
+    return /:(disabled|enabled|checked|blank|read-only|read-write|required|optional|empty|nth-last-child|nth-child|first-child|last-child|only-child|nth-of-type|nth-last-of-type|first-of-type|last-of-type|only-of-type)/
   },
 }

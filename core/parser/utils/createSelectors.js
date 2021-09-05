@@ -12,12 +12,19 @@ class Selector{
 }
 
 function createSelectors(selectorString) {
+   selectorString = selectorString.trim();
+   
+   if (/^(\+|\~|\>)/.test(selectorString)) {
+       throw new Error('Invalid selector string: It may not start with any combinator symbol.')
+   }
+   
    let selectorsList = [];
    let match;
+   let lastSelector = null;
+   selectors.lastIndex = 0
    
    while((match = selectors.exec(selectorString)) !== null) {
       let selector = null;
-      // console.log('match', match[0]);
       
       switch (true) {
          case match[0].startsWith('#'):
@@ -45,16 +52,12 @@ function createSelectors(selectorString) {
             selector = new Selector('global');
             break;
          case /^\s+$/.test(match[0]):
-            selector = new Selector('descendent', null, ' ');
+            selector = new Selector('combinator', null, ' ');
             break;
          case match[1] === '+':
-            selector = new Selector('sibling', null,'+');
-            break;
          case match[1] === '~':
-            selector = new Selector('sibling', null,'~');
-            break;
          case match[1] === '>':
-            selector = new Selector('descendent', null,'>');
+            selector = new Selector('combinator', null, match[1]);
             break;
          default:
             if (match[8] && /[a-z][\w-]*/i.test(match[8])) {
@@ -63,7 +66,12 @@ function createSelectors(selectorString) {
       }
       
       if (selector) {
+         if (lastSelector && lastSelector.type === 'combinator' && lastSelector.type === selector.type) {
+            throw new Error('Invalid selector string: Must not contain nested combinator symbols.')
+         }
+         
          selectorsList.push(selector);
+         lastSelector = selector;
       } else {
          /**
           * if any selector fails, the whole selector is invalid
