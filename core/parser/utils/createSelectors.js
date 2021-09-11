@@ -53,7 +53,7 @@ function createSelectors(selectorString) {
             
             break;
          case match[0] === '*':
-            selector = new Selector('global');
+            selector = new Selector('global', null, '*');
             break;
          case /^\s+$/.test(match[0]):
             selector = new Selector('combinator', null, ' ');
@@ -86,7 +86,18 @@ function createSelectors(selectorString) {
       }
    }
    
-   return selectorsList;
+   return selectorsList
+     .reduce(({selectors, lastSelector}, sel) => {
+        if (!selectors.length) {
+           selectors = [[sel]];
+        } else if (sel.type === 'combinator' || lastSelector.type === 'combinator') {
+           selectors = [...selectors, [sel]];
+        } else {
+           selectors[selectors.length - 1].push(sel)
+        }
+     
+        return {selectors, lastSelector: sel};
+     }, {selectors: [], lastSelector: null});
 }
 
 module.exports.createSelectors = createSelectors;

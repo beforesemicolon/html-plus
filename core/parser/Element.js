@@ -6,6 +6,9 @@ const {Attr} = require('./Attr');
 const {tagCommentPattern, attrPattern} = require('./utils/regexPatterns');
 const selfClosingTags = require('./utils/selfClosingTags.json');
 const {createSelectors} = require("./utils/createSelectors");
+const {nodeMatchesSelector} = require("./utils/nodeMatchesSelector");
+const {nodeMatchesSelectorList} = require("./utils/nodeMatchesSelectorList");
+const {traverseNodeDescendents} = require("./utils/traverseNodeDescendents");
 
 /**
  * a simpler server-side DOM Element facade
@@ -291,202 +294,31 @@ class Element extends Node {
     let selectors;
     
     try {
-      ({selectors} = createSelectors(cssSelectorString)
-        .reduce(({selectors, lastSelector}, sel) => {
-          if (!selectors.length) {
-            selectors = [[sel]];
-          } else if (sel.type === 'combinator' || lastSelector.type === 'combinator') {
-            selectors = [...selectors, [sel]];
-          } else {
-            selectors[selectors.length - 1].push(sel)
-          }
-          
-          return {selectors, lastSelector: sel};
-        }, {selectors: [], lastSelector: null}));
+      ({selectors} = createSelectors(cssSelectorString));
     } catch (e) {
-      throw new Error(`Failed to execute 'querySelector' on 'Element': '${cssSelectorString}' is not a valid selector`)
+      throw new Error(`Failed to execute 'querySelector' on 'Element': '${cssSelectorString}' is not a valid selector.`)
     }
     
-    let selector = selectors.shift();
+    const lastSelector = selectors[selectors.length - 1];
+    let matchedNode = null;
     
-    // matchedNode(node, cb)
-    //    match node?
-    //        yes: is there more selectors?
-    //          yes
-    //            grab next selector
-    //            return traverse matched node
-    //          no: return node
-    //        no: return cb(node)
-    const matchNode = (node, onNoMatch) => {
-      let matched = selector.every(sel => this.#matchNodeWithSelector(node, sel));
-      
-      if (matched) {
-        if (selectors.length) {
-          selector = selectors.shift();
-          return traverse(node)
-        } else {
-          return node;
-        }
-      } else {
-        return onNoMatch(node);
-      }
-    }
-    
-    // continueMatch(node)
-    //   for each direct child
-    //      node = matchedNode(child, () => null)
-    //   no match?
-    //      for each child child
-    //        node = traverse node
-    //   return matched node or null
-    const continueMatching = (node) => {
-      let matchedNode = null;
-      
-      for (let child of node.children) {
-        // console.log('-- child', child.tagName);
-        matchedNode = matchNode(child, () => null);
-        
-        if (matchedNode) {
-          break;
-        }
-      }
-      
-      if (!matchedNode) {
-        for (let child of node.children) {
-          for (let subChild of child.children) {
-            matchedNode = traverse(subChild);
-  
-            if (matchedNode) {
-              return matchedNode
-            }
+    traverseNodeDescendents(this, (descendentNode) => {
+      if (lastSelector.every(selector => nodeMatchesSelector(descendentNode, selector))) {
+        if (selectors.length > 1) {
+          if (nodeMatchesSelectorList(descendentNode, selectors.length - 2, selectors)) {
+            matchedNode = descendentNode;
+            return true;
+          } else {
+            return false;
           }
         }
+  
+        matchedNode = descendentNode;
+        return true;
       }
-      
-      return matchedNode;
-    }
+    })
     
-    // set selection type to descendents
-    // is combinator?
-    //    no
-    //      node = matchedNode(node, continueMatch)
-    //      return node
-    //    yes
-    //      if next sib
-    //        grab next selector
-    //        return matchedNode(node.nextElementSibling, () => null)
-    //      if next sibs
-    //        grab next selector
-    //        for each next sib
-    //          node = matchedNode(sib, () => null)
-    //        return matched node or null
-    //      if direct child
-    //        grab next selector
-    //        for each direct child
-    //          node = matchedNode(child, () => null)
-    //        return matched node or null
-    //      if descendents
-    //        grab next selector
-    //        continueMatch(node)
-    function traverse(node) {
-      // console.log('-- traverse', node.tagName);
-      if (selector.length === 1 && selector[0].type === 'combinator') {
-          const combinator = selector[0];
-          selector = selectors.shift();
-          
-          switch (combinator.value) {
-            case '+':
-              return matchNode(node.nextElementSibling, () => null);
-            case '~':
-              let nextSib = node.nextElementSibling;
-              
-              while (nextSib) {
-                let matchedNode = matchNode(nextSib, () => null);
-                
-                if (matchedNode) {
-                    return matchedNode;
-                }
-  
-                nextSib = nextSib.nextElementSibling;
-              }
-              
-              return null;
-            case '>':
-              let matchedNode = null;
-  
-              for (let child of node.children) {
-                matchedNode = matchNode(child, () => null);
-    
-                if (matchedNode) {
-                  return matchedNode;
-                }
-              }
-              
-              return null;
-            default:
-              return continueMatching(node);
-          }
-      }
-  
-      return matchNode(node, continueMatching)
-    }
-  
-    for (let child of this.children) {
-      const matchedNode = traverse(child);
-    
-      if (matchedNode) {
-        return matchedNode;
-      }
-    }
-    
-    return null;
-  }
-  
-  #matchNodeWithSelector(node, selector) {
-    if (selector.type === 'tag') {
-      return node.tagName === selector.name ? node : null;
-    }
-    
-    if (selector.type === 'attribute') {
-      switch (selector.name) {
-        case 'id':
-          return node.id === selector.value ? node : null;
-        default:
-          if (selector.value === null) {
-            return node.hasAttribute(selector.name) ? node : null;
-          }
-          
-          const value = node.getAttribute(selector.name);
-          
-          if (value !== null) {
-            switch (selector.operator) {
-              case '*':
-                return value.includes(selector.value) ? node : null;
-              case '^':
-                return value.startsWith(selector.value) ? node : null;
-              case '$':
-                return value.endsWith(selector.value) ? node : null;
-              case '|':
-                return new RegExp(`^${selector.value}(?:$|-)`).test(value) ? node : null;
-              case '~':
-                return new RegExp(`\\b${selector.value}\\b`).test(value) ? node : null;
-              default:
-                if (/class|style/.test(selector.name) && selector.value) {
-                  return new RegExp(`\\b${selector.value}\\b`).test(value)
-                    ? node
-                    : null;
-                }
-                
-                return node.hasAttribute(selector.name) && value === selector.value
-                  ? node
-                  : null;
-            }
-          }
-      }
-    }
-    
-    
-    return null;
+    return matchedNode;
   }
   
   toString() {
