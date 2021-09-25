@@ -6,9 +6,32 @@ const {Attr} = require('./Attr');
 const {tagCommentPattern, attrPattern} = require('./utils/regexPatterns');
 const selfClosingTags = require('./utils/selfClosingTags.json');
 const {createSelectors} = require("./utils/createSelectors");
-const {nodeMatchesSelector} = require("./utils/nodeMatchesSelector");
-const {nodeMatchesSelectorList} = require("./utils/nodeMatchesSelectorList");
+const matchSelector = require("./utils/matchSelector");
 const {traverseNodeDescendents} = require("./utils/traverseNodeDescendents");
+
+const attributePropertyMap = {
+  className: 'class',
+  contentEditable: 'contenteditable',
+  tabIndex: 'tab-index',
+}
+
+const booleanAttributes = [
+  'hidden',
+  'draggable',
+  'contentEditable',
+  'spellcheck',
+  'inert',
+];
+
+const keyValuePairAttributes = [
+  'className',
+  'id',
+  'tabIndex',
+  'title',
+  'lang',
+  'slot',
+  'name',
+];
 
 /**
  * a simpler server-side DOM Element facade
@@ -22,6 +45,37 @@ class Element extends Node {
     super();
     this.#tagName = tagName;
     this.#attributes = new Attributes();
+    
+    // getters and setters for boolean attributes
+    booleanAttributes.forEach(attr => {
+      Object.defineProperty(this, attr, {
+        get () {
+          return this.hasAttribute(attributePropertyMap[attr] || attr);
+        },
+        set(val) {
+          if (val === true) {
+            this.setAttribute(attributePropertyMap[attr] || attr)
+          } else if (val === false) {
+            this.removeAttribute(attributePropertyMap[attr] || attr)
+          }
+        }
+      });
+      
+    })
+  
+    // getters and setters for key-value pair attributes
+    keyValuePairAttributes.forEach(attr => {
+      Object.defineProperty(this, attr, {
+        get() {
+          return this.getAttribute(attributePropertyMap[attr] || attr)
+        },
+        set(val) {
+          if (typeof val === 'string') {
+            this.setAttribute(attributePropertyMap[attr] || attr, val)
+          }
+        }
+      })
+    })
   }
   
   get tagName() {
@@ -91,24 +145,13 @@ class Element extends Node {
     return null;
   }
   
-  get id() {
-    return this.getAttribute('id')
+  get isContentEditable() {
+    return this.contentEditable;
   }
   
-  set id(val) {
-    if (typeof val === 'string') {
-      this.setAttribute('id', val)
-    }
-  }
-  
-  get className() {
-    return this.getAttribute('class');
-  }
-  
-  set className(val) {
-    if (typeof val === 'string') {
-      this.setAttribute('class', val)
-    }
+  get style() {
+    // todo: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration
+    return '';
   }
   
   hasAttributes() {
@@ -294,7 +337,7 @@ class Element extends Node {
     let selectors;
     
     try {
-      ({selectors} = createSelectors(cssSelectorString));
+      selectors = createSelectors(cssSelectorString);
     } catch (e) {
       throw new Error(`Failed to execute 'querySelector' on 'Element': '${cssSelectorString}' is not a valid selector.`)
     }
@@ -303,9 +346,9 @@ class Element extends Node {
     let matchedNode = null;
     
     traverseNodeDescendents(this, (descendentNode) => {
-      if (lastSelector.every(selector => nodeMatchesSelector(descendentNode, selector))) {
+      if (lastSelector.every(selector => matchSelector.single(descendentNode, selector))) {
         if (selectors.length > 1) {
-          if (nodeMatchesSelectorList(descendentNode, selectors.length - 2, selectors)) {
+          if (matchSelector.list(descendentNode, selectors.length - 2, selectors)) {
             matchedNode = descendentNode;
             return true;
           } else {
