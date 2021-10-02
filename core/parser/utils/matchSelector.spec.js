@@ -148,39 +148,25 @@ describe('MatchSelector Single', () => {
       
       expect(() => matchSelector.single(node, notSelector))
         .toThrowError('Invalid selector to match');
-      
+
       notSelector.value = Selector.class('section');
-      
+
       expect(matchSelector.single(node, notSelector)).toBeTruthy();
-      
+
       node.className = 'section';
-      
+
       expect(matchSelector.single(node, notSelector)).toBeFalsy();
       
+      const parent = new Element('div');
+      parent.appendChild(node);
+      
       notSelector.value = [
         [Selector.global()],
         [Selector.combinator('>')],
-        [Selector.class('section')],
+        [Selector.tag('section')],
       ];
       
       expect(matchSelector.single(node, notSelector)).toBeFalsy();
-      
-      notSelector.value = [
-        [Selector.global()],
-        [Selector.combinator('>')],
-        [Selector.id('section')],
-      ];
-      
-      expect(matchSelector.single(node, notSelector)).toBeTruthy();
-      
-      notSelector.value = [
-        [Selector.global()],
-        [Selector.combinator('>')],
-        [Selector.pseudoClass('not', Selector.id('section'))],
-      ];
-      
-      expect(() => matchSelector.single(node, notSelector))
-        .toThrowError(':not selectors cannot be nested');
     });
     
     it('disabled', () => {
@@ -334,31 +320,31 @@ describe('MatchSelector Single', () => {
       
       it('first-of-type', () => {
         const firstOfTypeSelector = Selector.pseudoClass('first-of-type');
-  
+        
         expect(matchSelector.single(ul.children[0], firstOfTypeSelector)).toBeTruthy();
         expect(matchSelector.single(ul.children[1], firstOfTypeSelector)).toBeFalsy();
         expect(matchSelector.single(ul.children[2], firstOfTypeSelector)).toBeFalsy();
         expect(matchSelector.single(ul.children[3], firstOfTypeSelector)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], firstOfTypeSelector)).toBeFalsy();
-  
+        
         expect(matchSelector.single(ul, firstOfTypeSelector)).toBeTruthy();
-  
+        
         let selectorType = [Selector.pseudoClass('nth-child', '2')];
-  
+        
         expect(matchSelector.single(ul.children[0], firstOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], firstOfTypeSelector, selectorType)).toBeTruthy();
         expect(matchSelector.single(ul.children[2], firstOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[3], firstOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], firstOfTypeSelector, selectorType)).toBeFalsy();
-  
+        
         selectorType = [Selector.tag('li')];
-  
+        
         expect(matchSelector.single(ul.children[0], firstOfTypeSelector, selectorType)).toBeTruthy();
         expect(matchSelector.single(ul.children[1], firstOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[2], firstOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[3], firstOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], firstOfTypeSelector, selectorType)).toBeFalsy();
-  
+        
         ul = parseHTMLString('<ul>' +
           '<li>item-1</li>' +
           '<li>item-2</li>' +
@@ -367,9 +353,9 @@ describe('MatchSelector Single', () => {
           '<li>item-5</li>' +
           '</ul>')
           .children[0];
-  
+        
         selectorType = [Selector.tag('li'), Selector.class('special-item')];
-  
+        
         expect(matchSelector.single(ul.children[0], firstOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], firstOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[2], firstOfTypeSelector, selectorType)).toBeTruthy();
@@ -379,31 +365,31 @@ describe('MatchSelector Single', () => {
       
       it('last-of-type', () => {
         const lastOfTypeSelector = Selector.pseudoClass('last-of-type');
-  
+        
         expect(matchSelector.single(ul.children[0], lastOfTypeSelector)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], lastOfTypeSelector)).toBeFalsy();
         expect(matchSelector.single(ul.children[2], lastOfTypeSelector)).toBeFalsy();
         expect(matchSelector.single(ul.children[3], lastOfTypeSelector)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], lastOfTypeSelector)).toBeTruthy();
-  
+        
         expect(matchSelector.single(ul, lastOfTypeSelector)).toBeTruthy();
-  
+        
         let selectorType = [Selector.pseudoClass('nth-child', '2')];
-  
+        
         expect(matchSelector.single(ul.children[0], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], lastOfTypeSelector, selectorType)).toBeTruthy();
         expect(matchSelector.single(ul.children[2], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[3], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], lastOfTypeSelector, selectorType)).toBeFalsy();
-  
+        
         selectorType = [Selector.tag('li')];
-  
+        
         expect(matchSelector.single(ul.children[0], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[2], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[3], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], lastOfTypeSelector, selectorType)).toBeTruthy();
-  
+        
         ul = parseHTMLString('<ul>' +
           '<li>item-1</li>' +
           '<li>item-2</li>' +
@@ -412,9 +398,9 @@ describe('MatchSelector Single', () => {
           '<li>item-5</li>' +
           '</ul>')
           .children[0];
-  
+        
         selectorType = [Selector.tag('li'), Selector.class('special-item')];
-  
+        
         expect(matchSelector.single(ul.children[0], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[2], lastOfTypeSelector, selectorType)).toBeFalsy();
@@ -424,7 +410,7 @@ describe('MatchSelector Single', () => {
       
       it('only-of-type', () => {
         const onlyOfTypeSelector = Selector.pseudoClass('only-of-type');
-  
+        
         expect(matchSelector.single(ul.children[0], onlyOfTypeSelector)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], onlyOfTypeSelector)).toBeFalsy();
         expect(matchSelector.single(ul.children[2], onlyOfTypeSelector)).toBeFalsy();
@@ -432,23 +418,23 @@ describe('MatchSelector Single', () => {
         expect(matchSelector.single(ul.children[4], onlyOfTypeSelector)).toBeFalsy();
         
         expect(matchSelector.single(ul, onlyOfTypeSelector)).toBeTruthy();
-  
+        
         let selectorType = [Selector.pseudoClass('nth-child', '2')];
-  
+        
         expect(matchSelector.single(ul.children[0], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], onlyOfTypeSelector, selectorType)).toBeTruthy();
         expect(matchSelector.single(ul.children[2], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[3], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], onlyOfTypeSelector, selectorType)).toBeFalsy();
-  
+        
         selectorType = [Selector.tag('li')];
-
+        
         expect(matchSelector.single(ul.children[0], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[2], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[3], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], onlyOfTypeSelector, selectorType)).toBeFalsy();
-  
+        
         ul = parseHTMLString('<ul>' +
           '<li>item-1</li>' +
           '<li>item-2</li>' +
@@ -457,16 +443,16 @@ describe('MatchSelector Single', () => {
           '<li>item-5</li>' +
           '</ul>')
           .children[0];
-  
+        
         selectorType = [Selector.tag('li'), Selector.class('special-item')];
-  
+        
         expect(matchSelector.single(ul.children[0], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[1], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[2], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[3], onlyOfTypeSelector, selectorType)).toBeTruthy();
         expect(matchSelector.single(ul.children[4], onlyOfTypeSelector, selectorType)).toBeFalsy();
       });
-  
+      
       it('type mixed', () => {
         const firstOfTypeSelector = Selector.pseudoClass('first-of-type');
         const lastOfTypeSelector = Selector.pseudoClass('last-of-type');
@@ -481,14 +467,14 @@ describe('MatchSelector Single', () => {
           '<li>item-5</li>' +
           '</ul>')
           .children[0];
-  
+        
         expect(matchSelector.single(ul, firstOfTypeSelector,
           [lastOfTypeSelector, onlyOfTypeSelector])).toBeTruthy();
         expect(matchSelector.single(ul.children[3], firstOfTypeSelector,
           [Selector.class('special-item'), lastOfTypeSelector, onlyOfTypeSelector])).toBeTruthy();
         expect(matchSelector.single(ul.children[1], notSelector)).toBeTruthy();
       });
-  
+      
       describe('nth', () => {
         it('last-child', () => {
           const nthLastChildSelector = Selector.pseudoClass('nth-last-child', '1');
@@ -656,79 +642,79 @@ describe('MatchSelector Single', () => {
         
         it('of-type', () => {
           const nthOfTypeSelector = Selector.pseudoClass('nth-of-type', '1');
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[4], nthOfTypeSelector)).toBeFalsy();
-  
+          
           nthOfTypeSelector.value = '2';
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[4], nthOfTypeSelector)).toBeFalsy();
-  
+          
           nthOfTypeSelector.value = 'odd';
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[3], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[4], nthOfTypeSelector)).toBeTruthy();
-  
+          
           nthOfTypeSelector.value = 'even';
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[4], nthOfTypeSelector)).toBeFalsy();
-  
+          
           nthOfTypeSelector.value = 'n';
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[3], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[4], nthOfTypeSelector)).toBeTruthy();
-  
+          
           nthOfTypeSelector.value = '4n';
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[4], nthOfTypeSelector)).toBeFalsy();
-  
+          
           nthOfTypeSelector.value = 'n+3';
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[3], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[4], nthOfTypeSelector)).toBeTruthy();
-  
+          
           nthOfTypeSelector.value = '2n+3';
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[4], nthOfTypeSelector)).toBeFalsy();
-  
+          
           nthOfTypeSelector.value = '-n+3';
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[3], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[4], nthOfTypeSelector)).toBeFalsy();
-  
+          
           nthOfTypeSelector.value = '-2n+3';
-  
+          
           expect(matchSelector.single(ul.children[0], nthOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthOfTypeSelector)).toBeFalsy();
@@ -738,79 +724,79 @@ describe('MatchSelector Single', () => {
         
         it('last-of-type', () => {
           const nthLastOfTypeSelector = Selector.pseudoClass('nth-last-of-type', '1');
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[4], nthLastOfTypeSelector)).toBeTruthy();
-  
+          
           nthLastOfTypeSelector.value = '2';
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[4], nthLastOfTypeSelector)).toBeFalsy();
-  
+          
           nthLastOfTypeSelector.value = 'odd';
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[3], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[4], nthLastOfTypeSelector)).toBeTruthy();
-  
+          
           nthLastOfTypeSelector.value = 'even';
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[4], nthLastOfTypeSelector)).toBeFalsy();
-  
+          
           nthLastOfTypeSelector.value = 'n';
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[3], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[4], nthLastOfTypeSelector)).toBeTruthy();
-  
+          
           nthLastOfTypeSelector.value = '4n';
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[4], nthLastOfTypeSelector)).toBeFalsy();
-  
+          
           nthLastOfTypeSelector.value = 'n+3';
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[3], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[4], nthLastOfTypeSelector)).toBeFalsy();
-  
+          
           nthLastOfTypeSelector.value = '2n+3';
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[3], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[4], nthLastOfTypeSelector)).toBeFalsy();
-  
+          
           nthLastOfTypeSelector.value = '-n+3';
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[3], nthLastOfTypeSelector)).toBeTruthy();
           expect(matchSelector.single(ul.children[4], nthLastOfTypeSelector)).toBeTruthy();
-  
+          
           nthLastOfTypeSelector.value = '-2n+3';
-  
+          
           expect(matchSelector.single(ul.children[0], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[1], nthLastOfTypeSelector)).toBeFalsy();
           expect(matchSelector.single(ul.children[2], nthLastOfTypeSelector)).toBeFalsy();
@@ -827,3 +813,95 @@ describe('MatchSelector Single', () => {
     expect(matchSelector.single(new Element('section'), new Selector('pseudo-class', 'hover'))).toBeFalsy();
   });
 });
+
+describe('MatchSelector List', () => {
+  const node = parseHTMLString(`
+      <section class="block">
+        <h2 id="main-title">Some title</h2>
+        <ul class="list">
+            <li class="item" name="">item 1</li>
+            <li class="item">item 2</li>
+            <li class="item">item 3</li>
+            <li class="item">item 4</li>
+            <li class="item special-item">
+                <span>more</span>
+                <ul class="sub-menu" id="more-menu">
+                  <li>sub item 1</li>
+                  <li class="last">sub item 2</li>
+                </ul>
+            </li>
+        </ul>
+        <a href="/path/to/page" download class="">view</a>
+      </section>
+    `);
+  
+  describe('should handle combinators', () => {
+    const sectionNode = node.children[0];
+    const anchor = sectionNode.lastElementChild;
+    const listNode = sectionNode.children[1];
+    const specialItem = listNode.lastElementChild;
+    const lastLi = specialItem.lastElementChild.lastElementChild;
+    
+    it('descendent', () => {
+      expect(matchSelector.list(lastLi, 2,[
+        [Selector.class('sub-menu')],
+        [Selector.combinator(' ')],
+        [Selector.tag('li')],
+      ], lastLi)).toBeTruthy()
+
+      expect(matchSelector.list(lastLi, 2,[
+        [Selector.class('special-item')],
+        [Selector.combinator(' ')],
+        [Selector.tag('li')],
+      ], lastLi)).toBeTruthy()
+    });
+    
+    it('direct child', () => {
+      expect(matchSelector.list(specialItem, 2,[
+        [Selector.tag('section')],
+        [Selector.combinator('>')],
+        [Selector.class('special-item')],
+      ], specialItem)).toBeFalsy();
+  
+      expect(matchSelector.list(specialItem, 2,[
+        [Selector.class('list')],
+        [Selector.combinator('>')],
+        [Selector.class('special-item')],
+      ], specialItem)).toBeTruthy();
+    });
+    
+    it('next sibling', () => {
+      expect(matchSelector.list(anchor, 2,[
+        [Selector.tag('ul')],
+        [Selector.combinator('+')],
+        [Selector.tag('a')],
+      ], anchor)).toBeTruthy();
+  
+      expect(matchSelector.list(anchor, 2,[
+        [Selector.tag('h2')],
+        [Selector.combinator('+')],
+        [Selector.tag('a')],
+      ], anchor)).toBeFalsy();
+    });
+    
+    it('siblings', () => {
+      expect(matchSelector.list(anchor, 2,[
+        [Selector.tag('h2')],
+        [Selector.combinator('~')],
+        [Selector.tag('a')],
+      ], anchor)).toBeTruthy();
+  
+      expect(matchSelector.list(specialItem, 2,[
+        [Selector.attribute('name', '')],
+        [Selector.combinator('~')],
+        [Selector.class('special-item')],
+      ], specialItem)).toBeTruthy();
+  
+      expect(matchSelector.list(listNode, 2,[
+        [Selector.tag('a')],
+        [Selector.combinator('~')],
+        [Selector.class('list')],
+      ], listNode)).toBeFalsy();
+    });
+  });
+})

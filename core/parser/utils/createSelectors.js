@@ -33,6 +33,7 @@ function createSelectors(selectorString) {
         break;
       case match[0].startsWith('.'):
         selector = Selector.class(match[8]);
+        selector.operator = '~';
         break;
       case match[0].startsWith(':') && pseudoClass.test(match[0]):
         const name = match[2];
@@ -50,6 +51,10 @@ function createSelectors(selectorString) {
         
         break;
       case match[0].startsWith('[') && match[0].endsWith(']'):
+        if (/\s+/.test(match[6])) {
+          throw new Error('Invalid selector string: Attribute value must not contain spaces.')
+        }
+        
         selector = Selector.attribute(match[2] || match[4], match[6]);
         
         if (match[5]) {
