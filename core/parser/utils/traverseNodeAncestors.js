@@ -1,4 +1,4 @@
-function traverseNodeAncestors(node, cb) {
+function traverseNodeAncestors(node, cb = () => false) {
   let quit = false;
   let parent = node.parentNode;
   
