@@ -1,4 +1,4 @@
-function traverseNodeDescendents(node, cb) {
+function traverseNodeDescendents(node, cb = () => false) {
   let quit = false;
   
   for (let child of node.children) {
