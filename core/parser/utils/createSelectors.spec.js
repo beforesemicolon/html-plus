@@ -86,7 +86,7 @@ describe('createSelectors', () => {
           {
             "modifier": null,
             "name": "class",
-            "operator": null,
+            "operator": "~",
             "type": "attribute",
             "value": "sample"
           }
@@ -443,20 +443,22 @@ describe('createSelectors', () => {
             "operator": null,
             "type": "pseudo-class",
             "value": [
-              {
-                "modifier": null,
-                "name": "class",
-                "operator": null,
-                "type": "attribute",
-                "value": "box"
-              },
-              {
-                "modifier": null,
-                "name": "class",
-                "operator": null,
-                "type": "attribute",
-                "value": "sample"
-              }
+              [
+                {
+                  "modifier": null,
+                  "name": "class",
+                  "operator": "~",
+                  "type": "attribute",
+                  "value": "box"
+                },
+                {
+                  "modifier": null,
+                  "name": "class",
+                  "operator": "~",
+                  "type": "attribute",
+                  "value": "sample"
+                }
+              ]
             ]
           }
         ]

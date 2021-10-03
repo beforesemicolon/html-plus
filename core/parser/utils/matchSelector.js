@@ -75,22 +75,29 @@ function nodeMatchesSelector(node, selector, selectorType = []) {
       return node.hasAttribute(selector.name);
     }
     
-    const value = node.getAttribute(selector.name);
+    let value = node.getAttribute(selector.name);
     
     if (value !== null) {
+      let selectorValue = selector.value;
+      
+      if (selector.modifier === 'i') {
+        value = value.toLowerCase();
+        selectorValue = selectorValue.toLowerCase();
+      }
+      
       switch (selector.operator) {
         case '*':
-          return value.includes(selector.value);
+          return value.includes(selectorValue);
         case '^':
-          return value.startsWith(selector.value);
+          return value.startsWith(selectorValue);
         case '$':
-          return value.endsWith(selector.value);
+          return value.endsWith(selectorValue);
         case '|':
-          return new RegExp(`^${selector.value}(?:$|-)`).test(value);
+          return new RegExp(`^${selectorValue}(?:$|-)`).test(value);
         case '~':
-          return new RegExp(`(?:^|\\s)${selector.value}(?:$|\\s)`, 'g').test(value);
+          return new RegExp(`(?:^|\\s)${selectorValue}(?:$|\\s)`, 'g').test(value);
         default:
-          return selector.value === value;
+          return selectorValue === value;
       }
     }
     
@@ -109,7 +116,7 @@ function nodeMatchesSelector(node, selector, selectorType = []) {
         }
         
         if (Array.isArray(selector.value)) {
-          if (selector.value.flat().some(sel => sel.name === 'not')) {
+          if (selector.value.toString().includes('not')) {
             throw new Error(':not selectors cannot be nested')
           }
           
@@ -138,9 +145,9 @@ function nodeMatchesSelector(node, selector, selectorType = []) {
       case 'nth-child':
         return matchNodeByNthNotation(node, selector.value);
       case 'first-child':
-        return Boolean(node.parentNode && node.parentNode.firstChild === node);
+        return Boolean(node.parentNode && node.parentNode.firstElementChild === node);
       case 'last-child':
-        return Boolean(node.parentNode && node.parentNode.lastChild === node);
+        return Boolean(node.parentNode && node.parentNode.lastElementChild === node);
       case 'only-child':
         return Boolean(node.parentNode && node.parentNode.children.length === 1 && node.parentNode.children[0] === node);
       case 'nth-of-type':

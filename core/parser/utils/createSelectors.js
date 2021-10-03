@@ -40,11 +40,7 @@ function createSelectors(selectorString) {
         const value = match[3];
         
         if (name === 'not') {
-          if (/:not/g.test(value) || /,/g.test(value)) {
-            selector = null;
-          } else {
-            selector = Selector.pseudoClass(name, createSelectors(value).flat());
-          }
+          selector = Selector.pseudoClass(name, createSelectors(value));
         } else {
           selector = Selector.pseudoClass(name, value);
         }

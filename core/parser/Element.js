@@ -8,6 +8,7 @@ const selfClosingTags = require('./utils/selfClosingTags.json');
 const {createSelectors} = require("./utils/createSelectors");
 const matchSelector = require("./utils/matchSelector");
 const {traverseNodeDescendents} = require("./utils/traverseNodeDescendents");
+const {traverseNodeAncestors} = require("./utils/traverseNodeAncestors");
 
 const attributePropertyMap = {
   className: 'class',
@@ -49,7 +50,7 @@ class Element extends Node {
     // getters and setters for boolean attributes
     booleanAttributes.forEach(attr => {
       Object.defineProperty(this, attr, {
-        get () {
+        get() {
           return this.hasAttribute(attributePropertyMap[attr] || attr);
         },
         set(val) {
@@ -62,7 +63,7 @@ class Element extends Node {
       });
       
     })
-  
+    
     // getters and setters for key-value pair attributes
     keyValuePairAttributes.forEach(attr => {
       Object.defineProperty(this, attr, {
@@ -92,6 +93,14 @@ class Element extends Node {
   
   get children() {
     return [...this.#children];
+  }
+  
+  get lastElementChild() {
+    return this.#children[this.#children.length - 1] || null;
+  }
+  
+  get firstElementChild() {
+    return this.#children[0] || null;
   }
   
   get innerHTML() {
@@ -333,30 +342,81 @@ class Element extends Node {
     }
   }
   
-  querySelector(cssSelectorString) {
-    let selectors;
-    
+  #cssSelectorToSelectorList(cssSelectorString) {
     try {
-      selectors = createSelectors(cssSelectorString);
+      return createSelectors(cssSelectorString);
     } catch (e) {
       throw new Error(`Failed to execute 'querySelector' on 'Element': '${cssSelectorString}' is not a valid selector.`)
     }
-    
+  }
+  
+  querySelector(cssSelectorString) {
+    const selectors = this.#cssSelectorToSelectorList(cssSelectorString);
     const lastSelector = selectors[selectors.length - 1];
     let matchedNode = null;
     
-    traverseNodeDescendents(this, (descendentNode) => {
-      if (lastSelector.every(selector => matchSelector.single(descendentNode, selector))) {
-        if (selectors.length > 1) {
-          if (matchSelector.list(descendentNode, selectors.length - 2, selectors)) {
-            matchedNode = descendentNode;
-            return true;
-          } else {
+    if (lastSelector) {
+      traverseNodeDescendents(this, (descendentNode) => {
+        if (lastSelector.every(selector => matchSelector.single(descendentNode, selector))) {
+          if (selectors.length > 1) {
+            if (matchSelector.list(descendentNode, selectors.length - 2, selectors)) {
+              matchedNode = descendentNode;
+              return true;
+            } else {
+              return false;
+            }
+          }
+          
+          matchedNode = descendentNode;
+          return true;
+        }
+      })
+    }
+    
+    return matchedNode;
+  }
+  
+  querySelectorAll(cssSelectorString) {
+    const selectors = this.#cssSelectorToSelectorList(cssSelectorString);
+    const lastSelector = selectors[selectors.length - 1];
+    const matchedNodes = [];
+    
+    if (lastSelector) {
+      traverseNodeDescendents(this, (descendentNode) => {
+        if (lastSelector.every(selector => matchSelector.single(descendentNode, selector))) {
+          if (selectors.length > 1) {
+            if (matchSelector.list(descendentNode, selectors.length - 2, selectors)) {
+              matchedNodes.push(descendentNode)
+            }
+  
             return false;
           }
+          
+          matchedNodes.push(descendentNode)
         }
+      })
+    }
+    
+    return matchedNodes;
+  }
   
-        matchedNode = descendentNode;
+  matches(cssSelectorString) {
+    const selectors = this.#cssSelectorToSelectorList(cssSelectorString);
+    
+    return matchSelector.list(this, selectors.length - 1, selectors, this);
+  }
+  
+  closest(cssSelectorString) {
+    if (this.matches(cssSelectorString)) {
+        return this;
+    }
+    
+    const selectors = this.#cssSelectorToSelectorList(cssSelectorString);
+    let matchedNode = null;
+    
+    traverseNodeAncestors(this, (ancestorNode) => {
+      if (matchSelector.list(ancestorNode, selectors.length - 1, selectors, ancestorNode)) {
+        matchedNode = ancestorNode
         return true;
       }
     })

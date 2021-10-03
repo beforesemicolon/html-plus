@@ -806,12 +806,6 @@ describe('MatchSelector Single', () => {
       });
     });
   });
-  
-  it('should return false if no selector is supported', () => {
-    expect(matchSelector.single(new Element('section'), new Selector('x'))).toBeFalsy();
-    expect(matchSelector.single(new Element('section'), new Selector('pseudo-element', 'after'))).toBeFalsy();
-    expect(matchSelector.single(new Element('section'), new Selector('pseudo-class', 'hover'))).toBeFalsy();
-  });
 });
 
 describe('MatchSelector List', () => {

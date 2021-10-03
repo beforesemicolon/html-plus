@@ -112,6 +112,9 @@ describe('Element', () => {
       
       expect(ul.childNodes.length).toBe(5)
       expect(ul.children.length).toBe(3)
+      expect(ul.children.toString()).toBe('<li>item 1</li>,<li>item 2</li>,<li>item 3</li>')
+      expect(ul.firstElementChild.toString()).toBe('<li>item 1</li>')
+      expect(ul.lastElementChild.toString()).toBe('<li>item 3</li>')
     });
     
     it('should append and remove child', () => {
@@ -270,13 +273,8 @@ describe('Element', () => {
     });
   });
   
-  describe('toString/parse', () => {
-  
-  })
-  
-  describe('querySelector', () => {
-    const node = parseHTMLString(`
-      <section class="block">
+  describe('working with css selectors', () => {
+    const node = parseHTMLString(`<section class="block">
         <h2 id="main-title">Some title</h2>
         <ul class="list">
             <li class="item" name="">item 1</li>
@@ -292,143 +290,108 @@ describe('Element', () => {
             </li>
         </ul>
         <a href="/path/to/page" download class="">view</a>
-      </section>
-    `);
-  
-    it('should try to match single selector at any level', () => {
-      const section = node.querySelector('section');
-      const h2 = node.querySelector('h2');
-      const ulList = node.querySelector('.list');
-      const a = node.querySelector('a');
-      const liSpecialItem = node.querySelector('.special-item');
-      const span = node.querySelector('span');
-      const ulMoreMenu = node.querySelector('#more-menu');
-      const h3 = node.querySelector('h3');
-      
-      expect(section?.tagName).toBe('section')
-      expect(h2?.tagName).toBe('h2')
-      expect(ulList?.tagName).toBe('ul')
-      expect(a?.tagName).toBe('a')
-      expect(liSpecialItem?.tagName).toBe('li')
-      expect(span?.tagName).toBe('span')
-      expect(ulMoreMenu?.tagName).toBe('ul')
-      expect(h3).toBeNull()
-    });
+      </section>`);
     
-    it('should try to match compound single selector at any level', () => {
-      const a = node.querySelector('a[download]');
-      const ul = node.querySelector('ul#more-menu.sub-menu');
-      const specialLi = node.querySelector('li.special-item');
-      const nameLi = node.querySelector('li[name].item');
-      const aClassed = node.querySelector('a.link');
-  
-      expect(a?.tagName).toBe('a')
-      expect(ul?.tagName).toBe('ul')
-      expect(specialLi?.tagName).toBe('li')
-      expect(nameLi?.tagName).toBe('li')
-      expect(aClassed).toBeNull()
-    });
-  
-    it('should throw error if invalid selector', () => {
-      expect(() => node.querySelector('> span')).toThrowError('Failed to execute \'querySelector\' on \'Element\': \'> span\' is not a valid selector.')
-      expect(() => node.querySelector('section > + span')).toThrowError('Failed to execute \'querySelector\' on \'Element\': \'section > + span\' is not a valid selector.')
-      expect(() => node.querySelector('section > span +')).toThrowError('Failed to execute \'querySelector\' on \'Element\': \'section > span +\' is not a valid selector.')
-    });
-  
-    it('should handle global selector', () => {});
-  
-    describe('should handle combinators', () => {
-      it('descendent', () => {
-        const a = node.querySelector('section a');
-        const span = node.querySelector('.list span');
-        const li = node.querySelector('.special-item li');
-  
+    describe('querySelector', () => {
+      it('should try to match single selector at any level', () => {
+        const section = node.querySelector('section');
+        const h2 = node.querySelector('h2');
+        const ulList = node.querySelector('.list');
+        const a = node.querySelector('a');
+        const liSpecialItem = node.querySelector('.special-item');
+        const span = node.querySelector('span');
+        const ulMoreMenu = node.querySelector('#more-menu');
+        const h3 = node.querySelector('h3');
+      
+        expect(section?.tagName).toBe('section')
+        expect(h2?.tagName).toBe('h2')
+        expect(ulList?.tagName).toBe('ul')
         expect(a?.tagName).toBe('a')
+        expect(liSpecialItem?.tagName).toBe('li')
         expect(span?.tagName).toBe('span')
-        expect(li?.tagName).toBe('li')
+        expect(ulMoreMenu?.tagName).toBe('ul')
+        expect(h3).toBeNull()
       });
-  
-      it('direct child', () => {
-        const ul = node.querySelector('li > ul');
-        const noNestedUl = node.querySelector('ul > ul');
-        const a = node.querySelector('section > [download]');
-        const span = node.querySelector('.special-item > span');
-        const h2 = node.querySelector('article > h2');
-        
-        expect(ul?.tagName).toBe('ul')
-        expect(noNestedUl).toBeNull()
-        expect(a?.tagName).toBe('a')
-        expect(span?.tagName).toBe('span')
-        expect(h2).toBeNull()
-      });
-  
-      it('next sibling', () => {
-        const a = node.querySelector('ul + a');
-        const ul = node.querySelector('span + ul');
-        const li = node.querySelector('[name] + li');
-        const specialLi = node.querySelector('li + .special-item');
-        const lastLi = node.querySelector('li + .last');
-        const subMenu = node.querySelector('p + .sub-menu');
-  
+    
+      it('should try to match compound single selector at any level', () => {
+        const a = node.querySelector('a[download]');
+        const ul = node.querySelector('ul#more-menu.sub-menu');
+        const specialLi = node.querySelector('li.special-item');
+        const nameLi = node.querySelector('li[name].item');
+        const aClassed = node.querySelector('a.link');
+      
         expect(a?.tagName).toBe('a')
         expect(ul?.tagName).toBe('ul')
-        expect(li?.tagName).toBe('li')
         expect(specialLi?.tagName).toBe('li')
-        expect(lastLi?.tagName).toBe('li')
-        expect(subMenu).toBeNull()
+        expect(nameLi?.tagName).toBe('li')
+        expect(aClassed).toBeNull()
       });
-  
-      it('siblings', () => {
-        const specialLi = node.querySelector('[name] ~ .special-item');
-        const a = node.querySelector('#main-title ~ [download]');
-        const lastLi = node.querySelector('li ~ .last');
-        const firstSpecialLi = node.querySelector('[name].first ~ .special-item');
-  
-        expect(specialLi?.tagName).toBe('li')
-        expect(a?.tagName).toBe('a')
-        expect(lastLi?.tagName).toBe('li')
-        expect(firstSpecialLi).toBeNull()
+    
+      it('should throw error if invalid selector', () => {
+        expect(() => node.querySelector('> span')).toThrowError('Failed to execute \'querySelector\' on \'Element\': \'> span\' is not a valid selector.')
+        expect(() => node.querySelector('section > + span')).toThrowError('Failed to execute \'querySelector\' on \'Element\': \'section > + span\' is not a valid selector.')
+        expect(() => node.querySelector('section > span +')).toThrowError('Failed to execute \'querySelector\' on \'Element\': \'section > span +\' is not a valid selector.')
+        expect(() => node.querySelector('[class="item sample"]')).toThrowError('Failed to execute \'querySelector\' on \'Element\': \'[class=\"item sample\"]\' is not a valid selector.')
+        expect(() => node.querySelector(':not(.item:not(.special))')).toThrowError('Failed to execute \'querySelector\' on \'Element\': \':not(.item:not(.special))\' is not a valid selector.')
       });
     });
     
-    describe('should handle attributes', () => {
-      describe('class', () => {})
-      
-      describe('id', () => {})
-      
-      describe('with square bracket notation', () => {
-        it('blank', () => {});
-        
-        it('name only', () => {});
-        
-        describe('name and value', () => {
-          it('only', () => {});
-          
-          it('where name is style', () => {});
-          
-          it('where name is class', () => {});
-          
-          it('where value is an empty string', () => {});
-          
-          it('with ~ operator', () => {});
-          
-          it('with ^ operator', () => {});
-          
-          it('with $ operator', () => {});
-          
-          it('with | operator', () => {});
-          
-          it('with * operator', () => {});
-          
-          it('with i modifier', () => {});
-          
-          it('with s modifier', () => {});
-        });
-      })
+    describe('querySelectorAll', () => {
+      it('should collect all li', () => {
+        expect(node.querySelectorAll('li').map(n => n.attributes.toString())).toEqual([
+          "class=\"item\" name=\"\"",
+          "class=\"item\"",
+          "class=\"item\"",
+          "class=\"item\"",
+          "class=\"item special-item\"",
+          "",
+          "class=\"last\""
+        ])
+      });
+  
+      it('should collect all ul', () => {
+        expect(node.querySelectorAll('ul').map(n => n.attributes.toString())).toEqual([
+          "class=\"list\"",
+          "class=\"sub-menu\" id=\"more-menu\""
+        ])
+      });
+  
+      it('should collect all elements without a class', () => {
+        expect(node.querySelectorAll(':not([class])').map(n => n.tagName)).toEqual([
+          "h2",
+          "span",
+          "li"
+        ])
+      });
     })
   
-    describe('should handle pseudo-class', () => {})
-  });
+    it('matches', () => {
+      const div = new Element('div');
+      const a = new Element('a');
+      a.setAttribute('download');
+      a.setAttribute('href', '/sample/path');
+      a.setAttribute('class', 'link');
+  
+      div.appendChild(a);
+      
+      expect(a.matches('.link')).toBeTruthy();
+      expect(a.matches('.link-super')).toBeFalsy();
+      expect(a.matches('[download][href="/sample/path"]')).toBeTruthy();
+      expect(a.matches('div > a.link')).toBeTruthy();
+      expect(a.matches('section a.link')).toBeFalsy();
+    });
+  
+    it('closest', () => {
+      const lastLi = node.querySelector('.last');
+      
+      expect(lastLi.closest('.special-item').className).toBe('item special-item');
+      expect(lastLi.closest('.list').className).toBe('list');
+      expect(lastLi.closest('*:nth-child(2)').className).toBe('last');
+      expect(lastLi.closest('.block:not(:last-child)')).toBeNull();
+      expect(lastLi.closest('.block:not(:nth-child(3))')).not.toBeNull();
+      expect(lastLi.closest('.main-title + *')).toBeNull();
+    });
+  })
   
   it('should clone node', () => {
     const parent = new Element('div');
@@ -519,7 +482,7 @@ describe('parseHTMLString', () => {
       expect(root.children.length).toBe(1);
       expect(root.children[0].tagName).toBe('bfs-img');
       expect(root.children[0].children.length).toBe(0);
-      expect(root.children[0].attributes.toString()).toBe('src="img/circle" alt');
+      expect(root.children[0].attributes.toString()).toBe('src="img/circle" alt=""');
     });
     
     it('when repeated next to each other', () => {
@@ -543,7 +506,7 @@ describe('parseHTMLString', () => {
       expect(root.children[0].children.length).toBe(0);
       expect(root.children[1].children.length).toBe(0);
       expect(root.children[0].attributes.toString()).toBe('charset="UTF-8"');
-      expect(root.children[1].attributes.toString()).toBe('src="img/circle" alt');
+      expect(root.children[1].attributes.toString()).toBe('src="img/circle" alt=""');
     });
   });
   
@@ -679,7 +642,7 @@ describe('parseHTMLString', () => {
     it('when has empty or no value', () => {
       const root = parseHTMLString('<a href="" download></a>');
       
-      expect(root.toString()).toBe('<a href download></a>');
+      expect(root.toString()).toBe('<a href="" download></a>');
     });
   });
   
