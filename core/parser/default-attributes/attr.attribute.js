@@ -35,7 +35,7 @@ class Attr extends CustomAttribute {
   
       if (!condition) {
         condition = value;
-        value = '';
+        value = null;
       }
   
       this.values.push(value);
@@ -60,7 +60,7 @@ class Attr extends CustomAttribute {
       name = name.trim();
       
       if (conditions[i]) {
-        const value = this.values[i].trim();
+        const value = this.values[i]?.trim();
         
         switch (name) {
           case 'class':

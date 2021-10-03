@@ -512,9 +512,11 @@ function setAttribute(node, attributes) {
   let match = '';
   
   while ((match = attrPattern.exec(attributes))) {
-    node.setAttribute(match[1], match[2] || match[3] || match[4] || (
+    const value = match[2] || match[3] || match[4] || (
       new RegExp(`^${match[1]}\\s*=`).test(match[0]) ? '' : null
-    ));
+    )
+    
+    node.setAttribute(match[1], value);
   }
 }
 
