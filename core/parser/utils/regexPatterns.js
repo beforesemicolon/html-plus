@@ -11,5 +11,5 @@ module.exports = {
   specificAttrPattern: (name) => new RegExp(`(#?${name})(?:\\s*=\\s*(?:"([^"]*)"|'([^']*)'|(\\S+)))?`, 'ig'),
   get selfClosingPattern() {
     return /^area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr|doctype$/i
-  },
+  }
 }

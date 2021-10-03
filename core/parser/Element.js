@@ -5,6 +5,34 @@ const {Attributes} = require('./Attributes');
 const {Attr} = require('./Attr');
 const {tagCommentPattern, attrPattern} = require('./utils/regexPatterns');
 const selfClosingTags = require('./utils/selfClosingTags.json');
+const {createSelectors} = require("./utils/createSelectors");
+const matchSelector = require("./utils/matchSelector");
+const {traverseNodeDescendents} = require("./utils/traverseNodeDescendents");
+const {traverseNodeAncestors} = require("./utils/traverseNodeAncestors");
+
+const attributePropertyMap = {
+  className: 'class',
+  contentEditable: 'contenteditable',
+  tabIndex: 'tab-index',
+}
+
+const booleanAttributes = [
+  'hidden',
+  'draggable',
+  'contentEditable',
+  'spellcheck',
+  'inert',
+];
+
+const keyValuePairAttributes = [
+  'className',
+  'id',
+  'tabIndex',
+  'title',
+  'lang',
+  'slot',
+  'name',
+];
 
 /**
  * a simpler server-side DOM Element facade
@@ -18,6 +46,37 @@ class Element extends Node {
     super();
     this.#tagName = tagName;
     this.#attributes = new Attributes();
+    
+    // getters and setters for boolean attributes
+    booleanAttributes.forEach(attr => {
+      Object.defineProperty(this, attr, {
+        get() {
+          return this.hasAttribute(attributePropertyMap[attr] || attr);
+        },
+        set(val) {
+          if (val === true) {
+            this.setAttribute(attributePropertyMap[attr] || attr)
+          } else if (val === false) {
+            this.removeAttribute(attributePropertyMap[attr] || attr)
+          }
+        }
+      });
+      
+    })
+    
+    // getters and setters for key-value pair attributes
+    keyValuePairAttributes.forEach(attr => {
+      Object.defineProperty(this, attr, {
+        get() {
+          return this.getAttribute(attributePropertyMap[attr] || attr)
+        },
+        set(val) {
+          if (typeof val === 'string') {
+            this.setAttribute(attributePropertyMap[attr] || attr, val)
+          }
+        }
+      })
+    })
   }
   
   get tagName() {
@@ -34,6 +93,14 @@ class Element extends Node {
   
   get children() {
     return [...this.#children];
+  }
+  
+  get lastElementChild() {
+    return this.#children[this.#children.length - 1] || null;
+  }
+  
+  get firstElementChild() {
+    return this.#children[0] || null;
   }
   
   get innerHTML() {
@@ -87,24 +154,13 @@ class Element extends Node {
     return null;
   }
   
-  get id() {
-    return this.getAttribute('id')
+  get isContentEditable() {
+    return this.contentEditable;
   }
   
-  set id(val) {
-    if (typeof val === 'string') {
-      this.setAttribute('id', val)
-    }
-  }
-  
-  get className() {
-    return this.getAttribute('class')
-  }
-  
-  set className(val) {
-    if (typeof val === 'string') {
-      this.setAttribute('class', val)
-    }
+  get style() {
+    // todo: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration
+    return '';
   }
   
   hasAttributes() {
@@ -120,7 +176,7 @@ class Element extends Node {
       if (this._customAttributes && this._customAttributes.hasOwnProperty(name)) {
         this._customAttributes.set(name, value);
       }
-  
+      
       this.#attributes.setNamedItem(name, value);
     }
   }
@@ -286,6 +342,88 @@ class Element extends Node {
     }
   }
   
+  #cssSelectorToSelectorList(cssSelectorString) {
+    try {
+      return createSelectors(cssSelectorString);
+    } catch (e) {
+      throw new Error(`Failed to execute 'querySelector' on 'Element': '${cssSelectorString}' is not a valid selector.`)
+    }
+  }
+  
+  querySelector(cssSelectorString) {
+    const selectors = this.#cssSelectorToSelectorList(cssSelectorString);
+    const lastSelector = selectors[selectors.length - 1];
+    let matchedNode = null;
+    
+    if (lastSelector) {
+      traverseNodeDescendents(this, (descendentNode) => {
+        if (lastSelector.every(selector => matchSelector.single(descendentNode, selector))) {
+          if (selectors.length > 1) {
+            if (matchSelector.list(descendentNode, selectors.length - 2, selectors)) {
+              matchedNode = descendentNode;
+              return true;
+            } else {
+              return false;
+            }
+          }
+          
+          matchedNode = descendentNode;
+          return true;
+        }
+      })
+    }
+    
+    return matchedNode;
+  }
+  
+  querySelectorAll(cssSelectorString) {
+    const selectors = this.#cssSelectorToSelectorList(cssSelectorString);
+    const lastSelector = selectors[selectors.length - 1];
+    const matchedNodes = [];
+    
+    if (lastSelector) {
+      traverseNodeDescendents(this, (descendentNode) => {
+        if (lastSelector.every(selector => matchSelector.single(descendentNode, selector))) {
+          if (selectors.length > 1) {
+            if (matchSelector.list(descendentNode, selectors.length - 2, selectors)) {
+              matchedNodes.push(descendentNode)
+            }
+  
+            return false;
+          }
+          
+          matchedNodes.push(descendentNode)
+        }
+      })
+    }
+    
+    return matchedNodes;
+  }
+  
+  matches(cssSelectorString) {
+    const selectors = this.#cssSelectorToSelectorList(cssSelectorString);
+    
+    return matchSelector.list(this, selectors.length - 1, selectors, this);
+  }
+  
+  closest(cssSelectorString) {
+    if (this.matches(cssSelectorString)) {
+        return this;
+    }
+    
+    const selectors = this.#cssSelectorToSelectorList(cssSelectorString);
+    let matchedNode = null;
+    
+    traverseNodeAncestors(this, (ancestorNode) => {
+      if (matchSelector.list(ancestorNode, selectors.length - 1, selectors, ancestorNode)) {
+        matchedNode = ancestorNode
+        return true;
+      }
+    })
+    
+    return matchedNode;
+  }
+  
   toString() {
     if (this.tagName === null) {
       return this.childNodes.join('');
@@ -346,21 +484,15 @@ function parseHTMLString(markup, data = {}) {
     if (closeOrBangSymbol === '!' || selfCloseSlash || selfClosingTags[tagName]) {
       const node = new Element(`${closeOrBangSymbol || ''}${tagName}`);
       
-      let match = '';
-      while ((match = attrPattern.exec(attributes))) {
-        node.setAttribute(match[1], match[2] || match[3] || match[4] || null);
-      }
+      setAttribute(node, attributes);
       
       parentNode.appendChild(node);
     } else if (closeOrBangSymbol === '/' && stack[stack.length - 1].tagName === tagName) {
       stack.pop();
-    } else if(!closeOrBangSymbol) {
+    } else if (!closeOrBangSymbol) {
       const node = new Element(tagName);
       
-      let match = '';
-      while ((match = attrPattern.exec(attributes))) {
-        node.setAttribute(match[1], match[2] || match[3] || match[4] || null);
-      }
+      setAttribute(node, attributes);
       
       parentNode.appendChild(node);
       
@@ -374,6 +506,18 @@ function parseHTMLString(markup, data = {}) {
   }
   
   return root;
+}
+
+function setAttribute(node, attributes) {
+  let match = '';
+  
+  while ((match = attrPattern.exec(attributes))) {
+    const value = match[2] || match[3] || match[4] || (
+      new RegExp(`^${match[1]}\\s*=`).test(match[0]) ? '' : null
+    )
+    
+    node.setAttribute(match[1], value);
+  }
 }
 
 module.exports.parseHTMLString = parseHTMLString;
