@@ -1,16 +1,17 @@
-const {attrsPriorities} = require('./../default-attributes');
+const {attrsPriorities} = require('./../default-attributes/priority');
 
 /**
  * collect custom attribute based on priority
- * @param attrs
+ * @param node
  * @returns {null}
  */
-function getNextCustomAttribute(attrs) {
+function getNextCustomAttribute(node) {
+  const attrs = Object.keys(attrsPriorities);
   let lastPrio = 100;
   let nextAttr = null;
   
   for (let attr of attrs) {
-    if (attr.startsWith('#')) {
+    if (node.hasOwnProperty(attr)) {
       const prio = attrsPriorities[attr] || 100;
   
       if (prio === 1) {

@@ -1,9 +1,10 @@
-const {parseHTMLString, Element} = require("../Element");
+const {Element} = require("../Element");
+const {parse} = require("../");
 const {traverseNodeDescendents} = require("./traverseNodeDescendents");
 const {traverseNodeAncestors} = require("./traverseNodeAncestors");
 
 describe('traverseNodeDescendents', () => {
-  const node = parseHTMLString(`
+  const node = parse(`
     <section class="block">
       <h2 id="main-title">Some title</h2>
       <ul class="list">

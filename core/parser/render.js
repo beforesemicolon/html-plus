@@ -7,7 +7,8 @@ const {customTagsRegistry} = require("./default-tags/CustomTagsRegistry");
 const {defaultTagsMap} = require("./default-tags");
 const {bindData} = require("./utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
-const {parseHTMLString, Element} = require("./Element");
+const {Element} = require("./Element");
+const {parse} = require(".");
 const {handleError} = require("./utils/handle-error");
 const {getNextCustomAttribute} = require("./utils/getNextCustomAttribute");
 
@@ -50,7 +51,8 @@ function render(dt = defaultOptions) {
       return '';
     }
     
-    root = parseHTMLString(content, dt.context);
+    root = parse(content);
+    root.context = dt.context || Object.create(null);
   }
   
   let nodeList = [root];
@@ -89,9 +91,9 @@ function render(dt = defaultOptions) {
         continue;
       }
       
-      const customAttr = getNextCustomAttribute(node.getAttributeNames());
+      const customAttr = getNextCustomAttribute(node);
   
-      if (customAttr) {
+      if (customAttr !== null) {
         htmlString += renderByAttribute(node, customAttr, dt) + closeAncestorTags(node);
         continue;
       }
@@ -218,14 +220,19 @@ function renderTag(node, metadata) {
 function renderByAttribute(node, attrName, {context, content, ...metadata}) {
   const attr = customAttributesRegistry.get(attrName.slice(1));
   const handler = new attr(node);
-  let val = node.getAttribute(attrName);
+  let val = node[attrName];
+  
   
   if (val) {
     val = parseValue(processCustomAttributeValue(handler, val, node.context));
   }
   
   const parentNode = node.parentNode;
-  node.removeAttribute(attrName);
+  // this can cause issues as it is modifying the node directly which means
+  // the next time the same node is parsed it will not have the same result
+  // since this is internal it is okay until there is a need for something
+  // more expensive like cloning the node before processing it
+  delete node[attrName];
   
   let result = handler.render(val, node);
   

@@ -1,6 +1,5 @@
 const {CustomAttribute} = require("./CustomAttribute");
 const {Element} = require("./../Element");
-const {Text} = require("./../Text");
 const {customAttributesRegistry} = require("./CustomAttributesRegistry");
 
 class Repeat extends CustomAttribute {

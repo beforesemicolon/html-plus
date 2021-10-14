@@ -1,14 +1,17 @@
 const {Text} = require('./Text');
-const {Comment} = require('./Comment');
 const {Node} = require('./Node');
 const {Attributes} = require('./Attributes');
 const {Attr} = require('./Attr');
-const {tagCommentPattern, attrPattern} = require('./utils/regexPatterns');
+const {parse} = require('.');
+const {tagCommentPattern} = require('./utils/regexPatterns');
 const selfClosingTags = require('./utils/selfClosingTags.json');
 const {createSelectors} = require("./utils/createSelectors");
 const matchSelector = require("./utils/matchSelector");
 const {traverseNodeDescendents} = require("./utils/traverseNodeDescendents");
 const {traverseNodeAncestors} = require("./utils/traverseNodeAncestors");
+// grab priority directly because Element cannot be dependent on any
+// default tag or attribute
+const {attrsPriorities} = require("./default-attributes/priority");
 
 const attributePropertyMap = {
   className: 'class',
@@ -33,6 +36,7 @@ const keyValuePairAttributes = [
   'slot',
   'name',
 ];
+
 
 /**
  * a simpler server-side DOM Element facade
@@ -114,7 +118,7 @@ class Element extends Node {
       this.removeChild(childNode);
     }
     
-    parseHTMLString(value).childNodes.forEach(node => this.appendChild(node));
+    parse(value).childNodes.forEach(node => this.appendChild(node));
   }
   
   set textContent(value) {
@@ -263,6 +267,13 @@ class Element extends Node {
     for (let attribute of this.attributes) {
       cloneNode.setAttribute(attribute.name, attribute.value)
     }
+  
+    // also copy the hidden special attributes as properties
+    for (let key of Object.keys(attrsPriorities)) {
+      if (this.hasOwnProperty(key)) {
+        cloneNode[key] = this[key]
+      }
+    }
     
     cloneNode.context = {...this.selfContext};
     
@@ -338,7 +349,7 @@ class Element extends Node {
   
   insertAdjacentHTML(position, value) {
     if (typeof value === "string") {
-      parseHTMLString(value).childNodes.forEach(node => this.#insert(position, node));
+      parse(value).childNodes.forEach(node => this.#insert(position, node));
     }
   }
   
@@ -450,76 +461,5 @@ function isValidNode(node) {
   return node && node instanceof Node;
 }
 
-/**
- * html regex based parser with support for Element context data and
- * attributes prefixed with # and complex logic as value
- * @param markup
- * @param data
- * @returns {Element}
- */
-function parseHTMLString(markup, data = {}) {
-  const root = new Element();
-  root.context = data;
-  const stack = [root];
-  let match;
-  let lastIndex = 0;
-  
-  while ((match = tagCommentPattern.exec(markup)) !== null) {
-    const [fullMatch, comment, closeOrBangSymbol, tagName, attributes, selfCloseSlash] = match;
-    
-    const parentNode = stack[stack.length - 1] || null;
-    
-    // grab in between text
-    if (lastIndex !== match.index) {
-      parentNode.appendChild(new Text(markup.slice(lastIndex, match.index)));
-    }
-    
-    lastIndex = tagCommentPattern.lastIndex;
-    
-    if (comment) {
-      parentNode.appendChild(new Comment(comment));
-      continue;
-    }
-    
-    if (closeOrBangSymbol === '!' || selfCloseSlash || selfClosingTags[tagName]) {
-      const node = new Element(`${closeOrBangSymbol || ''}${tagName}`);
-      
-      setAttribute(node, attributes);
-      
-      parentNode.appendChild(node);
-    } else if (closeOrBangSymbol === '/' && stack[stack.length - 1].tagName === tagName) {
-      stack.pop();
-    } else if (!closeOrBangSymbol) {
-      const node = new Element(tagName);
-      
-      setAttribute(node, attributes);
-      
-      parentNode.appendChild(node);
-      
-      stack.push(node)
-    }
-  }
-  
-  // grab ending text
-  if (lastIndex < markup.length) {
-    root.appendChild(new Text(markup.slice(lastIndex)));
-  }
-  
-  return root;
-}
-
-function setAttribute(node, attributes) {
-  let match = '';
-  
-  while ((match = attrPattern.exec(attributes))) {
-    const value = match[2] || match[3] || match[4] || (
-      new RegExp(`^${match[1]}\\s*=`).test(match[0]) ? '' : null
-    )
-    
-    node.setAttribute(match[1], value);
-  }
-}
-
-module.exports.parseHTMLString = parseHTMLString;
 module.exports.Element = Element;
 
