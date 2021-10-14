@@ -7,7 +7,8 @@ const {customTagsRegistry} = require("./default-tags/CustomTagsRegistry");
 const {defaultTagsMap} = require("./default-tags");
 const {bindData} = require("./utils/bind-data");
 const {processCustomAttributeValue} = require("./utils/process-custom-attribute-value");
-const {parseHTMLString, Element} = require("./Element");
+const {Element} = require("./Element");
+const {parse} = require(".");
 const {handleError} = require("./utils/handle-error");
 const {getNextCustomAttribute} = require("./utils/getNextCustomAttribute");
 
@@ -50,7 +51,7 @@ function render(dt = defaultOptions) {
       return '';
     }
     
-    root = parseHTMLString(content, dt.context);
+    root = parse(content, dt.context);
   }
   
   let nodeList = [root];
