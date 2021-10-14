@@ -45,14 +45,6 @@ describe('parse', () => {
     `.replace(/\s+/g, ''));
   });
   
-  it('should set node context', () => {
-    const root = parse(basicPageMarkup, {sample: 10});
-    const title = root.children[1].children[0].children[3];
-    
-    expect(root.tagName).toEqual(null);
-    expect(title.tagName).toBe('title')
-  });
-  
   describe('should handle self-closing tag', () => {
     it('when known HTML self closing tag ', () => {
       const root = parse('<meta charset="UTF-8">');
@@ -70,6 +62,7 @@ describe('parse', () => {
       expect(root.children[0].tagName).toBe('bfs-img');
       expect(root.children[0].children.length).toBe(0);
       expect(root.children[0].attributes.toString()).toBe('src="img/circle" alt=""');
+      expect(root.toString()).toBe('<bfs-img src="img/circle" alt=""></bfs-img>');
     });
     
     it('when repeated next to each other', () => {
@@ -82,6 +75,8 @@ describe('parse', () => {
       expect(root.children[1].children.length).toBe(0);
       expect(root.children[0].attributes.toString()).toBe('charset="UTF-8"');
       expect(root.children[1].attributes.toString()).toBe('http-equiv="X-UA-Compatible" content="ie=edge"');
+      expect(root.toString()).toBe('<meta charset="UTF-8">\n' +
+        '<meta http-equiv="X-UA-Compatible" content="ie=edge">');
     });
     
     it('when mixed of know html and custom self-closing tag', () => {
@@ -94,6 +89,8 @@ describe('parse', () => {
       expect(root.children[1].children.length).toBe(0);
       expect(root.children[0].attributes.toString()).toBe('charset="UTF-8"');
       expect(root.children[1].attributes.toString()).toBe('src="img/circle" alt=""');
+      expect(root.toString()).toBe('<meta charset="UTF-8">\n' +
+        '<bfs-img src="img/circle" alt=""></bfs-img>');
     });
   });
   
@@ -104,6 +101,7 @@ describe('parse', () => {
       expect(root.children.length).toBe(1);
       expect(root.children[0].tagName).toBe('p');
       expect(root.children[0].children.length).toBe(0);
+      expect(root.toString()).toBe('<p></p>');
     });
     
     it('with text inside', () => {
@@ -115,6 +113,7 @@ describe('parse', () => {
       expect(root.children[0].childNodes.length).toBe(1);
       expect(root.children[0].toString()).toBe('<p>Lorem ipsum dolor.</p>');
       expect(root.children[0].textContent).toBe('Lorem ipsum dolor.');
+      expect(root.toString()).toBe('<p>Lorem ipsum dolor.</p>');
     });
     
     it('with comment inside', () => {
@@ -126,6 +125,7 @@ describe('parse', () => {
       expect(root.children[0].childNodes.length).toBe(1);
       expect(root.children[0].toString()).toBe('<p><!-- content goes here --></p>');
       expect(root.children[0].textContent).toBe('');
+      expect(root.toString()).toBe('<p><!-- content goes here --></p>');
     });
     
     it('with self closing tag inside', () => {
@@ -137,6 +137,7 @@ describe('parse', () => {
       expect(root.children[0].childNodes.length).toBe(1);
       expect(root.children[0].toString()).toBe('<head><meta charset="UTF-8"></head>');
       expect(root.children[0].textContent).toBe('');
+      expect(root.toString()).toBe('<head><meta charset="UTF-8"></head>');
     });
     
     it('with different open-closing tag inside', () => {
@@ -148,6 +149,7 @@ describe('parse', () => {
       expect(root.children[0].childNodes.length).toBe(1);
       expect(root.children[0].toString()).toBe('<head><title>Some title</title></head>');
       expect(root.children[0].textContent).toBe('Some title');
+      expect(root.toString()).toBe('<head><title>Some title</title></head>');
     });
     
     it('with similar open-closing tag inside', () => {
@@ -159,6 +161,7 @@ describe('parse', () => {
       expect(root.children[0].childNodes.length).toBe(1);
       expect(root.children[0].toString()).toBe('<div><div>Some title</div></div>');
       expect(root.children[0].textContent).toBe('Some title');
+      expect(root.toString()).toBe('<div><div>Some title</div></div>');
     });
     
     it('when no closing slash is present', () => {
