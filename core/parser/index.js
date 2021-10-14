@@ -66,7 +66,9 @@ function setAttributes(node, attributes) {
   let match = '';
   while ((match = attrPattern.exec(attributes))) {
     const name = match[1];
-    const value = match[2] || match[3] || match[4] || null;
+    const value = match[2] || match[3] || match[4] || (
+      new RegExp(`^${match[1]}\\s*=`).test(match[0]) ? '' : null
+    )
     
     if (name.startsWith('#')) {
       // this is a special handler for custom attributes since its syntax is not allowed
