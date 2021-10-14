@@ -1,5 +1,6 @@
 const matchSelector = require('./matchSelector');
-const {Element, parseHTMLString} = require('../Element');
+const {Element} = require('../Element');
+const {parse} = require('..');
 const {Selector} = require("../Selector");
 
 describe('MatchSelector Single', () => {
@@ -136,7 +137,7 @@ describe('MatchSelector Single', () => {
   describe('should handle pseudo-class selector', () => {
     it('root', () => {
       const rootSelector = Selector.pseudoClass('root');
-      const node = parseHTMLString('<h2>some title</h2>');
+      const node = parse('<h2>some title</h2>');
       
       expect(matchSelector.single(node, rootSelector)).toBeTruthy();
       expect(matchSelector.single(node.children[0], rootSelector)).toBeFalsy();
@@ -272,7 +273,7 @@ describe('MatchSelector Single', () => {
       let ul;
       
       beforeEach(() => {
-        ul = parseHTMLString('<ul>' +
+        ul = parse('<ul>' +
           '<li>item-1</li>' +
           '<li>item-2</li>' +
           '<li>item-3</li>' +
@@ -345,7 +346,7 @@ describe('MatchSelector Single', () => {
         expect(matchSelector.single(ul.children[3], firstOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], firstOfTypeSelector, selectorType)).toBeFalsy();
         
-        ul = parseHTMLString('<ul>' +
+        ul = parse('<ul>' +
           '<li>item-1</li>' +
           '<li>item-2</li>' +
           '<li class="special-item">item-3</li>' +
@@ -390,7 +391,7 @@ describe('MatchSelector Single', () => {
         expect(matchSelector.single(ul.children[3], lastOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], lastOfTypeSelector, selectorType)).toBeTruthy();
         
-        ul = parseHTMLString('<ul>' +
+        ul = parse('<ul>' +
           '<li>item-1</li>' +
           '<li>item-2</li>' +
           '<li class="special-item">item-3</li>' +
@@ -435,7 +436,7 @@ describe('MatchSelector Single', () => {
         expect(matchSelector.single(ul.children[3], onlyOfTypeSelector, selectorType)).toBeFalsy();
         expect(matchSelector.single(ul.children[4], onlyOfTypeSelector, selectorType)).toBeFalsy();
         
-        ul = parseHTMLString('<ul>' +
+        ul = parse('<ul>' +
           '<li>item-1</li>' +
           '<li>item-2</li>' +
           '<li>item-3</li>' +
@@ -459,7 +460,7 @@ describe('MatchSelector Single', () => {
         const onlyOfTypeSelector = Selector.pseudoClass('only-of-type');
         const notSelector = Selector.pseudoClass('not', firstOfTypeSelector);
         
-        ul = parseHTMLString('<ul>' +
+        ul = parse('<ul>' +
           '<li>item-1</li>' +
           '<li>item-2</li>' +
           '<li>item-3</li>' +
@@ -809,7 +810,7 @@ describe('MatchSelector Single', () => {
 });
 
 describe('MatchSelector List', () => {
-  const node = parseHTMLString(`
+  const node = parse(`
       <section class="block">
         <h2 id="main-title">Some title</h2>
         <ul class="list">

@@ -275,7 +275,7 @@ describe('Element', () => {
   });
   
   describe('working with css selectors', () => {
-    const node = parseHTMLString(`<section class="block">
+    const node = parse(`<section class="block">
         <h2 id="main-title">Some title</h2>
         <ul class="list">
             <li class="item" name="">item 1</li>

@@ -46,8 +46,7 @@ describe('parse', () => {
   });
   
   it('should set node context', () => {
-    const root = parse(basicPageMarkup);
-    root.context = {sample: 10};
+    const root = parse(basicPageMarkup, {sample: 10});
     const title = root.children[1].children[0].children[3];
     
     expect(root.tagName).toEqual(null);
@@ -70,7 +69,7 @@ describe('parse', () => {
       expect(root.children.length).toBe(1);
       expect(root.children[0].tagName).toBe('bfs-img');
       expect(root.children[0].children.length).toBe(0);
-      expect(root.children[0].attributes.toString()).toBe('src="img/circle" alt');
+      expect(root.children[0].attributes.toString()).toBe('src="img/circle" alt=""');
     });
     
     it('when repeated next to each other', () => {
@@ -94,7 +93,7 @@ describe('parse', () => {
       expect(root.children[0].children.length).toBe(0);
       expect(root.children[1].children.length).toBe(0);
       expect(root.children[0].attributes.toString()).toBe('charset="UTF-8"');
-      expect(root.children[1].attributes.toString()).toBe('src="img/circle" alt');
+      expect(root.children[1].attributes.toString()).toBe('src="img/circle" alt=""');
     });
   });
   
@@ -234,7 +233,7 @@ describe('parse', () => {
     it('when has empty or no value', () => {
       const root = parse('<a href="" download></a>');
       
-      expect(root.toString()).toBe('<a href download></a>');
+      expect(root.toString()).toBe('<a href="" download></a>');
     });
   });
   
