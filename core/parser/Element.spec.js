@@ -414,4 +414,3 @@ describe('Element', () => {
     expect(anchorClone.parentNode).toEqual(null);
   });
 })
-

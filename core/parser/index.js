@@ -7,15 +7,13 @@ const selfClosingTags = require("./utils/selfClosingTags.json");
  * html regex based parser with support for Element context data and
  * attributes prefixed with # and complex logic as value
  * @param markup
- * @param data
  * @returns {Element}
  */
-function parse(markup, data = {}) {
+function parse(markup) {
   // since Element also uses parse importing it here will prevent
   // circular dependency issues
   const {Element} = require('./Element');
   const root = new Element();
-  root.context = data;
   const stack = [root];
   let match;
   let lastIndex = 0;

@@ -51,7 +51,8 @@ function render(dt = defaultOptions) {
       return '';
     }
     
-    root = parse(content, dt.context);
+    root = parse(content);
+    root.context = dt.context || Object.create(null);
   }
   
   let nodeList = [root];
@@ -220,6 +221,7 @@ function renderByAttribute(node, attrName, {context, content, ...metadata}) {
   const attr = customAttributesRegistry.get(attrName.slice(1));
   const handler = new attr(node);
   let val = node.getAttribute(attrName);
+  
   
   if (val) {
     val = parseValue(processCustomAttributeValue(handler, val, node.context));
