@@ -37,22 +37,16 @@ function parse(markup) {
     
     if (closeOrBangSymbol === '!' || selfCloseSlash || selfClosingTags[tagName]) {
       const node = new Element(`${closeOrBangSymbol || ''}${tagName}`);
-      
-      let match = '';
-      while ((match = attrPattern.exec(attributes))) {
-        node.setAttribute(match[1], match[2] || match[3] || match[4] || null);
-      }
+  
+      setAttributes(node, attributes)
       
       parentNode.appendChild(node);
     } else if (closeOrBangSymbol === '/' && parentNode.tagName === tagName) {
       stack.pop();
     } else if(!closeOrBangSymbol) {
       const node = new Element(tagName);
-      
-      let match = '';
-      while ((match = attrPattern.exec(attributes))) {
-        node.setAttribute(match[1], match[2] || match[3] || match[4] || null);
-      }
+  
+      setAttributes(node, attributes)
       
       parentNode.appendChild(node);
       
@@ -66,6 +60,22 @@ function parse(markup) {
   }
   
   return root;
+}
+
+function setAttributes(node, attributes) {
+  let match = '';
+  while ((match = attrPattern.exec(attributes))) {
+    const name = match[1];
+    const value = match[2] || match[3] || match[4] || null;
+    
+    if (name.startsWith('#')) {
+      // this is a special handler for custom attributes since its syntax is not allowed
+      // for HTML attributes allowing this parser to work with normal DOM elements
+      node[name] = value;
+    } else {
+      node.setAttribute(name, value);
+    }
+  }
 }
 
 module.exports.parse = parse;

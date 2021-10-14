@@ -9,6 +9,9 @@ const {createSelectors} = require("./utils/createSelectors");
 const matchSelector = require("./utils/matchSelector");
 const {traverseNodeDescendents} = require("./utils/traverseNodeDescendents");
 const {traverseNodeAncestors} = require("./utils/traverseNodeAncestors");
+// grab priority directly because Element cannot be dependent on any
+// default tag or attribute
+const {attrsPriorities} = require("./default-attributes/priority");
 
 const attributePropertyMap = {
   className: 'class',
@@ -33,6 +36,7 @@ const keyValuePairAttributes = [
   'slot',
   'name',
 ];
+
 
 /**
  * a simpler server-side DOM Element facade
@@ -262,6 +266,13 @@ class Element extends Node {
     
     for (let attribute of this.attributes) {
       cloneNode.setAttribute(attribute.name, attribute.value)
+    }
+  
+    // also copy the hidden special attributes as properties
+    for (let key of Object.keys(attrsPriorities)) {
+      if (this.hasOwnProperty(key)) {
+        cloneNode[key] = this[key]
+      }
     }
     
     cloneNode.context = {...this.selfContext};
